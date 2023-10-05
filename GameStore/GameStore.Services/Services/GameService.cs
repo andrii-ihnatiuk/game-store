@@ -2,6 +2,7 @@
 using GameStore.Data.Entities;
 using GameStore.Data.Repositories;
 using GameStore.Shared.DTOs;
+using GameStore.Shared.Exceptions;
 
 namespace GameStore.Services.Services;
 
@@ -19,7 +20,7 @@ public class GameService : IGameService
     public async Task<GameViewDto> GetGameByAliasAsync(string alias)
     {
         var game = await _unitOfWork.Games.GetByIdAsync(alias);
-        return _mapper.Map<Game, GameViewDto>(game);
+        return game is null ? throw new EntityNotFoundException(entityId: alias) : _mapper.Map<Game, GameViewDto>(game);
     }
 
     public async Task<GameViewDto> AddGameAsync(GameCreateDto dto)
