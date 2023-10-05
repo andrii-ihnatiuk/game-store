@@ -5,7 +5,13 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameStore.API", "GameStore.API\GameStore.API.csproj", "{6B12A80B-87DD-4D51-82E7-B8851DA00767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStore.Tests", "GameStore.Tests\GameStore.Tests.csproj", "{CB58DD1A-F772-4C28-9E6A-A5CE82343B14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameStore.Tests", "GameStore.Tests\GameStore.Tests.csproj", "{CB58DD1A-F772-4C28-9E6A-A5CE82343B14}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameStore.Data", "GameStore.Data\GameStore.Data.csproj", "{CEAEE505-63C4-411A-BC78-6353EEEA4D7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStore.Services", "GameStore.Services\GameStore.Services.csproj", "{AB034A2D-2D6C-4854-B8E7-CB5CBAC91531}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStore.Shared", "GameStore.Shared\GameStore.Shared.csproj", "{76289D25-FFF9-4042-BF59-03D4EC1A5DCF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,18 @@ Global
 		{CB58DD1A-F772-4C28-9E6A-A5CE82343B14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB58DD1A-F772-4C28-9E6A-A5CE82343B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CB58DD1A-F772-4C28-9E6A-A5CE82343B14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEAEE505-63C4-411A-BC78-6353EEEA4D7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEAEE505-63C4-411A-BC78-6353EEEA4D7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEAEE505-63C4-411A-BC78-6353EEEA4D7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEAEE505-63C4-411A-BC78-6353EEEA4D7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB034A2D-2D6C-4854-B8E7-CB5CBAC91531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB034A2D-2D6C-4854-B8E7-CB5CBAC91531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB034A2D-2D6C-4854-B8E7-CB5CBAC91531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB034A2D-2D6C-4854-B8E7-CB5CBAC91531}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76289D25-FFF9-4042-BF59-03D4EC1A5DCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76289D25-FFF9-4042-BF59-03D4EC1A5DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76289D25-FFF9-4042-BF59-03D4EC1A5DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76289D25-FFF9-4042-BF59-03D4EC1A5DCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
