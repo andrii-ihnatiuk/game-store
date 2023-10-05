@@ -51,6 +51,6 @@ public class GenericRepository<T> : IGenericRepository<T>
 
     public void Update(T entity)
     {
-        throw new NotImplementedException();
+        DbSet.Update(entity);
     }
 }
