@@ -28,4 +28,11 @@ public class GamesController : ControllerBase
         var gameViewDto = await _gameService.AddGameAsync(dto);
         return CreatedAtRoute("GetGameByAlias", new { gameAlias = gameViewDto.Alias }, gameViewDto);
     }
+
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdateGameAsync([FromBody] GameCreateDto dto)
+    {
+        await _gameService.UpdateGameAsync(dto);
+        return Ok();
+    }
 }

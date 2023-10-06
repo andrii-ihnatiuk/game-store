@@ -1,8 +1,10 @@
-﻿namespace GameStore.Data.Repositories;
+﻿using GameStore.Data.Entities;
+
+namespace GameStore.Data.Repositories;
 
 public interface IUnitOfWork : IDisposable
 {
-    IGameRepository Games { get; }
+    IGenericRepository<Game> Games { get; }
 
     Task<int> SaveAsync();
 }

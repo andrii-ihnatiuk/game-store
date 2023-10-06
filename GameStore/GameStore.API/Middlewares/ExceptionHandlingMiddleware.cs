@@ -27,15 +27,18 @@ public class ExceptionHandlingMiddleware
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        ErrorDetails errorDetails = default;
+        ErrorDetails errorDetails = new()
+        {
+            Message = exception.Message,
+        };
 
         switch (exception)
         {
-            case EntityNotFoundException ex:
+            case EntityNotFoundException:
                 errorDetails.StatusCode = StatusCodes.Status404NotFound;
-                errorDetails.Message = ex.Message;
+                break;
+            case EntityAlreadyExistsException:
+                errorDetails.StatusCode = StatusCodes.Status409Conflict;
                 break;
             default:
                 errorDetails.StatusCode = StatusCodes.Status500InternalServerError;
@@ -43,6 +46,8 @@ public class ExceptionHandlingMiddleware
                 break;
         }
 
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = errorDetails.StatusCode;
         await context.Response.WriteAsync(JsonSerializer.Serialize(errorDetails));
     }
 }

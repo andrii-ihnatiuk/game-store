@@ -1,23 +1,56 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace GameStore.Data.Repositories;
 
 public class GenericRepository<T> : IGenericRepository<T>
     where T : class
 {
-    protected GenericRepository(GameStoreDbContext context)
+    public GenericRepository(GameStoreDbContext context)
     {
         Context = context;
         DbSet = context.Set<T>();
     }
 
-    protected GameStoreDbContext Context { get; }
+    private GameStoreDbContext Context { get; }
 
-    protected DbSet<T> DbSet { get; }
+    private DbSet<T> DbSet { get; }
 
     public async Task<T> GetByIdAsync(object id)
     {
         return await DbSet.FindAsync(id);
+    }
+
+    public IQueryable<T> GetQueryable()
+    {
+        return DbSet;
+    }
+
+    public async Task<IEnumerable<T>> QueryAsync(
+        Expression<Func<T, bool>>? predicate = null,
+        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
+    {
+        IQueryable<T> query = DbSet;
+
+        if (predicate != null)
+        {
+            query = query.Where(predicate);
+        }
+
+        if (include != null)
+        {
+            query = include(query);
+        }
+
+        return await (orderBy != null ? orderBy(query).ToListAsync() : query.ToListAsync());
+    }
+
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>>? predicate)
+    {
+        var query = await QueryAsync(predicate: predicate);
+        return query.FirstOrDefault();
     }
 
     public async Task<IList<T>> GetAllAsync()
@@ -49,8 +82,13 @@ public class GenericRepository<T> : IGenericRepository<T>
         }
     }
 
-    public void Update(T entity)
+    public void UpdateAsync(T entity)
     {
-        DbSet.Update(entity);
+        if (DbSet.Entry(entity).State == EntityState.Detached)
+        {
+            DbSet.Attach(entity);
+        }
+
+        DbSet.Entry(entity).State = EntityState.Modified;
     }
 }

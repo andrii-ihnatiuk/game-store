@@ -14,6 +14,10 @@ public sealed class GameStoreDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Game>()
-            .HasKey(e => e.Alias);
+            .HasKey(e => e.Id);
+
+        modelBuilder.Entity<Game>()
+            .HasIndex(e => e.Alias)
+            .IsUnique(true);
     }
 }
