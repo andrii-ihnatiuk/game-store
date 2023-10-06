@@ -70,19 +70,19 @@ public class GenericRepository<T> : IGenericRepository<T>
             DbSet.Attach(entity);
         }
 
-        DbSet.Remove(entity);
+        DbSet.Entry(entity).State = EntityState.Deleted;
     }
 
-    public void Delete(object id)
+    public async Task DeleteAsync(object id)
     {
-        T entityToDelete = DbSet.Find(id);
+        var entityToDelete = await DbSet.FindAsync(id);
         if (entityToDelete != null)
         {
             Delete(entityToDelete);
         }
     }
 
-    public void UpdateAsync(T entity)
+    public void Update(T entity)
     {
         if (DbSet.Entry(entity).State == EntityState.Detached)
         {
