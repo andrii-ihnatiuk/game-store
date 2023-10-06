@@ -2,6 +2,8 @@
 
 public class GameCreateDto
 {
+    public long GameId { get; set; }
+
     public string? Alias { get; set; }
 
     public string Name { get; set; }

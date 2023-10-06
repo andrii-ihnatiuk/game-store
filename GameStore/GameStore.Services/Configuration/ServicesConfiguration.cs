@@ -13,7 +13,7 @@ public static class ServicesConfiguration
     {
         serviceCollection.AddDbContext<GameStoreDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-        serviceCollection.AddScoped<IGameRepository, GameRepository>();
+        serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         serviceCollection.AddScoped<IGameService, GameService>();
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

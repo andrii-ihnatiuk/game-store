@@ -1,17 +1,19 @@
-﻿namespace GameStore.Data.Repositories;
+﻿using GameStore.Data.Entities;
+
+namespace GameStore.Data.Repositories;
 
 public class UnitOfWork : IUnitOfWork
 {
     private readonly GameStoreDbContext _context;
     private bool _disposed;
 
-    public UnitOfWork(GameStoreDbContext context, IGameRepository gameRepository)
+    public UnitOfWork(GameStoreDbContext context, IGenericRepository<Game> gameRepository)
     {
         _context = context;
         Games = gameRepository;
     }
 
-    public IGameRepository Games { get; }
+    public IGenericRepository<Game> Games { get; }
 
     public async Task<int> SaveAsync()
     {

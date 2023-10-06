@@ -7,4 +7,6 @@ public interface IGameService
     Task<GameViewDto> GetGameByAliasAsync(string alias);
 
     Task<GameViewDto> AddGameAsync(GameCreateDto dto);
+
+    Task UpdateGameAsync(GameCreateDto dto);
 }
