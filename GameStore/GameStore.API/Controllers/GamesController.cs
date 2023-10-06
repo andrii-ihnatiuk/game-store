@@ -35,4 +35,11 @@ public class GamesController : ControllerBase
         await _gameService.UpdateGameAsync(dto);
         return Ok();
     }
+
+    [HttpDelete("remove")]
+    public async Task<IActionResult> DeleteAsync([FromQuery] long gameId)
+    {
+        await _gameService.DeleteGameAsync(gameId);
+        return NoContent();
+    }
 }

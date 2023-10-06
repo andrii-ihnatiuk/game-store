@@ -45,4 +45,10 @@ public class GameService : IGameService
         _mapper.Map(dto, existingGame);
         await _unitOfWork.SaveAsync();
     }
+
+    public async Task DeleteGameAsync(long gameId)
+    {
+        await _unitOfWork.Games.DeleteAsync(gameId);
+        await _unitOfWork.SaveAsync();
+    }
 }

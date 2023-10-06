@@ -9,4 +9,6 @@ public interface IGameService
     Task<GameViewDto> AddGameAsync(GameCreateDto dto);
 
     Task UpdateGameAsync(GameCreateDto dto);
+
+    Task DeleteGameAsync(long gameId);
 }

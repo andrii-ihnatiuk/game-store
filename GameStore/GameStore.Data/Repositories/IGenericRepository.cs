@@ -23,7 +23,7 @@ public interface IGenericRepository<T>
 
     void Delete(T entity);
 
-    void Delete(object id);
+    Task DeleteAsync(object id);
 
-    void UpdateAsync(T entity);
+    void Update(T entity);
 }
