@@ -8,5 +8,7 @@ public interface IUnitOfWork : IDisposable
 
     IGenericRepository<Genre> Genres { get; }
 
+    IGenericRepository<Platform> Platforms { get; }
+
     Task<int> SaveAsync();
 }

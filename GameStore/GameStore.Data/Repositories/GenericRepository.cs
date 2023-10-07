@@ -27,7 +27,7 @@ public class GenericRepository<T> : IGenericRepository<T>
         return DbSet;
     }
 
-    public async Task<IEnumerable<T>> QueryAsync(
+    public async Task<IList<T>> GetAsync(
         Expression<Func<T, bool>>? predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
@@ -46,13 +46,8 @@ public class GenericRepository<T> : IGenericRepository<T>
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
         bool noTracking = true)
     {
-        var query = await QueryAsync(predicate: predicate, include: include, noTracking: noTracking);
+        var query = await GetAsync(predicate: predicate, include: include, noTracking: noTracking);
         return query.FirstOrDefault();
-    }
-
-    public async Task<IList<T>> GetAllAsync()
-    {
-        return await DbSet.ToListAsync();
     }
 
     public async Task AddAsync(T entity)

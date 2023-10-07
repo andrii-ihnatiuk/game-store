@@ -16,6 +16,7 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         serviceCollection.AddScoped<IGameService, GameService>();
         serviceCollection.AddScoped<IGenreService, GenreService>();
+        serviceCollection.AddScoped<IPlatformService, PlatformService>();
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     }

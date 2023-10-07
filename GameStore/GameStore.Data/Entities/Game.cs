@@ -12,5 +12,9 @@ public class Game
 
     public long? GenreId { get; set; }
 
+    public long? PlatformId { get; set; }
+
     public Genre? Genre { get; set; }
+
+    public Platform? Platform { get; set; }
 }
