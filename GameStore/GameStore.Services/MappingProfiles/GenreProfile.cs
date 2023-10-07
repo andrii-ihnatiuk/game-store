@@ -10,8 +10,19 @@ public class GenreProfile : Profile
     {
         CreateMap<GenreCreateDto, Genre>();
 
-        CreateMap<Genre, GenreViewFullDto>();
+        CreateMap<Genre, GenreViewFullDto>()
+            .ForMember(
+                dest => dest.GenreId,
+                opts => opts.MapFrom(src => src.Id));
 
-        CreateMap<Genre, GenreViewBriefDto>();
+        CreateMap<Genre, GenreViewBriefDto>()
+            .ForMember(
+                dest => dest.GenreId,
+                opts => opts.MapFrom(src => src.Id));
+
+        CreateMap<GenreUpdateDto, Genre>()
+            .ForMember(
+                dest => dest.Id,
+                opts => opts.MapFrom(src => src.GenreId));
     }
 }

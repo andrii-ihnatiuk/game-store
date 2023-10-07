@@ -40,4 +40,12 @@ public class GenreService : IGenreService
         await _unitOfWork.SaveAsync();
         return _mapper.Map<GenreViewFullDto>(genre);
     }
+
+    public async Task UpdateGenreAsync(GenreUpdateDto dto)
+    {
+        var existingGenre = await _unitOfWork.Genres.GetByIdAsync(dto.GenreId)
+                           ?? throw new EntityNotFoundException(entityId: dto.GenreId);
+        _mapper.Map(dto, existingGenre);
+        await _unitOfWork.SaveAsync();
+    }
 }

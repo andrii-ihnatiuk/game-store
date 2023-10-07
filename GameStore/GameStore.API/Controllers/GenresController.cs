@@ -26,6 +26,13 @@ public class GenresController : ControllerBase
     public async Task<IActionResult> PostGenreAsync([FromBody] GenreCreateDto dto)
     {
         var genreViewDto = await _genreService.AddGenreAsync(dto);
-        return CreatedAtRoute("GetGenreById", new { genreId = genreViewDto.Id }, genreViewDto);
+        return CreatedAtRoute("GetGenreById", new { genreId = genreViewDto.GenreId }, genreViewDto);
+    }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateGenreAsync([FromBody] GenreUpdateDto dto)
+    {
+        await _genreService.UpdateGenreAsync(dto);
+        return Ok();
     }
 }
