@@ -9,4 +9,6 @@ public interface IGenreService
     Task<GenreViewFullDto> AddGenreAsync(GenreCreateDto dto);
 
     Task UpdateGenreAsync(GenreUpdateDto dto);
+
+    Task DeleteGenreAsync(long genreId);
 }

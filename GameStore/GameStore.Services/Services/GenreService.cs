@@ -48,4 +48,10 @@ public class GenreService : IGenreService
         _mapper.Map(dto, existingGenre);
         await _unitOfWork.SaveAsync();
     }
+
+    public async Task DeleteGenreAsync(long genreId)
+    {
+        await _unitOfWork.Genres.DeleteAsync(genreId);
+        await _unitOfWork.SaveAsync();
+    }
 }

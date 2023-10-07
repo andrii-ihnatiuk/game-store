@@ -35,4 +35,11 @@ public class GenresController : ControllerBase
         await _genreService.UpdateGenreAsync(dto);
         return Ok();
     }
+
+    [HttpDelete("remove")]
+    public async Task<IActionResult> DeleteGenreAsync([FromQuery] long genreId)
+    {
+        await _genreService.DeleteGenreAsync(genreId);
+        return NoContent();
+    }
 }
