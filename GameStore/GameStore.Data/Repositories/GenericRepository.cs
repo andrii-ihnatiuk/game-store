@@ -30,26 +30,23 @@ public class GenericRepository<T> : IGenericRepository<T>
     public async Task<IEnumerable<T>> QueryAsync(
         Expression<Func<T, bool>>? predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null)
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        bool noTracking = true)
     {
         IQueryable<T> query = DbSet;
-
-        if (predicate != null)
-        {
-            query = query.Where(predicate);
-        }
-
-        if (include != null)
-        {
-            query = include(query);
-        }
+        query = noTracking ? query.AsNoTracking() : query;
+        query = predicate != null ? query.Where(predicate) : query;
+        query = include != null ? include(query) : query;
 
         return await (orderBy != null ? orderBy(query).ToListAsync() : query.ToListAsync());
     }
 
-    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>>? predicate)
+    public async Task<T?> FirstOrDefaultAsync(
+        Expression<Func<T, bool>>? predicate,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        bool noTracking = true)
     {
-        var query = await QueryAsync(predicate: predicate);
+        var query = await QueryAsync(predicate: predicate, include: include, noTracking: noTracking);
         return query.FirstOrDefault();
     }
 

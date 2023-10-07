@@ -1,6 +1,6 @@
 ﻿namespace GameStore.Shared.DTOs.Genre;
 
-public class GenreViewBriefDto
+public class GenreUpdateDto
 {
     public long GenreId { get; set; }
 

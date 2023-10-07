@@ -2,7 +2,7 @@
 
 public class GenreViewFullDto
 {
-    public long Id { get; set; }
+    public long GenreId { get; set; }
 
     public string Name { get; set; }
 
