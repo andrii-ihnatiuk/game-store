@@ -10,7 +10,7 @@ public interface IGenericRepository<T>
 
     IQueryable<T> GetQueryable();
 
-    Task<IEnumerable<T>> QueryAsync(
+    Task<IList<T>> GetAsync(
         Expression<Func<T, bool>>? predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
@@ -20,8 +20,6 @@ public interface IGenericRepository<T>
         Expression<Func<T, bool>>? predicate,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
         bool noTracking = true);
-
-    Task<IList<T>> GetAllAsync();
 
     Task AddAsync(T entity);
 

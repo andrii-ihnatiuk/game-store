@@ -22,6 +22,13 @@ public class GenresController : ControllerBase
         return Ok(genreViewDto);
     }
 
+    [HttpGet("")]
+    public async Task<ActionResult<IEnumerable<GenreViewBriefDto>>> GetAllGenresAsync()
+    {
+        var genresDto = await _genreService.GetAllGenresAsync();
+        return Ok(genresDto);
+    }
+
     [HttpPost("new")]
     public async Task<IActionResult> PostGenreAsync([FromBody] GenreCreateDto dto)
     {

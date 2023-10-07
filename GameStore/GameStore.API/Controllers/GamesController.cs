@@ -1,5 +1,4 @@
-﻿using GameStore.Data.Entities;
-using GameStore.Services.Services;
+﻿using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +23,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IEnumerable<Game>>> GetAllGamesAsync()
+    public async Task<ActionResult<IEnumerable<GameViewBriefDto>>> GetAllGamesAsync()
     {
         var gamesDto = await _gameService.GetAllGamesAsync();
         return Ok(gamesDto);

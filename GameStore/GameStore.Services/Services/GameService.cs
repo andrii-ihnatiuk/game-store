@@ -27,7 +27,7 @@ public class GameService : IGameService
 
     public async Task<IList<GameViewBriefDto>> GetAllGamesAsync()
     {
-        var games = await _unitOfWork.Games.GetAllAsync();
+        var games = await _unitOfWork.Games.GetAsync(orderBy: q => q.OrderBy(g => g.Id));
         var gamesDto = _mapper.Map<IList<Game>, IList<GameViewBriefDto>>(games);
         return gamesDto;
     }

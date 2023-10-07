@@ -19,6 +19,7 @@ public sealed class GameStoreDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
         SeedGames(modelBuilder.Entity<Game>());
         SeedGenres(modelBuilder.Entity<Genre>());
+        SeedPlatforms(modelBuilder.Entity<Platform>());
     }
 
     private static void SeedGames(EntityTypeBuilder<Game> builder)
@@ -61,5 +62,14 @@ public sealed class GameStoreDbContext : DbContext
             new Genre { Id = 14, Name = "Adventure", ParentGenreId = null },
             new Genre { Id = 15, Name = "Puzzle & Skill", ParentGenreId = null },
             new Genre { Id = 16, Name = "Misc.", ParentGenreId = null });
+    }
+
+    private static void SeedPlatforms(EntityTypeBuilder<Platform> builder)
+    {
+        builder.HasData(
+            new Platform { Id = 1, Type = "mobile" },
+            new Platform { Id = 2, Type = "browser" },
+            new Platform { Id = 3, Type = "desktop" },
+            new Platform { Id = 4, Type = "console" });
     }
 }

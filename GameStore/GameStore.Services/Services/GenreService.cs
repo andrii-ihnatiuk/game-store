@@ -26,6 +26,13 @@ public class GenreService : IGenreService
         return genre is null ? throw new EntityNotFoundException(entityId: id) : _mapper.Map<GenreViewFullDto>(genre);
     }
 
+    public async Task<IList<GenreViewBriefDto>> GetAllGenresAsync()
+    {
+        var genres = await _unitOfWork.Genres.GetAsync(orderBy: q => q.OrderBy(g => g.Id));
+        var genresDto = _mapper.Map<IList<Genre>, IList<GenreViewBriefDto>>(genres);
+        return genresDto;
+    }
+
     public async Task<GenreViewFullDto> AddGenreAsync(GenreCreateDto dto)
     {
         var genre = _mapper.Map<Genre>(dto);
