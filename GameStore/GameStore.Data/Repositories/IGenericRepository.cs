@@ -13,9 +13,13 @@ public interface IGenericRepository<T>
     Task<IEnumerable<T>> QueryAsync(
         Expression<Func<T, bool>>? predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null);
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        bool noTracking = true);
 
-    Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>>? predicate);
+    Task<T?> FirstOrDefaultAsync(
+        Expression<Func<T, bool>>? predicate,
+        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        bool noTracking = true);
 
     Task<IList<T>> GetAllAsync();
 
