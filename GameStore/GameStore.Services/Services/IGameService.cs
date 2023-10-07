@@ -1,14 +1,18 @@
-﻿using GameStore.Shared.DTOs;
+﻿using GameStore.Shared.DTOs.Game;
 
 namespace GameStore.Services.Services;
 
 public interface IGameService
 {
-    Task<GameViewDto> GetGameByAliasAsync(string alias);
+    Task<GameViewFullDto> GetGameByAliasAsync(string alias);
 
-    Task<GameViewDto> AddGameAsync(GameCreateDto dto);
+    Task<IList<GameViewBriefDto>> GetAllGamesAsync();
 
-    Task UpdateGameAsync(GameCreateDto dto);
+    Task<GameViewFullDto> AddGameAsync(GameCreateDto dto);
+
+    Task UpdateGameAsync(GameUpdateDto dto);
 
     Task DeleteGameAsync(long gameId);
+
+    Task<Tuple<byte[], string>> DownloadAsync(string gameAlias);
 }

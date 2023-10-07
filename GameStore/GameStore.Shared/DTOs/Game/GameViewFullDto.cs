@@ -1,7 +1,9 @@
-﻿namespace GameStore.Shared.DTOs;
+﻿namespace GameStore.Shared.DTOs.Game;
 
-public class GameViewDto
+public class GameViewFullDto
 {
+    public long GameId { get; set; }
+
     public string Alias { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;

@@ -1,5 +1,6 @@
-﻿using GameStore.Services.Services;
-using GameStore.Shared.DTOs;
+﻿using GameStore.Data.Entities;
+using GameStore.Services.Services;
+using GameStore.Shared.DTOs.Game;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStore.API.Controllers;
@@ -22,6 +23,20 @@ public class GamesController : ControllerBase
         return Ok(gameViewDto);
     }
 
+    [HttpGet("")]
+    public async Task<ActionResult<IEnumerable<Game>>> GetAllGamesAsync()
+    {
+        var gamesDto = await _gameService.GetAllGamesAsync();
+        return Ok(gamesDto);
+    }
+
+    [HttpGet("{gameAlias}/download")]
+    public async Task<IActionResult> DownloadGameAsync([FromRoute] string gameAlias)
+    {
+        (byte[] bytes, string fileName) = await _gameService.DownloadAsync(gameAlias);
+        return File(bytes, "text/plain", fileDownloadName: fileName);
+    }
+
     [HttpPost("new")]
     public async Task<IActionResult> PostGameAsync([FromBody] GameCreateDto dto)
     {
@@ -30,7 +45,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> UpdateGameAsync([FromBody] GameCreateDto dto)
+    public async Task<IActionResult> UpdateGameAsync([FromBody] GameUpdateDto dto)
     {
         await _gameService.UpdateGameAsync(dto);
         return Ok();

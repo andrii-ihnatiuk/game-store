@@ -15,6 +15,7 @@ public static class ServicesConfiguration
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         serviceCollection.AddScoped<IGameService, GameService>();
+        serviceCollection.AddScoped<IGenreService, GenreService>();
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     }
