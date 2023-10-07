@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Text;
+using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Repositories;
-using GameStore.Shared.DTOs;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,13 +19,20 @@ public class GameService : IGameService
         _mapper = mapper;
     }
 
-    public async Task<GameViewDto> GetGameByAliasAsync(string alias)
+    public async Task<GameViewFullDto> GetGameByAliasAsync(string alias)
     {
         var game = await _unitOfWork.Games.FirstOrDefaultAsync(g => g.Alias == alias);
-        return game is null ? throw new EntityNotFoundException(entityId: alias) : _mapper.Map<Game, GameViewDto>(game);
+        return game is null ? throw new EntityNotFoundException(entityId: alias) : _mapper.Map<Game, GameViewFullDto>(game);
     }
 
-    public async Task<GameViewDto> AddGameAsync(GameCreateDto dto)
+    public async Task<IList<GameViewBriefDto>> GetAllGamesAsync()
+    {
+        var games = await _unitOfWork.Games.GetAllAsync();
+        var gamesDto = _mapper.Map<IList<Game>, IList<GameViewBriefDto>>(games);
+        return gamesDto;
+    }
+
+    public async Task<GameViewFullDto> AddGameAsync(GameCreateDto dto)
     {
         var game = _mapper.Map<Game>(dto);
 
@@ -36,12 +44,13 @@ public class GameService : IGameService
 
         await _unitOfWork.Games.AddAsync(game);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<Game, GameViewDto>(game);
+        return _mapper.Map<Game, GameViewFullDto>(game);
     }
 
-    public async Task UpdateGameAsync(GameCreateDto dto)
+    public async Task UpdateGameAsync(GameUpdateDto dto)
     {
-        var existingGame = await _unitOfWork.Games.GetByIdAsync(dto.GameId) ?? throw new EntityNotFoundException(entityId: dto.GameId);
+        var existingGame = await _unitOfWork.Games.GetByIdAsync(dto.GameId)
+                           ?? throw new EntityNotFoundException(entityId: dto.GameId);
         _mapper.Map(dto, existingGame);
         await _unitOfWork.SaveAsync();
     }
@@ -50,5 +59,16 @@ public class GameService : IGameService
     {
         await _unitOfWork.Games.DeleteAsync(gameId);
         await _unitOfWork.SaveAsync();
+    }
+
+    public async Task<Tuple<byte[], string>> DownloadAsync(string gameAlias)
+    {
+        var game = await _unitOfWork.Games.FirstOrDefaultAsync(g => g.Alias == gameAlias)
+                   ?? throw new EntityNotFoundException(entityId: gameAlias);
+        string content = $"Game: {game.Name}\n\nDescription: {game.Description}";
+        byte[] bytes = Encoding.UTF8.GetBytes(content);
+        var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
+        string fileName = $"{game.Name}_{timestamp}.txt";
+        return new Tuple<byte[], string>(bytes, fileName);
     }
 }

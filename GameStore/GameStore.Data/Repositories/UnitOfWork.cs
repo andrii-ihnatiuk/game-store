@@ -7,13 +7,19 @@ public class UnitOfWork : IUnitOfWork
     private readonly GameStoreDbContext _context;
     private bool _disposed;
 
-    public UnitOfWork(GameStoreDbContext context, IGenericRepository<Game> gameRepository)
+    public UnitOfWork(
+        GameStoreDbContext context,
+        IGenericRepository<Game> gameRepository,
+        IGenericRepository<Genre> genericRepository)
     {
         _context = context;
         Games = gameRepository;
+        Genres = genericRepository;
     }
 
     public IGenericRepository<Game> Games { get; }
+
+    public IGenericRepository<Genre> Genres { get; }
 
     public async Task<int> SaveAsync()
     {

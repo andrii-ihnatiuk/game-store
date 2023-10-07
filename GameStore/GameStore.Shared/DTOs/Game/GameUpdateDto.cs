@@ -1,10 +1,10 @@
-﻿namespace GameStore.Shared.DTOs;
+﻿namespace GameStore.Shared.DTOs.Game;
 
-public class GameCreateDto
+public class GameUpdateDto
 {
     public long GameId { get; set; }
 
-    public string? Alias { get; set; }
+    public string Alias { get; set; }
 
     public string Name { get; set; }
 
