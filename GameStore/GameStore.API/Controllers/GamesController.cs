@@ -6,6 +6,7 @@ namespace GameStore.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[ResponseCache(CacheProfileName = "OneMinuteCache")]
 public class GamesController : ControllerBase
 {
     private readonly IGameService _gameService;

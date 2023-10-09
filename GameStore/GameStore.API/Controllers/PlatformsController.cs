@@ -6,6 +6,7 @@ namespace GameStore.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[ResponseCache(CacheProfileName = "OneMinuteCache")]
 public class PlatformsController : ControllerBase
 {
     private readonly IPlatformService _platformService;

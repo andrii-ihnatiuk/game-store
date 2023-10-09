@@ -6,6 +6,7 @@ namespace GameStore.API.Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[ResponseCache(CacheProfileName = "OneMinuteCache")]
 public class GenresController : ControllerBase
 {
     private readonly IGenreService _genreService;
