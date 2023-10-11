@@ -1,4 +1,4 @@
-﻿namespace GameStore.Shared.Exceptions;
+﻿namespace GameStore.Data.Exceptions;
 
 public class EntityAlreadyExistsException : Exception
 {

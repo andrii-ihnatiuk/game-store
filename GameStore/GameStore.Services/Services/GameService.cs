@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using AutoMapper;
 using GameStore.Data.Entities;
+using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Shared.DTOs.Game;
-using GameStore.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services.Services;
@@ -19,20 +19,19 @@ public class GameService : IGameService
         _mapper = mapper;
     }
 
-    public async Task<GameViewFullDto> GetGameByAliasAsync(string alias)
+    public async Task<GameFullDto> GetGameByAliasAsync(string alias)
     {
-        var game = await _unitOfWork.Games.FirstOrDefaultAsync(g => g.Alias == alias);
-        return game is null ? throw new EntityNotFoundException(entityId: alias) : _mapper.Map<Game, GameViewFullDto>(game);
+        var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == alias);
+        return _mapper.Map<Game, GameFullDto>(game);
     }
 
-    public async Task<IList<GameViewBriefDto>> GetAllGamesAsync()
+    public async Task<IList<GameBriefDto>> GetAllGamesAsync()
     {
         var games = await _unitOfWork.Games.GetAsync(orderBy: q => q.OrderBy(g => g.Id));
-        var gamesDto = _mapper.Map<IList<Game>, IList<GameViewBriefDto>>(games);
-        return gamesDto;
+        return _mapper.Map<IList<GameBriefDto>>(games);
     }
 
-    public async Task<GameViewFullDto> AddGameAsync(GameCreateDto dto)
+    public async Task<GameFullDto> AddGameAsync(GameCreateDto dto)
     {
         var game = _mapper.Map<Game>(dto);
 
@@ -42,16 +41,17 @@ public class GameService : IGameService
             throw new EntityAlreadyExistsException(nameof(game.Alias), game.Alias);
         }
 
+        await ThrowIfForeignKeyConstraintViolationFor(game);
         await _unitOfWork.Games.AddAsync(game);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<Game, GameViewFullDto>(game);
+        return _mapper.Map<Game, GameFullDto>(game);
     }
 
     public async Task UpdateGameAsync(GameUpdateDto dto)
     {
-        var existingGame = await _unitOfWork.Games.GetByIdAsync(dto.GameId)
-                           ?? throw new EntityNotFoundException(entityId: dto.GameId);
+        var existingGame = await _unitOfWork.Games.GetByIdAsync(dto.GameId);
         _mapper.Map(dto, existingGame);
+        await ThrowIfForeignKeyConstraintViolationFor(existingGame);
         await _unitOfWork.SaveAsync();
     }
 
@@ -63,12 +63,28 @@ public class GameService : IGameService
 
     public async Task<Tuple<byte[], string>> DownloadAsync(string gameAlias)
     {
-        var game = await _unitOfWork.Games.FirstOrDefaultAsync(g => g.Alias == gameAlias)
-                   ?? throw new EntityNotFoundException(entityId: gameAlias);
+        var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == gameAlias);
         string content = $"Game: {game.Name}\n\nDescription: {game.Description}";
         byte[] bytes = Encoding.UTF8.GetBytes(content);
         var timestamp = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
         string fileName = $"{game.Name}_{timestamp}.txt";
         return new Tuple<byte[], string>(bytes, fileName);
+    }
+
+    private async Task ThrowIfForeignKeyConstraintViolationFor(Game game)
+    {
+        bool genreExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Id == game.GenreId);
+
+        if (!genreExists)
+        {
+            throw new ForeignKeyException(onColumn: nameof(game.GenreId));
+        }
+
+        bool platformExists = await _unitOfWork.Platforms.GetQueryable().AnyAsync(p => p.Id == game.PlatformId);
+
+        if (!platformExists)
+        {
+            throw new ForeignKeyException(onColumn: nameof(game.PlatformId));
+        }
     }
 }

@@ -18,11 +18,11 @@ public class GameProfile : Profile
                 dest => dest.Id,
                 opts => opts.MapFrom(dest => dest.GameId));
 
-        CreateMap<Game, GameViewBriefDto>()
+        CreateMap<Game, GameBriefDto>()
             .ForMember(
                 dest => dest.GameId,
                 opts => opts.MapFrom(src => src.Id));
-        CreateMap<Game, GameViewFullDto>()
+        CreateMap<Game, GameFullDto>()
             .ForMember(
                 dest => dest.GameId,
                 opts => opts.MapFrom(src => src.Id));

@@ -24,7 +24,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IEnumerable<GameViewBriefDto>>> GetAllGamesAsync()
+    public async Task<ActionResult<IEnumerable<GameBriefDto>>> GetAllGamesAsync()
     {
         var gamesDto = await _gameService.GetAllGamesAsync();
         return Ok(gamesDto);

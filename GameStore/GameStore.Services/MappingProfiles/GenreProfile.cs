@@ -10,12 +10,12 @@ public class GenreProfile : Profile
     {
         CreateMap<GenreCreateDto, Genre>();
 
-        CreateMap<Genre, GenreViewFullDto>()
+        CreateMap<Genre, GenreFullDto>()
             .ForMember(
                 dest => dest.GenreId,
                 opts => opts.MapFrom(src => src.Id));
 
-        CreateMap<Genre, GenreViewBriefDto>()
+        CreateMap<Genre, GenreBriefDto>()
             .ForMember(
                 dest => dest.GenreId,
                 opts => opts.MapFrom(src => src.Id));

@@ -6,7 +6,7 @@ namespace GameStore.Data.Repositories;
 public interface IGenericRepository<T>
     where T : class
 {
-    Task<T?> GetByIdAsync(object id);
+    Task<T> GetByIdAsync(object id);
 
     IQueryable<T> GetQueryable();
 
@@ -16,7 +16,7 @@ public interface IGenericRepository<T>
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
         bool noTracking = true);
 
-    Task<T?> FirstOrDefaultAsync(
+    Task<T> GetOneAsync(
         Expression<Func<T, bool>>? predicate,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
         bool noTracking = true);

@@ -24,7 +24,7 @@ public class PlatformsController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IEnumerable<PlatformViewBriefDto>>> GetAllGenresAsync()
+    public async Task<ActionResult<IEnumerable<PlatformBriefDto>>> GetAllGenresAsync()
     {
         var platformsDto = await _platformService.GetAllPlatformsAsync();
         return Ok(platformsDto);

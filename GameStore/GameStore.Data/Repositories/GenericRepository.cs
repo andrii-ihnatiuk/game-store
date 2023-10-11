@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using GameStore.Data.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -17,9 +18,10 @@ public class GenericRepository<T> : IGenericRepository<T>
 
     private DbSet<T> DbSet { get; }
 
-    public async Task<T?> GetByIdAsync(object id)
+    public async Task<T> GetByIdAsync(object id)
     {
-        return await DbSet.FindAsync(id);
+        var entity = await DbSet.FindAsync(id);
+        return entity ?? throw new EntityNotFoundException(entityId: id);
     }
 
     public IQueryable<T> GetQueryable()
@@ -41,13 +43,14 @@ public class GenericRepository<T> : IGenericRepository<T>
         return await (orderBy != null ? orderBy(query).ToListAsync() : query.ToListAsync());
     }
 
-    public async Task<T?> FirstOrDefaultAsync(
+    public async Task<T> GetOneAsync(
         Expression<Func<T, bool>>? predicate,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
         bool noTracking = true)
     {
         var query = await GetAsync(predicate: predicate, include: include, noTracking: noTracking);
-        return query.FirstOrDefault();
+        var entity = query.FirstOrDefault();
+        return entity ?? throw new EntityNotFoundException();
     }
 
     public async Task AddAsync(T entity)
