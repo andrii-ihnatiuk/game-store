@@ -37,13 +37,7 @@ public class GenreService : IGenreService
     public async Task<GenreFullDto> AddGenreAsync(GenreCreateDto dto)
     {
         var genre = _mapper.Map<Genre>(dto);
-
-        var genreExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Name == genre.Name);
-        if (genreExists)
-        {
-            throw new EntityAlreadyExistsException(nameof(genre.Name), genre.Name);
-        }
-
+        await ThrowIfGenreNameIsNotUnique(genre.Name);
         await ThrowIfForeignKeyConstraintViolationFor(genre);
         await _unitOfWork.Genres.AddAsync(genre);
         await _unitOfWork.SaveAsync();
@@ -53,8 +47,13 @@ public class GenreService : IGenreService
     public async Task UpdateGenreAsync(GenreUpdateDto dto)
     {
         var existingGenre = await _unitOfWork.Genres.GetByIdAsync(dto.GenreId);
-        _mapper.Map(dto, existingGenre);
-        await ThrowIfForeignKeyConstraintViolationFor(existingGenre);
+        if (existingGenre.Name != dto.Name)
+        {
+            await ThrowIfGenreNameIsNotUnique(dto.Name);
+        }
+
+        var updatedGenre = _mapper.Map(dto, existingGenre);
+        await ThrowIfForeignKeyConstraintViolationFor(updatedGenre);
         await _unitOfWork.SaveAsync();
     }
 
@@ -66,11 +65,22 @@ public class GenreService : IGenreService
 
     private async Task ThrowIfForeignKeyConstraintViolationFor(Genre genre)
     {
-        bool parentExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Id == genre.ParentGenreId);
-
-        if (!parentExists)
+        if (genre.ParentGenreId != null)
         {
-            throw new ForeignKeyException(onColumn: nameof(genre.ParentGenreId));
+            bool parentExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Id == genre.ParentGenreId);
+            if (!parentExists || genre.Id == genre.ParentGenreId)
+            {
+                throw new ForeignKeyException(onColumn: nameof(genre.ParentGenreId));
+            }
+        }
+    }
+
+    private async Task ThrowIfGenreNameIsNotUnique(string name)
+    {
+        bool nameIsNotUnique = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Name == name);
+        if (nameIsNotUnique)
+        {
+            throw new EntityAlreadyExistsException(nameof(Genre.Name), name);
         }
     }
 }

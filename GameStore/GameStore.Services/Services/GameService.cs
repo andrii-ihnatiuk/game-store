@@ -34,13 +34,7 @@ public class GameService : IGameService
     public async Task<GameFullDto> AddGameAsync(GameCreateDto dto)
     {
         var game = _mapper.Map<Game>(dto);
-
-        var gameExists = await _unitOfWork.Games.GetQueryable().AnyAsync(g => g.Alias == game.Alias);
-        if (gameExists)
-        {
-            throw new EntityAlreadyExistsException(nameof(game.Alias), game.Alias);
-        }
-
+        await ThrowIfGameAliasIsNotUnique(game.Alias);
         await ThrowIfForeignKeyConstraintViolationFor(game);
         await _unitOfWork.Games.AddAsync(game);
         await _unitOfWork.SaveAsync();
@@ -50,8 +44,13 @@ public class GameService : IGameService
     public async Task UpdateGameAsync(GameUpdateDto dto)
     {
         var existingGame = await _unitOfWork.Games.GetByIdAsync(dto.GameId);
-        _mapper.Map(dto, existingGame);
-        await ThrowIfForeignKeyConstraintViolationFor(existingGame);
+        if (existingGame.Alias != dto.Alias)
+        {
+            await ThrowIfGameAliasIsNotUnique(dto.Alias);
+        }
+
+        var updatedGame = _mapper.Map(dto, existingGame);
+        await ThrowIfForeignKeyConstraintViolationFor(updatedGame);
         await _unitOfWork.SaveAsync();
     }
 
@@ -73,18 +72,31 @@ public class GameService : IGameService
 
     private async Task ThrowIfForeignKeyConstraintViolationFor(Game game)
     {
-        bool genreExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Id == game.GenreId);
-
-        if (!genreExists)
+        if (game.GenreId != null)
         {
-            throw new ForeignKeyException(onColumn: nameof(game.GenreId));
+            bool genreExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Id == game.GenreId);
+            if (!genreExists)
+            {
+                throw new ForeignKeyException(onColumn: nameof(game.GenreId));
+            }
         }
 
-        bool platformExists = await _unitOfWork.Platforms.GetQueryable().AnyAsync(p => p.Id == game.PlatformId);
-
-        if (!platformExists)
+        if (game.PlatformId != null)
         {
-            throw new ForeignKeyException(onColumn: nameof(game.PlatformId));
+            bool platformExists = await _unitOfWork.Platforms.GetQueryable().AnyAsync(p => p.Id == game.PlatformId);
+            if (!platformExists)
+            {
+                throw new ForeignKeyException(onColumn: nameof(game.PlatformId));
+            }
+        }
+    }
+
+    private async Task ThrowIfGameAliasIsNotUnique(string alias)
+    {
+        bool aliasIsNotUnique = await _unitOfWork.Games.GetQueryable().AnyAsync(g => g.Alias == alias);
+        if (aliasIsNotUnique)
+        {
+            throw new EntityAlreadyExistsException(nameof(Game.Alias), alias);
         }
     }
 }

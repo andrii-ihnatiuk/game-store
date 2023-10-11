@@ -24,7 +24,7 @@ public class PlatformsController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IEnumerable<PlatformBriefDto>>> GetAllGenresAsync()
+    public async Task<ActionResult<IEnumerable<PlatformBriefDto>>> GetAllPlatformsAsync()
     {
         var platformsDto = await _platformService.GetAllPlatformsAsync();
         return Ok(platformsDto);
@@ -45,7 +45,7 @@ public class PlatformsController : ControllerBase
     }
 
     [HttpDelete("remove")]
-    public async Task<IActionResult> DeleteGenreAsync([FromQuery] long platformId)
+    public async Task<IActionResult> DeletePlatformAsync([FromQuery] long platformId)
     {
         await _platformService.DeletePlatformAsync(platformId);
         return NoContent();
