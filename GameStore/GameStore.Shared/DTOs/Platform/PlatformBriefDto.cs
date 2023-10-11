@@ -1,6 +1,6 @@
 ﻿namespace GameStore.Shared.DTOs.Platform;
 
-public class PlatformViewFullDto
+public class PlatformBriefDto
 {
     public long PlatformId { get; set; }
 

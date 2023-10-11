@@ -1,8 +1,8 @@
-﻿namespace GameStore.Shared.Exceptions;
+﻿namespace GameStore.Data.Exceptions;
 
 public class EntityNotFoundException : Exception
 {
-    private const string DefaultMessage = "Entity with provided ID does not exist!";
+    private const string DefaultMessage = "Requested entity does not exist!";
 
     public EntityNotFoundException()
         : base(DefaultMessage)

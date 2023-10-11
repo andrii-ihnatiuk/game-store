@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using GameStore.Data.Entities;
+using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Shared.DTOs.Platform;
-using GameStore.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services.Services;
@@ -18,20 +18,21 @@ public class PlatformService : IPlatformService
         _mapper = mapper;
     }
 
-    public async Task<PlatformViewFullDto> GetPlatformByIdAsync(long id)
+    public async Task<PlatformFullDto> GetPlatformByIdAsync(long id)
     {
-        var platform = await _unitOfWork.Platforms.FirstOrDefaultAsync(p => p.Id == id);
-        return platform is null ? throw new EntityNotFoundException() : _mapper.Map<PlatformViewFullDto>(platform);
+        var platform = await _unitOfWork.Platforms.GetOneAsync(
+            p => p.Id == id,
+            p => p.Include(nav => nav.Games));
+        return _mapper.Map<PlatformFullDto>(platform);
     }
 
-    public async Task<IList<PlatformViewBriefDto>> GetAllPlatformsAsync()
+    public async Task<IList<PlatformBriefDto>> GetAllPlatformsAsync()
     {
         var platforms = await _unitOfWork.Platforms.GetAsync(orderBy: q => q.OrderBy(p => p.Id));
-        var platformsDto = _mapper.Map<IList<Platform>, IList<PlatformViewBriefDto>>(platforms);
-        return platformsDto;
+        return _mapper.Map<IList<PlatformBriefDto>>(platforms);
     }
 
-    public async Task<PlatformViewFullDto> AddPlatformAsync(PlatformCreateDto dto)
+    public async Task<PlatformFullDto> AddPlatformAsync(PlatformCreateDto dto)
     {
         var platform = _mapper.Map<Platform>(dto);
 
@@ -43,13 +44,12 @@ public class PlatformService : IPlatformService
 
         await _unitOfWork.Platforms.AddAsync(platform);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<PlatformViewFullDto>(platform);
+        return _mapper.Map<PlatformFullDto>(platform);
     }
 
     public async Task UpdatePlatformAsync(PlatformUpdateDto dto)
     {
-        var existingPlatform = await _unitOfWork.Platforms.GetByIdAsync(dto.PlatformId)
-                            ?? throw new EntityNotFoundException(entityId: dto.PlatformId);
+        var existingPlatform = await _unitOfWork.Platforms.GetByIdAsync(dto.PlatformId);
         _mapper.Map(dto, existingPlatform);
         await _unitOfWork.SaveAsync();
     }

@@ -4,11 +4,11 @@ namespace GameStore.Services.Services;
 
 public interface IPlatformService
 {
-    Task<PlatformViewFullDto> GetPlatformByIdAsync(long id);
+    Task<PlatformFullDto> GetPlatformByIdAsync(long id);
 
-    Task<IList<PlatformViewBriefDto>> GetAllPlatformsAsync();
+    Task<IList<PlatformBriefDto>> GetAllPlatformsAsync();
 
-    Task<PlatformViewFullDto> AddPlatformAsync(PlatformCreateDto dto);
+    Task<PlatformFullDto> AddPlatformAsync(PlatformCreateDto dto);
 
     Task UpdatePlatformAsync(PlatformUpdateDto dto);
 

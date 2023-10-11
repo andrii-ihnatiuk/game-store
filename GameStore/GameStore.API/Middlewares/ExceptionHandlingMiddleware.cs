@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using GameStore.API.Models;
-using GameStore.Shared.Exceptions;
+using GameStore.Data.Exceptions;
 
 namespace GameStore.API.Middlewares;
 
@@ -39,6 +39,9 @@ public class ExceptionHandlingMiddleware
                 break;
             case EntityAlreadyExistsException:
                 errorDetails.StatusCode = StatusCodes.Status409Conflict;
+                break;
+            case ForeignKeyException:
+                errorDetails.StatusCode = StatusCodes.Status400BadRequest;
                 break;
             default:
                 errorDetails.StatusCode = StatusCodes.Status500InternalServerError;

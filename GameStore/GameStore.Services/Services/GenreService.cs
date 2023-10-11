@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using GameStore.Data.Entities;
+using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Shared.DTOs.Genre;
-using GameStore.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services.Services;
@@ -18,22 +18,23 @@ public class GenreService : IGenreService
         _mapper = mapper;
     }
 
-    public async Task<GenreViewFullDto> GetGenreByIdAsync(long id)
+    public async Task<GenreFullDto> GetGenreByIdAsync(long id)
     {
-        var genre = await _unitOfWork.Genres.FirstOrDefaultAsync(
+        var genre = await _unitOfWork.Genres.GetOneAsync(
             g => g.Id == id,
-            g => g.Include(nav => nav.SubGenres));
-        return genre is null ? throw new EntityNotFoundException(entityId: id) : _mapper.Map<GenreViewFullDto>(genre);
+            g => g
+                .Include(nav => nav.SubGenres)
+                .Include(nav => nav.Games));
+        return _mapper.Map<GenreFullDto>(genre);
     }
 
-    public async Task<IList<GenreViewBriefDto>> GetAllGenresAsync()
+    public async Task<IList<GenreBriefDto>> GetAllGenresAsync()
     {
         var genres = await _unitOfWork.Genres.GetAsync(orderBy: q => q.OrderBy(g => g.Id));
-        var genresDto = _mapper.Map<IList<Genre>, IList<GenreViewBriefDto>>(genres);
-        return genresDto;
+        return _mapper.Map<IList<GenreBriefDto>>(genres);
     }
 
-    public async Task<GenreViewFullDto> AddGenreAsync(GenreCreateDto dto)
+    public async Task<GenreFullDto> AddGenreAsync(GenreCreateDto dto)
     {
         var genre = _mapper.Map<Genre>(dto);
 
@@ -43,16 +44,17 @@ public class GenreService : IGenreService
             throw new EntityAlreadyExistsException(nameof(genre.Name), genre.Name);
         }
 
+        await ThrowIfForeignKeyConstraintViolationFor(genre);
         await _unitOfWork.Genres.AddAsync(genre);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<GenreViewFullDto>(genre);
+        return _mapper.Map<GenreFullDto>(genre);
     }
 
     public async Task UpdateGenreAsync(GenreUpdateDto dto)
     {
-        var existingGenre = await _unitOfWork.Genres.GetByIdAsync(dto.GenreId)
-                           ?? throw new EntityNotFoundException(entityId: dto.GenreId);
+        var existingGenre = await _unitOfWork.Genres.GetByIdAsync(dto.GenreId);
         _mapper.Map(dto, existingGenre);
+        await ThrowIfForeignKeyConstraintViolationFor(existingGenre);
         await _unitOfWork.SaveAsync();
     }
 
@@ -60,5 +62,15 @@ public class GenreService : IGenreService
     {
         await _unitOfWork.Genres.DeleteAsync(genreId);
         await _unitOfWork.SaveAsync();
+    }
+
+    private async Task ThrowIfForeignKeyConstraintViolationFor(Genre genre)
+    {
+        bool parentExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Id == genre.ParentGenreId);
+
+        if (!parentExists)
+        {
+            throw new ForeignKeyException(onColumn: nameof(genre.ParentGenreId));
+        }
     }
 }

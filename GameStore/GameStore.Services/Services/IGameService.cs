@@ -4,11 +4,11 @@ namespace GameStore.Services.Services;
 
 public interface IGameService
 {
-    Task<GameViewFullDto> GetGameByAliasAsync(string alias);
+    Task<GameFullDto> GetGameByAliasAsync(string alias);
 
-    Task<IList<GameViewBriefDto>> GetAllGamesAsync();
+    Task<IList<GameBriefDto>> GetAllGamesAsync();
 
-    Task<GameViewFullDto> AddGameAsync(GameCreateDto dto);
+    Task<GameFullDto> AddGameAsync(GameCreateDto dto);
 
     Task UpdateGameAsync(GameUpdateDto dto);
 

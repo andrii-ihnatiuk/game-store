@@ -32,6 +32,7 @@ public sealed class GameStoreDbContext : DbContext
                 Name = "The Legend of Zelda: Breath of the Wild",
                 Description = "An action-adventure game in an open world.",
                 GenreId = 14,
+                PlatformId = 4,
             },
             new Game()
             {
@@ -40,6 +41,7 @@ public sealed class GameStoreDbContext : DbContext
                 Name = "Grand Theft Auto V",
                 Description = "An open-world action-adventure game.",
                 GenreId = 11,
+                PlatformId = 3,
             });
     }
 
