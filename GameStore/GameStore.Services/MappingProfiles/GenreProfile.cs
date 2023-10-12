@@ -1,9 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics.CodeAnalysis;
+using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Shared.DTOs.Genre;
 
 namespace GameStore.Services.MappingProfiles;
 
+[ExcludeFromCodeCoverage]
 public class GenreProfile : Profile
 {
     public GenreProfile()

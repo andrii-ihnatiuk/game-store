@@ -4,7 +4,6 @@ using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Shared.DTOs.Game;
-using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services.Services;
 
@@ -38,7 +37,7 @@ public class GameService : IGameService
         await ThrowIfForeignKeyConstraintViolationFor(game);
         await _unitOfWork.Games.AddAsync(game);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<Game, GameFullDto>(game);
+        return _mapper.Map<GameFullDto>(game);
     }
 
     public async Task UpdateGameAsync(GameUpdateDto dto)
@@ -74,7 +73,7 @@ public class GameService : IGameService
     {
         if (game.GenreId != null)
         {
-            bool genreExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Id == game.GenreId);
+            bool genreExists = await _unitOfWork.Genres.ExistsAsync(g => g.Id == game.GenreId);
             if (!genreExists)
             {
                 throw new ForeignKeyException(onColumn: nameof(game.GenreId));
@@ -83,7 +82,7 @@ public class GameService : IGameService
 
         if (game.PlatformId != null)
         {
-            bool platformExists = await _unitOfWork.Platforms.GetQueryable().AnyAsync(p => p.Id == game.PlatformId);
+            bool platformExists = await _unitOfWork.Platforms.ExistsAsync(p => p.Id == game.PlatformId);
             if (!platformExists)
             {
                 throw new ForeignKeyException(onColumn: nameof(game.PlatformId));
@@ -93,7 +92,7 @@ public class GameService : IGameService
 
     private async Task ThrowIfGameAliasIsNotUnique(string alias)
     {
-        bool aliasIsNotUnique = await _unitOfWork.Games.GetQueryable().AnyAsync(g => g.Alias == alias);
+        bool aliasIsNotUnique = await _unitOfWork.Games.ExistsAsync(g => g.Alias == alias);
         if (aliasIsNotUnique)
         {
             throw new EntityAlreadyExistsException(nameof(Game.Alias), alias);

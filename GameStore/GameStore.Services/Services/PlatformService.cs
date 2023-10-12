@@ -61,7 +61,7 @@ public class PlatformService : IPlatformService
 
     private async Task ThrowIfPlatformTypeIsNotUnique(string type)
     {
-        bool typeIsNotUnique = await _unitOfWork.Platforms.GetQueryable().AnyAsync(p => p.Type == type);
+        bool typeIsNotUnique = await _unitOfWork.Platforms.ExistsAsync(p => p.Type == type);
         if (typeIsNotUnique)
         {
             throw new EntityAlreadyExistsException(nameof(Platform.Type), type);

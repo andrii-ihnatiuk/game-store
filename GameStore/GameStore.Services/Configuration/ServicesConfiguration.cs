@@ -1,4 +1,5 @@
-﻿using GameStore.Data;
+﻿using System.Diagnostics.CodeAnalysis;
+using GameStore.Data;
 using GameStore.Data.Repositories;
 using GameStore.Services.Services;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GameStore.Services.Configuration;
 
+[ExcludeFromCodeCoverage]
 public static class ServicesConfiguration
 {
     public static void AddApplicationServices(this IServiceCollection serviceCollection, IConfiguration configuration)

@@ -8,8 +8,6 @@ public interface IGenericRepository<T>
 {
     Task<T> GetByIdAsync(object id);
 
-    IQueryable<T> GetQueryable();
-
     Task<IList<T>> GetAsync(
         Expression<Func<T, bool>>? predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
@@ -28,4 +26,6 @@ public interface IGenericRepository<T>
     Task DeleteAsync(object id);
 
     void Update(T entity);
+
+    Task<bool> ExistsAsync(Expression<Func<T, bool>> condition);
 }

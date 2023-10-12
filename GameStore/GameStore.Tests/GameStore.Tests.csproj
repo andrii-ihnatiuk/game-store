@@ -38,12 +38,7 @@
 		</PackageReference>
 		<PackageReference Include="System.Text.Json" Version="7.0.0" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="GameStore.Data.Tests\" />
-	  <Folder Include="GameStore.Services.Tests\" />
-	</ItemGroup>
-
+	
 	<ItemGroup>
 	  <ProjectReference Include="..\GameStore.API\GameStore.API.csproj" />
 	</ItemGroup>

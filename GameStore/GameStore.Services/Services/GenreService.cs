@@ -67,7 +67,7 @@ public class GenreService : IGenreService
     {
         if (genre.ParentGenreId != null)
         {
-            bool parentExists = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Id == genre.ParentGenreId);
+            bool parentExists = await _unitOfWork.Genres.ExistsAsync(g => g.Id == genre.ParentGenreId);
             if (!parentExists || genre.Id == genre.ParentGenreId)
             {
                 throw new ForeignKeyException(onColumn: nameof(genre.ParentGenreId));
@@ -77,7 +77,7 @@ public class GenreService : IGenreService
 
     private async Task ThrowIfGenreNameIsNotUnique(string name)
     {
-        bool nameIsNotUnique = await _unitOfWork.Genres.GetQueryable().AnyAsync(g => g.Name == name);
+        bool nameIsNotUnique = await _unitOfWork.Genres.ExistsAsync(g => g.Name == name);
         if (nameIsNotUnique)
         {
             throw new EntityAlreadyExistsException(nameof(Genre.Name), name);

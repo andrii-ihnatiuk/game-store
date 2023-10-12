@@ -24,11 +24,6 @@ public class GenericRepository<T> : IGenericRepository<T>
         return entity ?? throw new EntityNotFoundException(entityId: id);
     }
 
-    public IQueryable<T> GetQueryable()
-    {
-        return DbSet;
-    }
-
     public async Task<IList<T>> GetAsync(
         Expression<Func<T, bool>>? predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
@@ -85,5 +80,10 @@ public class GenericRepository<T> : IGenericRepository<T>
         }
 
         DbSet.Entry(entity).State = EntityState.Modified;
+    }
+
+    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> condition)
+    {
+        return await DbSet.AnyAsync(condition);
     }
 }
