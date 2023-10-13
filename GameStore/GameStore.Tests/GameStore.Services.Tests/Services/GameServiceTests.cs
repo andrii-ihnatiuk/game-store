@@ -50,7 +50,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetAllGamesAsync_ReturnsGames()
+    public async Task GetAllGamesAsync_ReturnsGamesWithCountDto()
     {
         // Arrange
         var gamesData = new List<Game> { new(), new() };
@@ -62,15 +62,19 @@ public class GameServiceTests
             .ReturnsAsync(gamesData)
             .Verifiable();
 
-        _mapper.Setup(m => m.Map<IList<GameBriefDto>>(gamesData))
-            .Returns(new List<GameBriefDto> { new(), new() });
+        _mapper.Setup(m => m.Map<GamesWithCountDto>(gamesData))
+            .Returns(new GamesWithCountDto()
+            {
+                Games = new List<GameBriefDto> { new(), new() },
+                Count = 2,
+            });
 
         // Act
         var games = await _service.GetAllGamesAsync();
 
         // Assert
         _unitOfWork.Verify();
-        Assert.Equal(gamesData.Count, games.Count);
+        Assert.Equal(gamesData.Count, games.Games.Count);
     }
 
     [Fact]

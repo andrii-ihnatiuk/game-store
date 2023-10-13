@@ -28,6 +28,14 @@ public class GameProfile : Profile
             .ForMember(
                 dest => dest.GameId,
                 opts => opts.MapFrom(src => src.Id));
+
+        CreateMap<IEnumerable<Game>, GamesWithCountDto>()
+            .ForMember(
+                dest => dest.Games,
+                opts => opts.MapFrom(src => src))
+            .ForMember(
+                dest => dest.Count,
+                opts => opts.MapFrom(src => src.Count()));
     }
 
     private static string ConstructAlias(GameCreateDto dto)

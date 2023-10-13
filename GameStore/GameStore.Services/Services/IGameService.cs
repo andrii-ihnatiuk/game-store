@@ -6,7 +6,7 @@ public interface IGameService
 {
     Task<GameFullDto> GetGameByAliasAsync(string alias);
 
-    Task<IList<GameBriefDto>> GetAllGamesAsync();
+    Task<GamesWithCountDto> GetAllGamesAsync();
 
     Task<GameFullDto> AddGameAsync(GameCreateDto dto);
 

@@ -24,10 +24,10 @@ public class GameService : IGameService
         return _mapper.Map<Game, GameFullDto>(game);
     }
 
-    public async Task<IList<GameBriefDto>> GetAllGamesAsync()
+    public async Task<GamesWithCountDto> GetAllGamesAsync()
     {
         var games = await _unitOfWork.Games.GetAsync(orderBy: q => q.OrderBy(g => g.Id));
-        return _mapper.Map<IList<GameBriefDto>>(games);
+        return _mapper.Map<GamesWithCountDto>(games);
     }
 
     public async Task<GameFullDto> AddGameAsync(GameCreateDto dto)

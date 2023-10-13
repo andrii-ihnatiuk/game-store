@@ -21,8 +21,6 @@ public interface IGenericRepository<T>
 
     Task AddAsync(T entity);
 
-    void Delete(T entity);
-
     Task DeleteAsync(object id);
 
     void Update(T entity);

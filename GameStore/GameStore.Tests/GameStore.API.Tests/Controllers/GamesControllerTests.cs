@@ -35,11 +35,11 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetAllGames_ReturnsGamesBriefDtoList()
+    public async Task GetAllGames_ReturnsGamesWithCountDto()
     {
         // Arrange
         _gameService.Setup(s => s.GetAllGamesAsync())
-            .ReturnsAsync(new List<GameBriefDto>())
+            .ReturnsAsync(new GamesWithCountDto())
             .Verifiable();
 
         // Act
@@ -48,7 +48,7 @@ public class GamesControllerTests
         // Assert
         _gameService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
-        Assert.IsAssignableFrom<IList<GameBriefDto>>(((OkObjectResult)result.Result).Value);
+        Assert.IsType<GamesWithCountDto>(((OkObjectResult)result.Result).Value);
     }
 
     [Fact]
