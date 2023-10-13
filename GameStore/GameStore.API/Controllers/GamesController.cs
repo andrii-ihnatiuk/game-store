@@ -19,12 +19,12 @@ public class GamesController : ControllerBase
     [HttpGet("{gameAlias}", Name = "GetGameByAlias")]
     public async Task<IActionResult> GetGameAsync([FromRoute] string gameAlias)
     {
-        var gameViewDto = await _gameService.GetGameByAliasAsync(gameAlias);
-        return Ok(gameViewDto);
+        var gameFullDto = await _gameService.GetGameByAliasAsync(gameAlias);
+        return Ok(gameFullDto);
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IEnumerable<GameBriefDto>>> GetAllGamesAsync()
+    public async Task<ActionResult<GamesWithCountDto>> GetAllGamesAsync()
     {
         var gamesDto = await _gameService.GetAllGamesAsync();
         return Ok(gamesDto);
@@ -40,8 +40,8 @@ public class GamesController : ControllerBase
     [HttpPost("new")]
     public async Task<IActionResult> PostGameAsync([FromBody] GameCreateDto dto)
     {
-        var gameViewDto = await _gameService.AddGameAsync(dto);
-        return CreatedAtRoute("GetGameByAlias", new { gameAlias = gameViewDto.Alias }, gameViewDto);
+        var gameFullDto = await _gameService.AddGameAsync(dto);
+        return CreatedAtRoute("GetGameByAlias", new { gameAlias = gameFullDto.Alias }, gameFullDto);
     }
 
     [HttpPut("update")]
@@ -52,7 +52,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpDelete("remove")]
-    public async Task<IActionResult> DeleteAsync([FromQuery] long gameId)
+    public async Task<IActionResult> DeleteGameAsync([FromQuery] long gameId)
     {
         await _gameService.DeleteGameAsync(gameId);
         return NoContent();

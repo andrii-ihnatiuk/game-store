@@ -1,6 +1,7 @@
 using GameStore.API.Middlewares;
 using GameStore.Services.Configuration;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddResponseCaching();
 
+LogManager.Setup().LoadConfigurationFromFile("nlog.config", false);
+
 builder.Services.Configure<RouteOptions>(options =>
 {
     options.LowercaseUrls = true;
@@ -35,6 +38,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<IpLoggingMiddleware>();
+app.UseMiddleware<PerformanceLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 

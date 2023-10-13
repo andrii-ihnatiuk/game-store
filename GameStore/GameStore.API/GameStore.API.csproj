@@ -32,4 +32,8 @@
 	  <ProjectReference Include="..\GameStore.Shared\GameStore.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Update="nlog.config" CopyToOutputDirectory="Always" />
+	</ItemGroup>
+
 </Project>

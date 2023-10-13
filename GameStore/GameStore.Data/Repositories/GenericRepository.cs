@@ -10,11 +10,8 @@ public class GenericRepository<T> : IGenericRepository<T>
 {
     public GenericRepository(GameStoreDbContext context)
     {
-        Context = context;
         DbSet = context.Set<T>();
     }
-
-    private GameStoreDbContext Context { get; }
 
     private DbSet<T> DbSet { get; }
 
@@ -22,11 +19,6 @@ public class GenericRepository<T> : IGenericRepository<T>
     {
         var entity = await DbSet.FindAsync(id);
         return entity ?? throw new EntityNotFoundException(entityId: id);
-    }
-
-    public IQueryable<T> GetQueryable()
-    {
-        return DbSet;
     }
 
     public async Task<IList<T>> GetAsync(
@@ -58,22 +50,12 @@ public class GenericRepository<T> : IGenericRepository<T>
         await DbSet.AddAsync(entity);
     }
 
-    public void Delete(T entity)
-    {
-        if (Context.Entry(entity).State == EntityState.Detached)
-        {
-            DbSet.Attach(entity);
-        }
-
-        DbSet.Entry(entity).State = EntityState.Deleted;
-    }
-
     public async Task DeleteAsync(object id)
     {
         var entityToDelete = await DbSet.FindAsync(id);
         if (entityToDelete != null)
         {
-            Delete(entityToDelete);
+            DbSet.Remove(entityToDelete);
         }
     }
 
@@ -85,5 +67,10 @@ public class GenericRepository<T> : IGenericRepository<T>
         }
 
         DbSet.Entry(entity).State = EntityState.Modified;
+    }
+
+    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> condition)
+    {
+        return await DbSet.AnyAsync(condition);
     }
 }

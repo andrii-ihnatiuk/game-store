@@ -1,9 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics.CodeAnalysis;
+using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Shared.DTOs.Game;
 
 namespace GameStore.Services.MappingProfiles;
 
+[ExcludeFromCodeCoverage]
 public class GameProfile : Profile
 {
     public GameProfile()
@@ -26,6 +28,14 @@ public class GameProfile : Profile
             .ForMember(
                 dest => dest.GameId,
                 opts => opts.MapFrom(src => src.Id));
+
+        CreateMap<IEnumerable<Game>, GamesWithCountDto>()
+            .ForMember(
+                dest => dest.Games,
+                opts => opts.MapFrom(src => src))
+            .ForMember(
+                dest => dest.Count,
+                opts => opts.MapFrom(src => src.Count()));
     }
 
     private static string ConstructAlias(GameCreateDto dto)

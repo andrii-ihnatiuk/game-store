@@ -19,8 +19,8 @@ public class GenresController : ControllerBase
     [HttpGet("{genreId:long}", Name = "GetGenreById")]
     public async Task<IActionResult> GetGenreAsync([FromRoute] long genreId)
     {
-        var genreViewDto = await _genreService.GetGenreByIdAsync(genreId);
-        return Ok(genreViewDto);
+        var genreFullDto = await _genreService.GetGenreByIdAsync(genreId);
+        return Ok(genreFullDto);
     }
 
     [HttpGet("")]
@@ -33,8 +33,8 @@ public class GenresController : ControllerBase
     [HttpPost("new")]
     public async Task<IActionResult> PostGenreAsync([FromBody] GenreCreateDto dto)
     {
-        var genreViewDto = await _genreService.AddGenreAsync(dto);
-        return CreatedAtRoute("GetGenreById", new { genreId = genreViewDto.GenreId }, genreViewDto);
+        var genreFullDto = await _genreService.AddGenreAsync(dto);
+        return CreatedAtRoute("GetGenreById", new { genreId = genreFullDto.GenreId }, genreFullDto);
     }
 
     [HttpPut("update")]

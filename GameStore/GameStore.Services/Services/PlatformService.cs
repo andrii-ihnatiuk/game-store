@@ -35,13 +35,7 @@ public class PlatformService : IPlatformService
     public async Task<PlatformFullDto> AddPlatformAsync(PlatformCreateDto dto)
     {
         var platform = _mapper.Map<Platform>(dto);
-
-        var platformExists = await _unitOfWork.Platforms.GetQueryable().AnyAsync(p => p.Type == platform.Type);
-        if (platformExists)
-        {
-            throw new EntityAlreadyExistsException(nameof(platform.Type), platform.Type);
-        }
-
+        await ThrowIfPlatformTypeIsNotUnique(platform.Type);
         await _unitOfWork.Platforms.AddAsync(platform);
         await _unitOfWork.SaveAsync();
         return _mapper.Map<PlatformFullDto>(platform);
@@ -50,6 +44,11 @@ public class PlatformService : IPlatformService
     public async Task UpdatePlatformAsync(PlatformUpdateDto dto)
     {
         var existingPlatform = await _unitOfWork.Platforms.GetByIdAsync(dto.PlatformId);
+        if (existingPlatform.Type != dto.Type)
+        {
+            await ThrowIfPlatformTypeIsNotUnique(dto.Type);
+        }
+
         _mapper.Map(dto, existingPlatform);
         await _unitOfWork.SaveAsync();
     }
@@ -58,5 +57,14 @@ public class PlatformService : IPlatformService
     {
         await _unitOfWork.Platforms.DeleteAsync(id);
         await _unitOfWork.SaveAsync();
+    }
+
+    private async Task ThrowIfPlatformTypeIsNotUnique(string type)
+    {
+        bool typeIsNotUnique = await _unitOfWork.Platforms.ExistsAsync(p => p.Type == type);
+        if (typeIsNotUnique)
+        {
+            throw new EntityAlreadyExistsException(nameof(Platform.Type), type);
+        }
     }
 }
