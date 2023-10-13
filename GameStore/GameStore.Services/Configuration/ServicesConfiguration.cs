@@ -2,6 +2,7 @@
 using GameStore.Data;
 using GameStore.Data.Repositories;
 using GameStore.Services.Services;
+using GameStore.Shared.Loggers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,10 +17,14 @@ public static class ServicesConfiguration
         serviceCollection.AddDbContext<GameStoreDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
         serviceCollection.AddScoped<IGameService, GameService>();
         serviceCollection.AddScoped<IGenreService, GenreService>();
         serviceCollection.AddScoped<IPlatformService, PlatformService>();
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
+
         serviceCollection.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+        serviceCollection.AddSingleton<ILogger, NLogLogger>();
     }
 }
