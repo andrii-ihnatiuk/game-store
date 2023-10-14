@@ -2,12 +2,15 @@
 using GameStore.API.Middlewares;
 using GameStore.API.Models;
 using GameStore.Data.Exceptions;
+using GameStore.Shared.Loggers;
 using Microsoft.AspNetCore.Http;
+using Moq;
 
 namespace GameStore.Tests.GameStore.API.Tests.Middlewares;
 
 public class ExceptionHandlingMiddlewareTests
 {
+    private readonly Mock<ILogger> _logger = new();
     private readonly DefaultHttpContext _context = new()
     {
         Response =
@@ -20,7 +23,7 @@ public class ExceptionHandlingMiddlewareTests
     public async Task Invoke_Captured_EntityNotFoundException_HandledCorrectly()
     {
         // Arrange
-        var middleware = new ExceptionHandlingMiddleware(_ => throw new EntityNotFoundException("Not found"));
+        var middleware = new ExceptionHandlingMiddleware(_ => throw new EntityNotFoundException("Not found"), _logger.Object);
 
         // Act
         await middleware.Invoke(_context);
@@ -40,7 +43,7 @@ public class ExceptionHandlingMiddlewareTests
     public async Task Invoke_Captured_EntityAlreadyExistsException_HandledCorrectly()
     {
         // Arrange
-        var middleware = new ExceptionHandlingMiddleware(_ => throw new EntityAlreadyExistsException());
+        var middleware = new ExceptionHandlingMiddleware(_ => throw new EntityAlreadyExistsException(), _logger.Object);
 
         // Act
         await middleware.Invoke(_context);
@@ -60,7 +63,7 @@ public class ExceptionHandlingMiddlewareTests
     public async Task Invoke_Captured_ForeignKeyException_HandledCorrectly()
     {
         // Arrange
-        var middleware = new ExceptionHandlingMiddleware(_ => throw new ForeignKeyException(string.Empty));
+        var middleware = new ExceptionHandlingMiddleware(_ => throw new ForeignKeyException(string.Empty), _logger.Object);
 
         // Act
         await middleware.Invoke(_context);
@@ -80,7 +83,7 @@ public class ExceptionHandlingMiddlewareTests
     public async Task Invoke_Captured_Exception_HandledCorrectly()
     {
         // Arrange
-        var middleware = new ExceptionHandlingMiddleware(_ => throw new Exception());
+        var middleware = new ExceptionHandlingMiddleware(_ => throw new Exception(), _logger.Object);
 
         // Act
         await middleware.Invoke(_context);
@@ -95,5 +98,18 @@ public class ExceptionHandlingMiddlewareTests
         Assert.Equal(StatusCodes.Status500InternalServerError, errorDetails.StatusCode);
         Assert.Equal("Internal server error, please retry later.", errorDetails.Message);
         Assert.True(_context.Response.ContentType == "application/json");
+    }
+
+    [Fact]
+    public async Task Invoke_Captured_Exception_LoggedError()
+    {
+        // Arrange
+        var middleware = new ExceptionHandlingMiddleware(_ => throw new Exception(), _logger.Object);
+
+        // Act
+        await middleware.Invoke(_context);
+
+        // Assert
+        _logger.Verify(l => l.LogError(It.IsAny<string>()), Times.Once);
     }
 }

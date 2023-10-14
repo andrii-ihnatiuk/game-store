@@ -37,9 +37,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<PerformanceLoggingMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<IpLoggingMiddleware>();
-app.UseMiddleware<PerformanceLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 

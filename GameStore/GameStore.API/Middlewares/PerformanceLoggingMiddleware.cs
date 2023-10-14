@@ -19,9 +19,14 @@ public class PerformanceLoggingMiddleware
         var sw = new Stopwatch();
         sw.Start();
 
-        await _next(context);
-
-        sw.Stop();
-        _logger.LogInfo($"Processing request [{context.Request.Method}] {context.Request.Path} took {sw.ElapsedMilliseconds} ms");
+        try
+        {
+            await _next(context);
+        }
+        finally
+        {
+            sw.Stop();
+            _logger.LogInfo($"Processing request [{context.Request.Method}] {context.Request.Path} took {sw.ElapsedMilliseconds} ms");
+        }
     }
 }
