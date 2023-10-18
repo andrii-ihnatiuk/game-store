@@ -12,19 +12,10 @@ public class PlatformProfile : Profile
     {
         CreateMap<PlatformCreateDto, Platform>();
 
-        CreateMap<Platform, PlatformFullDto>()
-            .ForMember(
-                dest => dest.PlatformId,
-                opts => opts.MapFrom(src => src.Id));
+        CreateMap<Platform, PlatformFullDto>();
 
-        CreateMap<Platform, PlatformBriefDto>()
-            .ForMember(
-                dest => dest.PlatformId,
-                opts => opts.MapFrom(src => src.Id));
+        CreateMap<Platform, PlatformBriefDto>();
 
-        CreateMap<PlatformUpdateDto, Platform>()
-            .ForMember(
-                dest => dest.Id,
-                opts => opts.MapFrom(src => src.PlatformId));
+        CreateMap<PlatformUpdateDto, Platform>();
     }
 }

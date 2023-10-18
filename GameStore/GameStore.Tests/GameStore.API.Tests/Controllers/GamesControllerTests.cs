@@ -22,7 +22,7 @@ public class GamesControllerTests
         // Arrange
         const string gameAlias = "game-alias";
         _gameService.Setup(s => s.GetGameByAliasAsync(gameAlias))
-            .ReturnsAsync(new GameFullDto { Alias = gameAlias })
+            .ReturnsAsync(new GameFullDto { Key = gameAlias })
             .Verifiable();
 
         // Act
@@ -35,11 +35,11 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetAllGames_ReturnsGamesWithCountDto()
+    public async Task GetAllGames_ReturnsGames()
     {
         // Arrange
         _gameService.Setup(s => s.GetAllGamesAsync())
-            .ReturnsAsync(new GamesWithCountDto())
+            .ReturnsAsync(new List<GameBriefDto>())
             .Verifiable();
 
         // Act
@@ -48,7 +48,7 @@ public class GamesControllerTests
         // Assert
         _gameService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
-        Assert.IsType<GamesWithCountDto>(((OkObjectResult)result.Result).Value);
+        Assert.IsAssignableFrom<IEnumerable<GameBriefDto>>(((OkObjectResult)result.Result).Value);
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class GamesControllerTests
     {
         // Arrange
         var gameCreateDto = new GameCreateDto();
-        var gameFullDto = new GameFullDto() { Alias = "game-alias" };
+        var gameFullDto = new GameFullDto() { Key = "game-alias" };
         _gameService.Setup(s => s.AddGameAsync(gameCreateDto))
             .ReturnsAsync(gameFullDto)
             .Verifiable();
@@ -109,7 +109,7 @@ public class GamesControllerTests
     public async Task DeleteGame_ReturnsNoContent()
     {
         // Arrange
-        const long gameId = 1;
+        var gameId = Guid.Empty;
         _gameService.Setup(s => s.DeleteGameAsync(gameId))
             .Returns(Task.CompletedTask)
             .Verifiable();

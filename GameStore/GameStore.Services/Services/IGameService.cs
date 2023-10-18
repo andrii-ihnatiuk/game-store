@@ -6,13 +6,13 @@ public interface IGameService
 {
     Task<GameFullDto> GetGameByAliasAsync(string alias);
 
-    Task<GamesWithCountDto> GetAllGamesAsync();
+    Task<IList<GameBriefDto>> GetAllGamesAsync();
 
     Task<GameFullDto> AddGameAsync(GameCreateDto dto);
 
     Task UpdateGameAsync(GameUpdateDto dto);
 
-    Task DeleteGameAsync(long gameId);
+    Task DeleteGameAsync(Guid gameId);
 
     Task<Tuple<byte[], string>> DownloadAsync(string gameAlias);
 }

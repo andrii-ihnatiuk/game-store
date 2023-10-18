@@ -5,6 +5,18 @@ using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "angular-front",
+        policyBuilder =>
+        {
+            policyBuilder.WithOrigins("http://127.0.0.1:8080");
+            policyBuilder.AllowAnyHeader();
+            policyBuilder.AllowAnyMethod();
+        });
+});
+
 builder.Services.AddControllers(opts =>
 {
     opts.CacheProfiles.Add(
@@ -42,6 +54,8 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<IpLoggingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseCors("angular-front");
 
 app.UseResponseCaching();
 

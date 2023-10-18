@@ -4,7 +4,7 @@ namespace GameStore.Services.Services;
 
 public interface IPlatformService
 {
-    Task<PlatformFullDto> GetPlatformByIdAsync(long id);
+    Task<PlatformFullDto> GetPlatformByIdAsync(Guid id);
 
     Task<IList<PlatformBriefDto>> GetAllPlatformsAsync();
 

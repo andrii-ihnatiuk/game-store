@@ -4,7 +4,7 @@ namespace GameStore.Services.Services;
 
 public interface IGenreService
 {
-    Task<GenreFullDto> GetGenreByIdAsync(long id);
+    Task<GenreFullDto> GetGenreByIdAsync(Guid id);
 
     Task<IList<GenreBriefDto>> GetAllGenresAsync();
 
@@ -12,5 +12,5 @@ public interface IGenreService
 
     Task UpdateGenreAsync(GenreUpdateDto dto);
 
-    Task DeleteGenreAsync(long genreId);
+    Task DeleteGenreAsync(Guid genreId);
 }

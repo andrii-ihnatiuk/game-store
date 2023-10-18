@@ -24,10 +24,10 @@ public class GameService : IGameService
         return _mapper.Map<Game, GameFullDto>(game);
     }
 
-    public async Task<GamesWithCountDto> GetAllGamesAsync()
+    public async Task<IList<GameBriefDto>> GetAllGamesAsync()
     {
         var games = await _unitOfWork.Games.GetAsync(orderBy: q => q.OrderBy(g => g.Id));
-        return _mapper.Map<GamesWithCountDto>(games);
+        return _mapper.Map<IList<GameBriefDto>>(games);
     }
 
     public async Task<GameFullDto> AddGameAsync(GameCreateDto dto)
@@ -42,10 +42,10 @@ public class GameService : IGameService
 
     public async Task UpdateGameAsync(GameUpdateDto dto)
     {
-        var existingGame = await _unitOfWork.Games.GetByIdAsync(dto.GameId);
-        if (existingGame.Alias != dto.Alias)
+        var existingGame = await _unitOfWork.Games.GetByIdAsync(dto.Id);
+        if (existingGame.Alias != dto.Key)
         {
-            await ThrowIfGameAliasIsNotUnique(dto.Alias);
+            await ThrowIfGameAliasIsNotUnique(dto.Key);
         }
 
         var updatedGame = _mapper.Map(dto, existingGame);
@@ -53,7 +53,7 @@ public class GameService : IGameService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task DeleteGameAsync(long gameId)
+    public async Task DeleteGameAsync(Guid gameId)
     {
         await _unitOfWork.Games.DeleteAsync(gameId);
         await _unitOfWork.SaveAsync();
@@ -71,21 +71,21 @@ public class GameService : IGameService
 
     private async Task ThrowIfForeignKeyConstraintViolationFor(Game game)
     {
-        if (game.GenreId != null)
+        foreach (var gameGenre in game.GameGenres)
         {
-            bool genreExists = await _unitOfWork.Genres.ExistsAsync(g => g.Id == game.GenreId);
+            bool genreExists = await _unitOfWork.Genres.ExistsAsync(g => g.Id == gameGenre.GenreId);
             if (!genreExists)
             {
-                throw new ForeignKeyException(onColumn: nameof(game.GenreId));
+                throw new ForeignKeyException(onColumn: nameof(gameGenre.GenreId));
             }
         }
 
-        if (game.PlatformId != null)
+        foreach (var gamePlatform in game.GamePlatforms)
         {
-            bool platformExists = await _unitOfWork.Platforms.ExistsAsync(p => p.Id == game.PlatformId);
+            bool platformExists = await _unitOfWork.Platforms.ExistsAsync(p => p.Id == gamePlatform.PlatformId);
             if (!platformExists)
             {
-                throw new ForeignKeyException(onColumn: nameof(game.PlatformId));
+                throw new ForeignKeyException(onColumn: nameof(gamePlatform.PlatformId));
             }
         }
     }

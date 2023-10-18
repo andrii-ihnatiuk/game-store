@@ -4,7 +4,7 @@ namespace GameStore.Shared.DTOs.Platform;
 
 public class PlatformFullDto
 {
-    public long PlatformId { get; set; }
+    public Guid Id { get; set; }
 
     public string Type { get; set; }
 

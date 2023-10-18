@@ -20,9 +20,9 @@ public class GenresControllerTests
     public async Task GetGenre_ReturnsGenreDto()
     {
         // Arrange
-        const long genreId = 1;
+        var genreId = Guid.Empty;
         _genreService.Setup(s => s.GetGenreByIdAsync(genreId))
-            .ReturnsAsync(new GenreFullDto { GenreId = genreId })
+            .ReturnsAsync(new GenreFullDto { Id = genreId })
             .Verifiable();
 
         // Act
@@ -56,7 +56,7 @@ public class GenresControllerTests
     {
         // Arrange
         var genreCreateDto = new GenreCreateDto();
-        var genreFullDto = new GenreFullDto { GenreId = 1 };
+        var genreFullDto = new GenreFullDto { Id = Guid.Empty };
         _genreService.Setup(s => s.AddGenreAsync(genreCreateDto))
             .ReturnsAsync(genreFullDto)
             .Verifiable();
@@ -91,7 +91,7 @@ public class GenresControllerTests
     public async Task DeleteGenre_ReturnsNoContent()
     {
         // Arrange
-        const long genreId = 1;
+        var genreId = Guid.Empty;
         _genreService.Setup(s => s.DeleteGenreAsync(genreId))
             .Returns(Task.CompletedTask)
             .Verifiable();

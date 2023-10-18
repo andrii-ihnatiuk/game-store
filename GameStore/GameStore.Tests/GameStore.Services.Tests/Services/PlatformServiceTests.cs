@@ -26,7 +26,7 @@ public class PlatformServiceTests
     public async Task GetPlatformByIdAsync_CallsRepository_WithValidArguments()
     {
         // Arrange
-        const long id = 1;
+        var id = Guid.Empty;
         var platform = new Platform { Id = id };
         _unitOfWork.Setup(uow => uow.Platforms.GetOneAsync(
                 It.IsAny<Expression<Func<Platform, bool>>>(),
@@ -122,10 +122,10 @@ public class PlatformServiceTests
     public async Task UpdatePlatformAsync_AllOk_CallsRepository()
     {
         // Arrange
-        var platformUpdateDto = new PlatformUpdateDto() { PlatformId = 1, Type = PlatformType };
+        var platformUpdateDto = new PlatformUpdateDto() { Id = Guid.Empty, Type = PlatformType };
         var existingPlatform = new Platform() { Type = PlatformType };
 
-        _unitOfWork.Setup(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.PlatformId))
+        _unitOfWork.Setup(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Id))
             .ReturnsAsync(existingPlatform);
 
         _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Type == PlatformType))
@@ -138,7 +138,7 @@ public class PlatformServiceTests
         await _service.UpdatePlatformAsync(platformUpdateDto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.PlatformId), Times.Once);
+        _unitOfWork.Verify(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Id), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 
@@ -150,7 +150,7 @@ public class PlatformServiceTests
         var platformUpdateDto = new PlatformUpdateDto() { Type = updatedType };
         var existingPlatform = new Platform() { Type = PlatformType };
 
-        _unitOfWork.Setup(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.PlatformId))
+        _unitOfWork.Setup(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Id))
             .ReturnsAsync(existingPlatform);
 
         _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Type == updatedType))

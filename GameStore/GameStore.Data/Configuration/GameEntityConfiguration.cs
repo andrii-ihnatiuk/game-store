@@ -10,15 +10,16 @@ internal class GameEntityConfiguration : IEntityTypeConfiguration<Game>
 {
     public void Configure(EntityTypeBuilder<Game> builder)
     {
-        builder
-            .HasIndex(e => e.Alias).IsUnique(true);
+        builder.HasKey(g => g.Id);
+
+        builder.HasIndex(g => g.Alias).IsUnique(true);
 
         builder
-            .HasKey(e => e.Id);
+            .Property(g => g.Price)
+            .HasColumnType("money");
 
         builder
-            .HasOne(g => g.Genre)
-            .WithMany(gnr => gnr.Games)
-            .HasForeignKey(g => g.GenreId);
+            .Property(g => g.Discontinued)
+            .HasColumnType("bit");
     }
 }

@@ -16,8 +16,8 @@ public class PlatformsController : ControllerBase
         _platformService = platformService;
     }
 
-    [HttpGet("{platformId:long}", Name = "GetPlatformById")]
-    public async Task<IActionResult> GetPlatformAsync([FromRoute] long platformId)
+    [HttpGet("{platformId:guid}", Name = "GetPlatformById")]
+    public async Task<IActionResult> GetPlatformAsync([FromRoute] Guid platformId)
     {
         var viewDto = await _platformService.GetPlatformByIdAsync(platformId);
         return Ok(viewDto);
@@ -34,7 +34,7 @@ public class PlatformsController : ControllerBase
     public async Task<IActionResult> PostPlatformAsync([FromBody] PlatformCreateDto dto)
     {
         var viewDto = await _platformService.AddPlatformAsync(dto);
-        return CreatedAtRoute("GetPlatformById", new { platformId = viewDto.PlatformId }, viewDto);
+        return CreatedAtRoute("GetPlatformById", new { platformId = viewDto.Id }, viewDto);
     }
 
     [HttpPut("update")]

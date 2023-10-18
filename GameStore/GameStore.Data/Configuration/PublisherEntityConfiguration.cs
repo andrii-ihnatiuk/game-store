@@ -1,0 +1,34 @@
+﻿using GameStore.Data.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace GameStore.Data.Configuration;
+
+public class PublisherEntityConfiguration : IEntityTypeConfiguration<Publisher>
+{
+    public void Configure(EntityTypeBuilder<Publisher> builder)
+    {
+        builder.HasKey(p => p.Id);
+
+        builder.Property(p => p.Id)
+            .ValueGeneratedOnAdd();
+
+        builder
+            .HasMany(p => p.Games)
+            .WithOne(g => g.Publisher)
+            .HasForeignKey(g => g.PublisherId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder
+            .Property(p => p.CompanyName)
+            .HasColumnType("nvarchar(40)");
+
+        builder
+            .Property(p => p.Description)
+            .HasColumnType("ntext");
+
+        builder
+            .Property(p => p.HomePage)
+            .HasColumnType("ntext");
+    }
+}

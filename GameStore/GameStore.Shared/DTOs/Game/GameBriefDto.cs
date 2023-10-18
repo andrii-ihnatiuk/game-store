@@ -2,9 +2,9 @@
 
 public class GameBriefDto
 {
-    public long GameId { get; set; }
+    public Guid Id { get; set; }
 
-    public string Alias { get; set; } = string.Empty;
+    public string Key { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;
 }

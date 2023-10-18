@@ -24,7 +24,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<GamesWithCountDto>> GetAllGamesAsync()
+    public async Task<ActionResult<IEnumerable<GameBriefDto>>> GetAllGamesAsync()
     {
         var gamesDto = await _gameService.GetAllGamesAsync();
         return Ok(gamesDto);
@@ -41,7 +41,7 @@ public class GamesController : ControllerBase
     public async Task<IActionResult> PostGameAsync([FromBody] GameCreateDto dto)
     {
         var gameFullDto = await _gameService.AddGameAsync(dto);
-        return CreatedAtRoute("GetGameByAlias", new { gameAlias = gameFullDto.Alias }, gameFullDto);
+        return CreatedAtRoute("GetGameByAlias", new { gameAlias = gameFullDto.Key }, gameFullDto);
     }
 
     [HttpPut("update")]
@@ -52,7 +52,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpDelete("remove")]
-    public async Task<IActionResult> DeleteGameAsync([FromQuery] long gameId)
+    public async Task<IActionResult> DeleteGameAsync([FromQuery] Guid gameId)
     {
         await _gameService.DeleteGameAsync(gameId);
         return NoContent();
