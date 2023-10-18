@@ -6,15 +6,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace GameStore.Data.Configuration;
 
 [ExcludeFromCodeCoverage]
-public class PlatformEntityConfiguration : IEntityTypeConfiguration<Platform>
+internal class PlatformEntityConfiguration : IEntityTypeConfiguration<Platform>
 {
     public void Configure(EntityTypeBuilder<Platform> builder)
     {
-        builder.HasIndex(p => p.Type).IsUnique(true);
+        builder.HasKey(p => p.Id);
 
         builder
-            .HasMany(p => p.Games)
-            .WithOne(g => g.Platform)
-            .HasForeignKey(g => g.PlatformId);
+            .Property(p => p.Id)
+            .ValueGeneratedOnAdd();
+
+        builder.HasIndex(p => p.Type).IsUnique(true);
     }
 }

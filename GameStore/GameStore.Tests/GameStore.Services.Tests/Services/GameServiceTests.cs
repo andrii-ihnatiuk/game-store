@@ -50,7 +50,7 @@ public class GameServiceTests
     }
 
     [Fact]
-    public async Task GetAllGamesAsync_ReturnsGamesWithCountDto()
+    public async Task GetAllGamesAsync_ReturnsGames()
     {
         // Arrange
         var gamesData = new List<Game> { new(), new() };
@@ -62,19 +62,15 @@ public class GameServiceTests
             .ReturnsAsync(gamesData)
             .Verifiable();
 
-        _mapper.Setup(m => m.Map<GamesWithCountDto>(gamesData))
-            .Returns(new GamesWithCountDto()
-            {
-                Games = new List<GameBriefDto> { new(), new() },
-                Count = 2,
-            });
+        _mapper.Setup(m => m.Map<IEnumerable<GameBriefDto>>(gamesData))
+            .Returns(new List<GameBriefDto> { new(), new() });
 
         // Act
         var games = await _service.GetAllGamesAsync();
 
         // Assert
         _unitOfWork.Verify();
-        Assert.Equal(gamesData.Count, games.Games.Count);
+        Assert.Equal(gamesData.Count, games.Count);
     }
 
     [Fact]
@@ -82,7 +78,7 @@ public class GameServiceTests
     {
         // Arrange
         var gameCreateDto = new GameCreateDto();
-        var game = new Game() { Id = 1, Alias = GameAlias, PlatformId = null, GenreId = null };
+        var game = new Game() { Id = Guid.Empty, Alias = GameAlias };
 
         _mapper.Setup(m => m.Map<Game>(gameCreateDto))
             .Returns(game);
@@ -112,7 +108,7 @@ public class GameServiceTests
     {
         // Arrange
         var gameCreateDto = new GameCreateDto();
-        var game = new Game() { Alias = GameAlias, PlatformId = null, GenreId = null };
+        var game = new Game() { Alias = GameAlias };
 
         _mapper.Setup(m => m.Map<Game>(gameCreateDto))
             .Returns(game);
@@ -129,7 +125,8 @@ public class GameServiceTests
     {
         // Arrange
         var gameCreateDto = new GameCreateDto();
-        var game = new Game() { Alias = GameAlias, PlatformId = null, GenreId = 0 };
+        var gameGenres = new List<GameGenre> { new(), new() };
+        var game = new Game() { Alias = GameAlias, GameGenres = gameGenres };
 
         _mapper.Setup(m => m.Map<Game>(gameCreateDto))
             .Returns(game);
@@ -137,7 +134,7 @@ public class GameServiceTests
         _unitOfWork.Setup(uow => uow.Games.ExistsAsync(g => g.Alias == GameAlias))
             .ReturnsAsync(false);
 
-        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Id == game.GenreId))
+        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Id == It.IsAny<Guid>()))
             .ReturnsAsync(false);
 
         // Act and Assert
@@ -149,7 +146,8 @@ public class GameServiceTests
     {
         // Arrange
         var gameCreateDto = new GameCreateDto();
-        var game = new Game() { Alias = GameAlias, PlatformId = 0, GenreId = null };
+        var gamePlatforms = new List<GamePlatform> { new(), new() };
+        var game = new Game() { Alias = GameAlias, GamePlatforms = gamePlatforms };
 
         _mapper.Setup(m => m.Map<Game>(gameCreateDto))
             .Returns(game);
@@ -157,7 +155,7 @@ public class GameServiceTests
         _unitOfWork.Setup(uow => uow.Games.ExistsAsync(g => g.Alias == GameAlias))
             .ReturnsAsync(false);
 
-        _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Id == game.PlatformId))
+        _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Id == It.IsAny<Guid>()))
             .ReturnsAsync(false);
 
         // Act and Assert
@@ -168,10 +166,10 @@ public class GameServiceTests
     public async Task UpdateGameAsync_AllOk_CallsRepository()
     {
         // Arrange
-        var gameUpdateDto = new GameUpdateDto() { GameId = 1, Alias = GameAlias };
-        var existingGame = new Game() { Id = 1, Alias = GameAlias };
+        var gameUpdateDto = new GameUpdateDto() { Id = Guid.Empty, Key = GameAlias };
+        var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
 
-        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.GameId))
+        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id))
             .ReturnsAsync(existingGame);
 
         _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
@@ -184,7 +182,7 @@ public class GameServiceTests
         await _service.UpdateGameAsync(gameUpdateDto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Games.GetByIdAsync(gameUpdateDto.GameId), Times.Once);
+        _unitOfWork.Verify(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 
@@ -193,10 +191,10 @@ public class GameServiceTests
     {
         // Arrange
         const string updatedAlias = "updated-but-already-exists";
-        var gameUpdateDto = new GameUpdateDto() { GameId = 1, Alias = updatedAlias };
+        var gameUpdateDto = new GameUpdateDto() { Id = Guid.Empty, Key = updatedAlias };
 
-        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.GameId))
-            .ReturnsAsync(new Game() { Id = 1, Alias = GameAlias });
+        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id))
+            .ReturnsAsync(new Game() { Id = Guid.Empty, Alias = GameAlias });
 
         _unitOfWork.Setup(uow => uow.Games.ExistsAsync(g => g.Alias == updatedAlias))
             .ReturnsAsync(true);
@@ -209,17 +207,19 @@ public class GameServiceTests
     public async Task UpdateGameAsync_WhenGenreDoesNotExist_ThrowsForeignKeyException()
     {
         // Arrange
-        var gameUpdateDto = new GameUpdateDto() { GameId = 1, Alias = GameAlias, GenreId = 3 };
-        var existingGame = new Game() { Id = 1, Alias = GameAlias, GenreId = 2 };
-        var updatedGame = new Game() { Id = 1, Alias = GameAlias, GenreId = 3 };
+        var gameGenres = new List<GameGenre>() { new() };
+        var gameUpdateDto = new GameUpdateDto() { Id = Guid.Empty, Key = GameAlias };
 
-        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.GameId))
+        var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
+        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id))
             .ReturnsAsync(existingGame);
 
+        var updatedGame = new Game() { Id = Guid.Empty, Alias = GameAlias, GameGenres = gameGenres };
         _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
             .Returns(updatedGame);
 
-        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Id == updatedGame.GenreId))
+        // ExistsAsync is called on updatedGame list
+        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Id == It.IsAny<Guid>()))
             .ReturnsAsync(false);
 
         // Act and Assert
@@ -230,17 +230,18 @@ public class GameServiceTests
     public async Task UpdateGameAsync_WhenPlatformDoesNotExist_ThrowsForeignKeyException()
     {
         // Arrange
-        var gameUpdateDto = new GameUpdateDto() { GameId = 1, Alias = GameAlias, PlatformId = 3 };
-        var existingGame = new Game() { Id = 1, Alias = GameAlias, PlatformId = 2 };
-        var updatedGame = new Game() { Id = 1, Alias = GameAlias, PlatformId = 3 };
+        var gamePlatforms = new List<GamePlatform> { new() };
+        var gameUpdateDto = new GameUpdateDto() { Id = Guid.Empty, Key = GameAlias };
 
-        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.GameId))
+        var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
+        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id))
             .ReturnsAsync(existingGame);
 
+        var updatedGame = new Game() { Id = Guid.Empty, Alias = GameAlias, GamePlatforms = gamePlatforms };
         _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
             .Returns(updatedGame);
 
-        _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Id == updatedGame.PlatformId))
+        _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Id == It.IsAny<Guid>()))
             .ReturnsAsync(false);
 
         // Act and Assert
@@ -251,7 +252,7 @@ public class GameServiceTests
     public async Task DeleteGameAsync_CallsRepository_WithValidArguments()
     {
         // Arrange
-        const long gameId = 1;
+        var gameId = Guid.Empty;
         _unitOfWork.Setup(uow => uow.Games.DeleteAsync(gameId)).Returns(Task.CompletedTask);
         _unitOfWork.Setup(uow => uow.SaveAsync()).ReturnsAsync(1);
 

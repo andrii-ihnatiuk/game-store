@@ -2,7 +2,7 @@
 
 public class Game
 {
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
     public string Alias { get; set; }
 
@@ -10,11 +10,17 @@ public class Game
 
     public string? Description { get; set; }
 
-    public long? GenreId { get; set; }
+    public decimal Price { get; set; }
 
-    public long? PlatformId { get; set; }
+    public short UnitInStock { get; set; }
 
-    public Genre? Genre { get; set; }
+    public bool Discontinued { get; set; }
 
-    public Platform? Platform { get; set; }
+    public Guid? PublisherId { get; set; }
+
+    public Publisher? Publisher { get; set; }
+
+    public IList<GameGenre> GameGenres { get; set; } = new List<GameGenre>();
+
+    public IList<GamePlatform> GamePlatforms { get; set; } = new List<GamePlatform>();
 }

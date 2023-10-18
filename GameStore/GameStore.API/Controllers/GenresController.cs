@@ -16,8 +16,8 @@ public class GenresController : ControllerBase
         _genreService = genreService;
     }
 
-    [HttpGet("{genreId:long}", Name = "GetGenreById")]
-    public async Task<IActionResult> GetGenreAsync([FromRoute] long genreId)
+    [HttpGet("{genreId:guid}", Name = "GetGenreById")]
+    public async Task<IActionResult> GetGenreAsync([FromRoute] Guid genreId)
     {
         var genreFullDto = await _genreService.GetGenreByIdAsync(genreId);
         return Ok(genreFullDto);
@@ -34,7 +34,7 @@ public class GenresController : ControllerBase
     public async Task<IActionResult> PostGenreAsync([FromBody] GenreCreateDto dto)
     {
         var genreFullDto = await _genreService.AddGenreAsync(dto);
-        return CreatedAtRoute("GetGenreById", new { genreId = genreFullDto.GenreId }, genreFullDto);
+        return CreatedAtRoute("GetGenreById", new { genreId = genreFullDto.Id }, genreFullDto);
     }
 
     [HttpPut("update")]
@@ -45,7 +45,7 @@ public class GenresController : ControllerBase
     }
 
     [HttpDelete("remove")]
-    public async Task<IActionResult> DeleteGenreAsync([FromQuery] long genreId)
+    public async Task<IActionResult> DeleteGenreAsync([FromQuery] Guid genreId)
     {
         await _genreService.DeleteGenreAsync(genreId);
         return NoContent();

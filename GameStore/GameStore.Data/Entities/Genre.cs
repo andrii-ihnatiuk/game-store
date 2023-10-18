@@ -2,13 +2,13 @@
 
 public class Genre
 {
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
     public string Name { get; set; }
 
-    public long? ParentGenreId { get; set; }
+    public Guid? ParentGenreId { get; set; }
 
     public IList<Genre> SubGenres { get; set; } = new List<Genre>();
 
-    public IList<Game> Games { get; set; } = new List<Game>();
+    public IList<GameGenre> GenreGames { get; set; } = new List<GameGenre>();
 }

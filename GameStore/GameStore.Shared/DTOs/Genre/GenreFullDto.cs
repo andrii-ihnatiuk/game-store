@@ -4,11 +4,11 @@ namespace GameStore.Shared.DTOs.Genre;
 
 public class GenreFullDto
 {
-    public long GenreId { get; set; }
+    public Guid Id { get; set; }
 
     public string Name { get; set; }
 
-    public long? ParentGenreId { get; set; }
+    public Guid? ParentGenreId { get; set; }
 
     public IList<GenreBriefDto> SubGenres { get; set; } = new List<GenreBriefDto>();
 

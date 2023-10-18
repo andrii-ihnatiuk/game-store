@@ -20,9 +20,9 @@ public class PlatformsControllerTests
     public async Task GetPlatform_ReturnsPlatformDto()
     {
         // Arrange
-        const long platformId = 1;
+        var platformId = Guid.Empty;
         _platformService.Setup(s => s.GetPlatformByIdAsync(platformId))
-            .ReturnsAsync(new PlatformFullDto() { PlatformId = platformId })
+            .ReturnsAsync(new PlatformFullDto() { Id = platformId })
             .Verifiable();
 
         // Act
@@ -56,7 +56,7 @@ public class PlatformsControllerTests
     {
         // Arrange
         var platformCreateDto = new PlatformCreateDto();
-        var platformViewDto = new PlatformFullDto() { PlatformId = 1 };
+        var platformViewDto = new PlatformFullDto() { Id = Guid.Empty };
         _platformService.Setup(s => s.AddPlatformAsync(platformCreateDto))
             .ReturnsAsync(platformViewDto)
             .Verifiable();

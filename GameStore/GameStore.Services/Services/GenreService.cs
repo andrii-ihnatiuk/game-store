@@ -18,13 +18,12 @@ public class GenreService : IGenreService
         _mapper = mapper;
     }
 
-    public async Task<GenreFullDto> GetGenreByIdAsync(long id)
+    public async Task<GenreFullDto> GetGenreByIdAsync(Guid id)
     {
         var genre = await _unitOfWork.Genres.GetOneAsync(
             g => g.Id == id,
             g => g
-                .Include(nav => nav.SubGenres)
-                .Include(nav => nav.Games));
+                .Include(nav => nav.SubGenres));
         return _mapper.Map<GenreFullDto>(genre);
     }
 
@@ -46,7 +45,7 @@ public class GenreService : IGenreService
 
     public async Task UpdateGenreAsync(GenreUpdateDto dto)
     {
-        var existingGenre = await _unitOfWork.Genres.GetByIdAsync(dto.GenreId);
+        var existingGenre = await _unitOfWork.Genres.GetByIdAsync(dto.Id);
         if (existingGenre.Name != dto.Name)
         {
             await ThrowIfGenreNameIsNotUnique(dto.Name);
@@ -57,7 +56,7 @@ public class GenreService : IGenreService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task DeleteGenreAsync(long genreId)
+    public async Task DeleteGenreAsync(Guid genreId)
     {
         await _unitOfWork.Genres.DeleteAsync(genreId);
         await _unitOfWork.SaveAsync();
