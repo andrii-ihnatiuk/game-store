@@ -1,6 +1,7 @@
 ﻿using GameStore.API.Controllers;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -10,10 +11,11 @@ public class GamesControllerTests
 {
     private readonly GamesController _controller;
     private readonly Mock<IGameService> _gameService = new();
+    private readonly Mock<IValidatorWrapper<GameCreateDto>> _gameCreateValidator = new();
 
     public GamesControllerTests()
     {
-        _controller = new GamesController(_gameService.Object);
+        _controller = new GamesController(_gameService.Object, _gameCreateValidator.Object);
     }
 
     [Fact]

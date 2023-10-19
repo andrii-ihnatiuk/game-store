@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
+using FluentValidation;
 using GameStore.API.Models;
 using GameStore.Data.Exceptions;
 using ILogger = GameStore.Shared.Loggers.ILogger;
@@ -36,28 +37,39 @@ public class ExceptionHandlingMiddleware
     {
         ErrorDetails errorDetails = new()
         {
-            Message = exception.Message,
+            Message = "An error occured during request processing.",
+            Errors = new List<string> { exception.Message },
         };
+        object response = errorDetails;
 
         switch (exception)
         {
             case EntityNotFoundException:
-                errorDetails.StatusCode = StatusCodes.Status404NotFound;
+                errorDetails.Status = StatusCodes.Status404NotFound;
                 break;
             case EntityAlreadyExistsException:
-                errorDetails.StatusCode = StatusCodes.Status409Conflict;
+                errorDetails.Status = StatusCodes.Status409Conflict;
                 break;
             case ForeignKeyException:
-                errorDetails.StatusCode = StatusCodes.Status400BadRequest;
+                errorDetails.Status = StatusCodes.Status400BadRequest;
+                break;
+            case ValidationException ex:
+                errorDetails.Status = StatusCodes.Status400BadRequest;
+                response = string.Join("\n", ex.Errors.Select(s => s.ErrorMessage));
                 break;
             default:
-                errorDetails.StatusCode = StatusCodes.Status500InternalServerError;
+                errorDetails.Status = StatusCodes.Status500InternalServerError;
                 errorDetails.Message = "Internal server error, please retry later.";
                 break;
         }
 
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = errorDetails.StatusCode;
-        await context.Response.WriteAsync(JsonSerializer.Serialize(errorDetails));
+        context.Response.StatusCode = errorDetails.Status;
+        var serializerOptions = new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
+        await context.Response.WriteAsync(JsonSerializer.Serialize(response, serializerOptions));
     }
 }
