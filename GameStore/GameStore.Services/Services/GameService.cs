@@ -4,6 +4,10 @@ using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Platform;
+using GameStore.Shared.DTOs.Publisher;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services.Services;
 
@@ -22,6 +26,30 @@ public class GameService : IGameService
     {
         var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == alias);
         return _mapper.Map<Game, GameFullDto>(game);
+    }
+
+    public async Task<IList<GenreBriefDto>> GetGenresByGameAliasAsync(string alias)
+    {
+        var game = await _unitOfWork.Games.GetOneAsync(
+            predicate: g => g.Alias == alias,
+            include: q => q.Include(g => g.GameGenres).ThenInclude(gg => gg.Genre));
+        return _mapper.Map<IList<GenreBriefDto>>(game.GameGenres.Select(gg => gg.Genre));
+    }
+
+    public async Task<IList<PlatformBriefDto>> GetPlatformsByGameAliasAsync(string alias)
+    {
+        var game = await _unitOfWork.Games.GetOneAsync(
+            predicate: g => g.Alias == alias,
+            include: q => q.Include(g => g.GamePlatforms).ThenInclude(gg => gg.Platform));
+        return _mapper.Map<IList<PlatformBriefDto>>(game.GamePlatforms.Select(gg => gg.Platform));
+    }
+
+    public async Task<PublisherBriefDto> GetPublisherByGameAliasAsync(string alias)
+    {
+        var game = await _unitOfWork.Games.GetOneAsync(
+            predicate: g => g.Alias == alias,
+            include: q => q.Include(g => g.Publisher));
+        return _mapper.Map<PublisherBriefDto>(game.Publisher);
     }
 
     public async Task<IList<GameBriefDto>> GetAllGamesAsync()

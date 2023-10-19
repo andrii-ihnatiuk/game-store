@@ -16,7 +16,7 @@ public interface IGenericRepository<T>
 
     Task<T> GetOneAsync(
         Expression<Func<T, bool>>? predicate,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object?>>? include = null,
         bool noTracking = true);
 
     Task AddAsync(T entity);
