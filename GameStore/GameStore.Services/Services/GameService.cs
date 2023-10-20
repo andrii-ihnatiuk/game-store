@@ -30,18 +30,20 @@ public class GameService : IGameService
 
     public async Task<IList<GenreBriefDto>> GetGenresByGameAliasAsync(string alias)
     {
-        var game = await _unitOfWork.Games.GetOneAsync(
-            predicate: g => g.Alias == alias,
-            include: q => q.Include(g => g.GameGenres).ThenInclude(gg => gg.Genre));
-        return _mapper.Map<IList<GenreBriefDto>>(game.GameGenres.Select(gg => gg.Genre));
+        var genresByGame = (await _unitOfWork.GamesGenres.GetAsync(
+                predicate: gg => gg.Game.Alias == alias,
+                include: q => q.Include(gg => gg.Genre)))
+            .Select(gg => gg.Genre);
+        return _mapper.Map<IList<GenreBriefDto>>(genresByGame);
     }
 
     public async Task<IList<PlatformBriefDto>> GetPlatformsByGameAliasAsync(string alias)
     {
-        var game = await _unitOfWork.Games.GetOneAsync(
-            predicate: g => g.Alias == alias,
-            include: q => q.Include(g => g.GamePlatforms).ThenInclude(gg => gg.Platform));
-        return _mapper.Map<IList<PlatformBriefDto>>(game.GamePlatforms.Select(gg => gg.Platform));
+        var platformsByGame = (await _unitOfWork.GamesPlatforms.GetAsync(
+                predicate: gp => gp.Game.Alias == alias,
+                include: q => q.Include(gp => gp.Platform)))
+            .Select(gp => gp.Platform);
+        return _mapper.Map<IList<PlatformBriefDto>>(platformsByGame);
     }
 
     public async Task<PublisherBriefDto> GetPublisherByGameAliasAsync(string alias)

@@ -11,12 +11,16 @@ public class UnitOfWork : IUnitOfWork
         GameStoreDbContext context,
         IGenericRepository<Game> gameRepository,
         IGenericRepository<Genre> genreRepository,
-        IGenericRepository<Platform> platformRepository)
+        IGenericRepository<Platform> platformRepository,
+        IGenericRepository<GameGenre> gamesGenres,
+        IGenericRepository<GamePlatform> gamesPlatforms)
     {
         _context = context;
         Games = gameRepository;
         Genres = genreRepository;
         Platforms = platformRepository;
+        GamesGenres = gamesGenres;
+        GamesPlatforms = gamesPlatforms;
     }
 
     public IGenericRepository<Game> Games { get; }
@@ -24,6 +28,10 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<Genre> Genres { get; }
 
     public IGenericRepository<Platform> Platforms { get; }
+
+    public IGenericRepository<GameGenre> GamesGenres { get; }
+
+    public IGenericRepository<GamePlatform> GamesPlatforms { get; }
 
     public async Task<int> SaveAsync()
     {
