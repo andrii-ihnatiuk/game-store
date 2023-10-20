@@ -14,7 +14,7 @@
 
   "genreApiUrl": "genres/{id}",
   "genresApiUrl": "genres",
-  "genresByGameApiUrl": "genres",
+  "genresByGameApiUrl": "games/{key}/genres",
   "genresByParentApiUrl": "genres",
   "updateGenreApiUrl": "genres/update",
   "addGenreApiUrl": "genres/new",
@@ -22,14 +22,14 @@
 
   "platformApiUrl": "platforms/{id}",
   "platformsApiUrl": "platforms",
-  "platformsByGameApiUrl": "platforms",
+  "platformsByGameApiUrl": "games/{key}/platforms",
   "updatePlatformApiUrl": "platforms/update",
   "addPlatformApiUrl": "platforms/add",
   "deletePlatformApiUrl": "platforms/remove",
 
   "publisherApiUrl": "publishers",
   "publishersApiUrl": "publishers",
-  "publisherByGameApiUrl": "publishers",
+  "publisherByGameApiUrl": "games/{key}/publisher",
   "addPublisherApiUrl": "publishers/new",
   "deletePublisherApiUrl": "publishers/remove/{key}",
   "updatePublisherApiUrl": "publishers/update"

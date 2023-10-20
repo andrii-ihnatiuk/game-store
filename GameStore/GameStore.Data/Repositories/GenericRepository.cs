@@ -24,7 +24,7 @@ public class GenericRepository<T> : IGenericRepository<T>
     public async Task<IList<T>> GetAsync(
         Expression<Func<T, bool>>? predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object?>>? include = null,
         bool noTracking = true)
     {
         IQueryable<T> query = DbSet;
@@ -37,7 +37,7 @@ public class GenericRepository<T> : IGenericRepository<T>
 
     public async Task<T> GetOneAsync(
         Expression<Func<T, bool>>? predicate,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
+        Func<IQueryable<T>, IIncludableQueryable<T, object?>>? include = null,
         bool noTracking = true)
     {
         var query = await GetAsync(predicate: predicate, include: include, noTracking: noTracking);

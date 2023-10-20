@@ -29,10 +29,11 @@ internal static class DataSeeder
     {
         SeedGenres(modelBuilder.Entity<Genre>());
         SeedPlatforms(modelBuilder.Entity<Platform>());
-        SeedGamesContainingGenresAndPlatforms(modelBuilder);
+        SeedPublishers(modelBuilder.Entity<Publisher>());
+        SeedGamesContainingGenresAndPlatformsAndPublishers(modelBuilder);
     }
 
-    private static void SeedGamesContainingGenresAndPlatforms(ModelBuilder builder)
+    private static void SeedGamesContainingGenresAndPlatformsAndPublishers(ModelBuilder builder)
     {
         builder.Entity<Game>().HasData(
             new Game()
@@ -44,6 +45,7 @@ internal static class DataSeeder
                 Discontinued = false,
                 UnitInStock = 50,
                 Price = 1500.2M,
+                PublisherId = Id1,
             },
             new Game()
             {
@@ -54,6 +56,7 @@ internal static class DataSeeder
                 Discontinued = true,
                 UnitInStock = 32,
                 Price = 500M,
+                PublisherId = Id2,
             });
 
         builder.Entity<GameGenre>().HasData(
@@ -95,5 +98,13 @@ internal static class DataSeeder
             new Platform { Id = Id2, Type = "browser" },
             new Platform { Id = Id3, Type = "desktop" },
             new Platform { Id = Id4, Type = "console" });
+    }
+
+    private static void SeedPublishers(EntityTypeBuilder<Publisher> builder)
+    {
+        builder.HasData(
+            new Publisher() { Id = Id1, CompanyName = "Activision", Description = "Activision Publishing, Inc. is an American video game publisher based in Santa Monica, California.", HomePage = "https://www.activision.com/" },
+            new Publisher { Id = Id2, CompanyName = "Electronic Arts", Description = "Electronic Arts Inc. is a global leader in digital interactive entertainment.", HomePage = "https://www.ea.com/" },
+            new Publisher { Id = Id3, CompanyName = "Ubisoft", Description = "Ubisoft Entertainment SA is a French video game company headquartered in Montreal.", HomePage = "https://www.ubisoft.com/", });
     }
 }

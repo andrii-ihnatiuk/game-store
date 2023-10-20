@@ -10,5 +10,9 @@ public interface IUnitOfWork : IDisposable
 
     IGenericRepository<Platform> Platforms { get; }
 
+    IGenericRepository<GameGenre> GamesGenres { get; }
+
+    IGenericRepository<GamePlatform> GamesPlatforms { get; }
+
     Task<int> SaveAsync();
 }

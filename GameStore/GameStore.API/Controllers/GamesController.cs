@@ -1,5 +1,8 @@
 ﻿using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Platform;
+using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,10 +30,31 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IEnumerable<GameBriefDto>>> GetAllGamesAsync()
+    public async Task<ActionResult<IList<GameBriefDto>>> GetAllGamesAsync()
     {
         var gamesDto = await _gameService.GetAllGamesAsync();
         return Ok(gamesDto);
+    }
+
+    [HttpGet("{gameAlias}/genres")]
+    public async Task<ActionResult<IList<GenreBriefDto>>> GetGenresByGameAlias([FromRoute] string gameAlias)
+    {
+        var genres = await _gameService.GetGenresByGameAliasAsync(gameAlias);
+        return Ok(genres);
+    }
+
+    [HttpGet("{gameAlias}/platforms")]
+    public async Task<ActionResult<IList<PlatformBriefDto>>> GetPlatformsByGameAlias([FromRoute] string gameAlias)
+    {
+        var platforms = await _gameService.GetPlatformsByGameAliasAsync(gameAlias);
+        return Ok(platforms);
+    }
+
+    [HttpGet("{gameAlias}/publisher")]
+    public async Task<ActionResult<PublisherBriefDto>> GetPublisherByGameAlias([FromRoute] string gameAlias)
+    {
+        var publisher = await _gameService.GetPublisherByGameAliasAsync(gameAlias);
+        return Ok(publisher);
     }
 
     [HttpGet("{gameAlias}/download")]
