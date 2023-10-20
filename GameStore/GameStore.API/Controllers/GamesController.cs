@@ -1,5 +1,6 @@
 ﻿using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStore.API.Controllers;
@@ -10,10 +11,12 @@ namespace GameStore.API.Controllers;
 public class GamesController : ControllerBase
 {
     private readonly IGameService _gameService;
+    private readonly IValidatorWrapper<GameCreateDto> _gameCreateValidator;
 
-    public GamesController(IGameService gameService)
+    public GamesController(IGameService gameService, IValidatorWrapper<GameCreateDto> gameCreateValidator)
     {
         _gameService = gameService;
+        _gameCreateValidator = gameCreateValidator;
     }
 
     [HttpGet("{gameAlias}", Name = "GetGameByAlias")]
@@ -40,6 +43,7 @@ public class GamesController : ControllerBase
     [HttpPost("new")]
     public async Task<IActionResult> PostGameAsync([FromBody] GameCreateDto dto)
     {
+        _gameCreateValidator.ValidateAndThrow(dto);
         var gameFullDto = await _gameService.AddGameAsync(dto);
         return CreatedAtRoute("GetGameByAlias", new { gameAlias = gameFullDto.Key }, gameFullDto);
     }

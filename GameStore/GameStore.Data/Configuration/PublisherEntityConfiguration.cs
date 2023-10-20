@@ -1,9 +1,11 @@
-﻿using GameStore.Data.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using GameStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace GameStore.Data.Configuration;
 
+[ExcludeFromCodeCoverage]
 public class PublisherEntityConfiguration : IEntityTypeConfiguration<Publisher>
 {
     public void Configure(EntityTypeBuilder<Publisher> builder)

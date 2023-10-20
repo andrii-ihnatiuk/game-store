@@ -1,8 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using FluentValidation;
 using GameStore.Data;
 using GameStore.Data.Repositories;
 using GameStore.Services.Services;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.Loggers;
+using GameStore.Shared.Validators;
+using GameStore.Shared.Validators.GameValidators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,5 +31,9 @@ public static class ServicesConfiguration
         serviceCollection.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         serviceCollection.AddSingleton<ILogger, NLogLogger>();
+
+        serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
+        serviceCollection.AddScoped(typeof(IValidatorWrapper<>), typeof(ValidatorWrapper<>));
+        ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
     }
 }

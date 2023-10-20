@@ -1,7 +1,10 @@
-﻿using GameStore.Data.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using GameStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Data;
+
+[ExcludeFromCodeCoverage]
 public sealed class GameStoreDbContext : DbContext
 {
     public GameStoreDbContext(DbContextOptions<GameStoreDbContext> options)

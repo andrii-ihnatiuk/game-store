@@ -19,6 +19,11 @@ public class ExceptionHandlingMiddlewareTests
         },
     };
 
+    private readonly JsonSerializerOptions _serializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    };
+
     [Fact]
     public async Task Invoke_Captured_EntityNotFoundException_HandledCorrectly()
     {
@@ -32,10 +37,10 @@ public class ExceptionHandlingMiddlewareTests
         _context.Response.Body.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(_context.Response.Body);
         string responseBody = await reader.ReadToEndAsync();
-        var errorDetails = JsonSerializer.Deserialize<ErrorDetails>(responseBody);
+        var errorDetails = JsonSerializer.Deserialize<ErrorDetails>(responseBody, _serializerOptions);
 
         Assert.Equal(StatusCodes.Status404NotFound, _context.Response.StatusCode);
-        Assert.Equal(StatusCodes.Status404NotFound, errorDetails.StatusCode);
+        Assert.Equal(StatusCodes.Status404NotFound, errorDetails.Status);
         Assert.True(_context.Response.ContentType == "application/json");
     }
 
@@ -52,10 +57,10 @@ public class ExceptionHandlingMiddlewareTests
         _context.Response.Body.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(_context.Response.Body);
         string responseBody = await reader.ReadToEndAsync();
-        var errorDetails = JsonSerializer.Deserialize<ErrorDetails>(responseBody);
+        var errorDetails = JsonSerializer.Deserialize<ErrorDetails>(responseBody, _serializerOptions);
 
         Assert.Equal(StatusCodes.Status409Conflict, _context.Response.StatusCode);
-        Assert.Equal(StatusCodes.Status409Conflict, errorDetails.StatusCode);
+        Assert.Equal(StatusCodes.Status409Conflict, errorDetails.Status);
         Assert.True(_context.Response.ContentType == "application/json");
     }
 
@@ -72,10 +77,10 @@ public class ExceptionHandlingMiddlewareTests
         _context.Response.Body.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(_context.Response.Body);
         string responseBody = await reader.ReadToEndAsync();
-        var errorDetails = JsonSerializer.Deserialize<ErrorDetails>(responseBody);
+        var errorDetails = JsonSerializer.Deserialize<ErrorDetails>(responseBody, _serializerOptions);
 
         Assert.Equal(StatusCodes.Status400BadRequest, _context.Response.StatusCode);
-        Assert.Equal(StatusCodes.Status400BadRequest, errorDetails.StatusCode);
+        Assert.Equal(StatusCodes.Status400BadRequest, errorDetails.Status);
         Assert.True(_context.Response.ContentType == "application/json");
     }
 
@@ -92,10 +97,10 @@ public class ExceptionHandlingMiddlewareTests
         _context.Response.Body.Seek(0, SeekOrigin.Begin);
         var reader = new StreamReader(_context.Response.Body);
         string responseBody = await reader.ReadToEndAsync();
-        var errorDetails = JsonSerializer.Deserialize<ErrorDetails>(responseBody);
+        var errorDetails = JsonSerializer.Deserialize<ErrorDetails>(responseBody, _serializerOptions);
 
         Assert.Equal(StatusCodes.Status500InternalServerError, _context.Response.StatusCode);
-        Assert.Equal(StatusCodes.Status500InternalServerError, errorDetails.StatusCode);
+        Assert.Equal(StatusCodes.Status500InternalServerError, errorDetails.Status);
         Assert.Equal("Internal server error, please retry later.", errorDetails.Message);
         Assert.True(_context.Response.ContentType == "application/json");
     }
