@@ -1,5 +1,8 @@
-﻿namespace GameStore.Data.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace GameStore.Data.Exceptions;
+
+[ExcludeFromCodeCoverage]
 public class EntityNotFoundException : Exception
 {
     private const string DefaultMessage = "Requested entity does not exist!";

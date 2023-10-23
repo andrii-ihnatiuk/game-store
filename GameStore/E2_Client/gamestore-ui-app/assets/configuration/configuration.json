@@ -5,7 +5,7 @@
   "gameByIdApiUrl": "games",
   "gamesApiUrl": "games",
   "gamesByGenreApiUrl": "games",
-  "gamesByPublisherApiUrl": "games",
+  "gamesByPublisherApiUrl": "publishers/{id}/games",
   "gamesByPlatformApiUrl": "games",
   "getGameFile": "games/{key}/download",
   "updateGameApiUrl": "games/update",
@@ -27,7 +27,7 @@
   "addPlatformApiUrl": "platforms/add",
   "deletePlatformApiUrl": "platforms/remove",
 
-  "publisherApiUrl": "publishers",
+  "publisherApiUrl": "publishers/{companyname}",
   "publishersApiUrl": "publishers",
   "publisherByGameApiUrl": "games/{key}/publisher",
   "addPublisherApiUrl": "publishers/new",

@@ -1,7 +1,9 @@
-﻿using NLog;
+﻿using System.Diagnostics.CodeAnalysis;
+using NLog;
 
 namespace GameStore.Shared.Loggers;
 
+[ExcludeFromCodeCoverage]
 public class NLogLogger : ILogger
 {
     private readonly NLog.ILogger _logger = LogManager.GetCurrentClassLogger();

@@ -9,5 +9,10 @@ public class PublisherProfile : Profile
     public PublisherProfile()
     {
         CreateMap<Publisher, PublisherBriefDto>();
+        CreateMap<Publisher, PublisherFullDto>();
+
+        CreateMap<PublisherInnerDto, Publisher>();
+        CreateMap<PublisherCreateDto, Publisher>()
+            .IncludeMembers(p => p.Publisher);
     }
 }

@@ -1,5 +1,8 @@
-﻿namespace GameStore.Data.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace GameStore.Data.Exceptions;
+
+[ExcludeFromCodeCoverage]
 public class EntityAlreadyExistsException : Exception
 {
     private const string DefaultMessage = "Entity already exists!";

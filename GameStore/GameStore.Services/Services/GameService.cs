@@ -3,6 +3,7 @@ using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
@@ -60,14 +61,14 @@ public class GameService : IGameService
         return _mapper.Map<IList<GameBriefDto>>(games);
     }
 
-    public async Task<GameFullDto> AddGameAsync(GameCreateDto dto)
+    public async Task<GameBriefDto> AddGameAsync(GameCreateDto dto)
     {
         var game = _mapper.Map<Game>(dto);
         await ThrowIfGameAliasIsNotUnique(game.Alias);
         await ThrowIfForeignKeyConstraintViolationFor(game);
         await _unitOfWork.Games.AddAsync(game);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<GameFullDto>(game);
+        return _mapper.Map<GameBriefDto>(game);
     }
 
     public async Task UpdateGameAsync(GameUpdateDto dto)

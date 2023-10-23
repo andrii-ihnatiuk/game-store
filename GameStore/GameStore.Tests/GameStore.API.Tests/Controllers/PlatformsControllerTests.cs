@@ -1,5 +1,5 @@
 ﻿using GameStore.API.Controllers;
-using GameStore.Services.Services;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Platform;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -56,7 +56,7 @@ public class PlatformsControllerTests
     {
         // Arrange
         var platformCreateDto = new PlatformCreateDto();
-        var platformViewDto = new PlatformFullDto() { Id = Guid.Empty };
+        var platformViewDto = new PlatformBriefDto() { Id = Guid.Empty };
         _platformService.Setup(s => s.AddPlatformAsync(platformCreateDto))
             .ReturnsAsync(platformViewDto)
             .Verifiable();

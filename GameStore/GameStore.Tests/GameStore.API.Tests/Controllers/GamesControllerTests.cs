@@ -1,5 +1,5 @@
 ﻿using GameStore.API.Controllers;
-using GameStore.Services.Services;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
@@ -75,9 +75,9 @@ public class GamesControllerTests
     {
         // Arrange
         var gameCreateDto = new GameCreateDto();
-        var gameFullDto = new GameFullDto() { Key = "game-alias" };
+        var gameBriefDto = new GameBriefDto() { Key = "game-alias" };
         _gameService.Setup(s => s.AddGameAsync(gameCreateDto))
-            .ReturnsAsync(gameFullDto)
+            .ReturnsAsync(gameBriefDto)
             .Verifiable();
 
         // Act
@@ -87,7 +87,7 @@ public class GamesControllerTests
         _gameService.Verify();
         Assert.IsType<CreatedAtRouteResult>(result);
         var routeResult = (CreatedAtRouteResult)result;
-        Assert.Equal(routeResult.Value, gameFullDto);
+        Assert.Equal(routeResult.Value, gameBriefDto);
     }
 
     [Fact]

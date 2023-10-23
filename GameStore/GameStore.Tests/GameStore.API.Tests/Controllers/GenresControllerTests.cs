@@ -1,5 +1,5 @@
 ﻿using GameStore.API.Controllers;
-using GameStore.Services.Services;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Genre;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -56,9 +56,9 @@ public class GenresControllerTests
     {
         // Arrange
         var genreCreateDto = new GenreCreateDto();
-        var genreFullDto = new GenreFullDto { Id = Guid.Empty };
+        var genreBriefDto = new GenreBriefDto() { Id = Guid.Empty };
         _genreService.Setup(s => s.AddGenreAsync(genreCreateDto))
-            .ReturnsAsync(genreFullDto)
+            .ReturnsAsync(genreBriefDto)
             .Verifiable();
 
         // Act
@@ -67,7 +67,7 @@ public class GenresControllerTests
         // Assert
         _genreService.Verify();
         Assert.IsType<CreatedAtRouteResult>(result);
-        Assert.Equal(((CreatedAtRouteResult)result).Value, genreFullDto);
+        Assert.Equal(((CreatedAtRouteResult)result).Value, genreBriefDto);
     }
 
     [Fact]

@@ -1,4 +1,4 @@
-using GameStore.Services.Services;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Genre;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,8 +33,8 @@ public class GenresController : ControllerBase
     [HttpPost("new")]
     public async Task<IActionResult> PostGenreAsync([FromBody] GenreCreateDto dto)
     {
-        var genreFullDto = await _genreService.AddGenreAsync(dto);
-        return CreatedAtRoute("GetGenreById", new { genreId = genreFullDto.Id }, genreFullDto);
+        var genreBriefDto = await _genreService.AddGenreAsync(dto);
+        return CreatedAtRoute("GetGenreById", new { genreId = genreBriefDto.Id }, genreBriefDto);
     }
 
     [HttpPut("update")]

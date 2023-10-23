@@ -12,6 +12,7 @@ public class UnitOfWork : IUnitOfWork
         IGenericRepository<Game> gameRepository,
         IGenericRepository<Genre> genreRepository,
         IGenericRepository<Platform> platformRepository,
+        IGenericRepository<Publisher> publishers,
         IGenericRepository<GameGenre> gamesGenres,
         IGenericRepository<GamePlatform> gamesPlatforms)
     {
@@ -21,6 +22,7 @@ public class UnitOfWork : IUnitOfWork
         Platforms = platformRepository;
         GamesGenres = gamesGenres;
         GamesPlatforms = gamesPlatforms;
+        Publishers = publishers;
     }
 
     public IGenericRepository<Game> Games { get; }
@@ -28,6 +30,8 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<Genre> Genres { get; }
 
     public IGenericRepository<Platform> Platforms { get; }
+
+    public IGenericRepository<Publisher> Publishers { get; }
 
     public IGenericRepository<GameGenre> GamesGenres { get; }
 

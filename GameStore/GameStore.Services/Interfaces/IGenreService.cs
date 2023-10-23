@@ -1,6 +1,6 @@
 ﻿using GameStore.Shared.DTOs.Genre;
 
-namespace GameStore.Services.Services;
+namespace GameStore.Services.Interfaces;
 
 public interface IGenreService
 {
@@ -8,7 +8,7 @@ public interface IGenreService
 
     Task<IList<GenreBriefDto>> GetAllGenresAsync();
 
-    Task<GenreFullDto> AddGenreAsync(GenreCreateDto dto);
+    Task<GenreBriefDto> AddGenreAsync(GenreCreateDto dto);
 
     Task UpdateGenreAsync(GenreUpdateDto dto);
 
