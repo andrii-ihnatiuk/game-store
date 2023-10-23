@@ -119,6 +119,15 @@ public class GameService : IGameService
                 throw new ForeignKeyException(onColumn: nameof(gamePlatform.PlatformId));
             }
         }
+
+        if (game.PublisherId is not null)
+        {
+            bool publisherExists = await _unitOfWork.Publishers.ExistsAsync(p => p.Id == game.PublisherId);
+            if (!publisherExists)
+            {
+                throw new ForeignKeyException(onColumn: nameof(game.PublisherId));
+            }
+        }
     }
 
     private async Task ThrowIfGameAliasIsNotUnique(string alias)

@@ -1,6 +1,7 @@
 ﻿using GameStore.API.Controllers;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -10,10 +11,11 @@ public class GenresControllerTests
 {
     private readonly GenresController _controller;
     private readonly Mock<IGenreService> _genreService = new();
+    private readonly Mock<IValidatorWrapper<GenreCreateDto>> _genreCreateValidator = new();
 
     public GenresControllerTests()
     {
-        _controller = new GenresController(_genreService.Object);
+        _controller = new GenresController(_genreService.Object, _genreCreateValidator.Object);
     }
 
     [Fact]

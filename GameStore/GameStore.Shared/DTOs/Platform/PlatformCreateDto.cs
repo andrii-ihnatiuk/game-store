@@ -2,5 +2,5 @@
 
 public class PlatformCreateDto
 {
-    public string Type { get; set; }
+    public PlatformInnerDto Platform { get; set; }
 }

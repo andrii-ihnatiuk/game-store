@@ -2,7 +2,5 @@
 
 public class GenreCreateDto
 {
-    public string Name { get; set; }
-
-    public long? ParentGenreId { get; set; }
+    public GenreInnerDto Genre { get; set; }
 }

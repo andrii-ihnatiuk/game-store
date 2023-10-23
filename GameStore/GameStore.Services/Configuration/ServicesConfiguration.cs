@@ -7,10 +7,14 @@ using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Loggers;
 using GameStore.Shared.Validators;
 using GameStore.Shared.Validators.GameValidators;
+using GameStore.Shared.Validators.GenreValidators;
+using GameStore.Shared.Validators.PlatformValidators;
 using GameStore.Shared.Validators.PublisherValidators;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +43,8 @@ public static class ServicesConfiguration
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
         serviceCollection.AddScoped<IValidator<PublisherCreateDto>, PublisherCreateValidator>();
+        serviceCollection.AddScoped<IValidator<PlatformCreateDto>, PlatformCreateValidator>();
+        serviceCollection.AddScoped<IValidator<GenreCreateDto>, GenreCreateValidator>();
         serviceCollection.AddScoped(typeof(IValidatorWrapper<>), typeof(ValidatorWrapper<>));
         ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
     }

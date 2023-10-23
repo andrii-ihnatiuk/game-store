@@ -1,8 +1,10 @@
-﻿using FluentValidation;
+﻿using System.Diagnostics.CodeAnalysis;
+using FluentValidation;
 using GameStore.Shared.DTOs.Publisher;
 
 namespace GameStore.Shared.Validators.PublisherValidators;
 
+[ExcludeFromCodeCoverage]
 public class PublisherCreateValidator : AbstractValidator<PublisherCreateDto>
 {
     public PublisherCreateValidator()

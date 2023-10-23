@@ -24,8 +24,8 @@
   "platformsApiUrl": "platforms",
   "platformsByGameApiUrl": "games/{key}/platforms",
   "updatePlatformApiUrl": "platforms/update",
-  "addPlatformApiUrl": "platforms/add",
-  "deletePlatformApiUrl": "platforms/remove",
+  "addPlatformApiUrl": "platforms/new",
+  "deletePlatformApiUrl": "platforms/remove/{id}",
 
   "publisherApiUrl": "publishers/{companyname}",
   "publishersApiUrl": "publishers",
