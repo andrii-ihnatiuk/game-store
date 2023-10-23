@@ -11,7 +11,8 @@ builder.Services.AddCors(options =>
         "angular-front",
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://127.0.0.1:8080");
+            policyBuilder.WithOrigins("http://127.0.0.1:8080")
+                .WithExposedHeaders("x-total-numbers-of-games");
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
         });
@@ -33,6 +34,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddResponseCaching();
+builder.Services.AddMemoryCache();
 
 LogManager.Setup().LoadConfigurationFromFile("nlog.config", false);
 
@@ -52,6 +54,7 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<PerformanceLoggingMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<IpLoggingMiddleware>();
+app.UseMiddleware<HeaderAdderMiddleware>();
 
 app.UseHttpsRedirection();
 

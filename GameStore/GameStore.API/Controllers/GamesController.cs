@@ -10,7 +10,6 @@ namespace GameStore.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[ResponseCache(CacheProfileName = "OneMinuteCache")]
 public class GamesController : ControllerBase
 {
     private readonly IGameService _gameService;
@@ -37,6 +36,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("{gameAlias}/genres")]
+    [ResponseCache(CacheProfileName = "OneMinuteCache")]
     public async Task<ActionResult<IList<GenreBriefDto>>> GetGenresByGameAliasAsync([FromRoute] string gameAlias)
     {
         var genres = await _gameService.GetGenresByGameAliasAsync(gameAlias);
@@ -44,6 +44,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("{gameAlias}/platforms")]
+    [ResponseCache(CacheProfileName = "OneMinuteCache")]
     public async Task<ActionResult<IList<PlatformBriefDto>>> GetPlatformsByGameAliasAsync([FromRoute] string gameAlias)
     {
         var platforms = await _gameService.GetPlatformsByGameAliasAsync(gameAlias);
@@ -51,6 +52,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("{gameAlias}/publisher")]
+    [ResponseCache(CacheProfileName = "OneMinuteCache")]
     public async Task<ActionResult<PublisherBriefDto>> GetPublisherByGameAliasAsync([FromRoute] string gameAlias)
     {
         var publisher = await _gameService.GetPublisherByGameAliasAsync(gameAlias);
@@ -58,6 +60,7 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("{gameAlias}/download")]
+    [ResponseCache(CacheProfileName = "OneMinuteCache")]
     public async Task<IActionResult> DownloadGameAsync([FromRoute] string gameAlias)
     {
         (byte[] bytes, string fileName) = await _gameService.DownloadAsync(gameAlias);
