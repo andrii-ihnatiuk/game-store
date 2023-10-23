@@ -2,6 +2,7 @@
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Genre;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,14 +34,14 @@ public class GenreService : IGenreService
         return _mapper.Map<IList<GenreBriefDto>>(genres);
     }
 
-    public async Task<GenreFullDto> AddGenreAsync(GenreCreateDto dto)
+    public async Task<GenreBriefDto> AddGenreAsync(GenreCreateDto dto)
     {
         var genre = _mapper.Map<Genre>(dto);
         await ThrowIfGenreNameIsNotUnique(genre.Name);
         await ThrowIfForeignKeyConstraintViolationFor(genre);
         await _unitOfWork.Genres.AddAsync(genre);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<GenreFullDto>(genre);
+        return _mapper.Map<GenreBriefDto>(genre);
     }
 
     public async Task UpdateGenreAsync(GenreUpdateDto dto)

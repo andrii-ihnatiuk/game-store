@@ -11,6 +11,7 @@ public class PublisherEntityConfiguration : IEntityTypeConfiguration<Publisher>
     public void Configure(EntityTypeBuilder<Publisher> builder)
     {
         builder.HasKey(p => p.Id);
+        builder.HasIndex(p => p.CompanyName).IsUnique(true);
 
         builder.Property(p => p.Id)
             .ValueGeneratedOnAdd();

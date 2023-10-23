@@ -2,6 +2,7 @@
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Platform;
 
 namespace GameStore.Services.Services;
@@ -30,13 +31,13 @@ public class PlatformService : IPlatformService
         return _mapper.Map<IList<PlatformBriefDto>>(platforms);
     }
 
-    public async Task<PlatformFullDto> AddPlatformAsync(PlatformCreateDto dto)
+    public async Task<PlatformBriefDto> AddPlatformAsync(PlatformCreateDto dto)
     {
         var platform = _mapper.Map<Platform>(dto);
         await ThrowIfPlatformTypeIsNotUnique(platform.Type);
         await _unitOfWork.Platforms.AddAsync(platform);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<PlatformFullDto>(platform);
+        return _mapper.Map<PlatformBriefDto>(platform);
     }
 
     public async Task UpdatePlatformAsync(PlatformUpdateDto dto)

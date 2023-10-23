@@ -1,6 +1,6 @@
 ﻿using GameStore.Shared.DTOs.Platform;
 
-namespace GameStore.Services.Services;
+namespace GameStore.Services.Interfaces;
 
 public interface IPlatformService
 {
@@ -8,7 +8,7 @@ public interface IPlatformService
 
     Task<IList<PlatformBriefDto>> GetAllPlatformsAsync();
 
-    Task<PlatformFullDto> AddPlatformAsync(PlatformCreateDto dto);
+    Task<PlatformBriefDto> AddPlatformAsync(PlatformCreateDto dto);
 
     Task UpdatePlatformAsync(PlatformUpdateDto dto);
 

@@ -1,4 +1,4 @@
-using GameStore.Services.Services;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Platform;
 using Microsoft.AspNetCore.Mvc;
 

@@ -3,7 +3,7 @@ using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
 
-namespace GameStore.Services.Services;
+namespace GameStore.Services.Interfaces;
 
 public interface IGameService
 {
@@ -17,7 +17,7 @@ public interface IGameService
 
     Task<IList<GameBriefDto>> GetAllGamesAsync();
 
-    Task<GameFullDto> AddGameAsync(GameCreateDto dto);
+    Task<GameBriefDto> AddGameAsync(GameCreateDto dto);
 
     Task UpdateGameAsync(GameUpdateDto dto);
 

@@ -1,5 +1,8 @@
-﻿namespace GameStore.Data.Exceptions;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace GameStore.Data.Exceptions;
+
+[ExcludeFromCodeCoverage]
 public class ForeignKeyException : Exception
 {
     public ForeignKeyException(string onColumn)
