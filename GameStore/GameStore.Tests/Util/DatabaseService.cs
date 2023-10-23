@@ -1,9 +1,11 @@
-﻿using GameStore.Data;
+﻿using System.Diagnostics.CodeAnalysis;
+using GameStore.Data;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Tests.Util;
 
+[ExcludeFromCodeCoverage]
 public static class DatabaseService
 {
     private const string InMemoryConnectionString = "DataSource=:memory:";

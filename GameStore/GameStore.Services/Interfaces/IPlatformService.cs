@@ -12,5 +12,5 @@ public interface IPlatformService
 
     Task UpdatePlatformAsync(PlatformUpdateDto dto);
 
-    Task DeletePlatformAsync(long id);
+    Task DeletePlatformAsync(Guid id);
 }

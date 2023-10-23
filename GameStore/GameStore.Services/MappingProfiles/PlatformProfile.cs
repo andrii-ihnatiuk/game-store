@@ -10,7 +10,9 @@ public class PlatformProfile : Profile
 {
     public PlatformProfile()
     {
-        CreateMap<PlatformCreateDto, Platform>();
+        CreateMap<PlatformInnerDto, Platform>();
+        CreateMap<PlatformCreateDto, Platform>()
+            .IncludeMembers(p => p.Platform);
 
         CreateMap<Platform, PlatformFullDto>();
 

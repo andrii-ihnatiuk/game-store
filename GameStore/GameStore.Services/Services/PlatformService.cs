@@ -52,7 +52,7 @@ public class PlatformService : IPlatformService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task DeletePlatformAsync(long id)
+    public async Task DeletePlatformAsync(Guid id)
     {
         await _unitOfWork.Platforms.DeleteAsync(id);
         await _unitOfWork.SaveAsync();

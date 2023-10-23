@@ -10,7 +10,9 @@ public class GenreProfile : Profile
 {
     public GenreProfile()
     {
-        CreateMap<GenreCreateDto, Genre>();
+        CreateMap<GenreInnerDto, Genre>();
+        CreateMap<GenreCreateDto, Genre>()
+            .IncludeMembers(g => g.Genre);
 
         CreateMap<Genre, GenreFullDto>();
 

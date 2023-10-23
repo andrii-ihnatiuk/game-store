@@ -1,5 +1,6 @@
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Platform;
+using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStore.API.Controllers;
@@ -10,10 +11,12 @@ namespace GameStore.API.Controllers;
 public class PlatformsController : ControllerBase
 {
     private readonly IPlatformService _platformService;
+    private readonly IValidatorWrapper<PlatformCreateDto> _platformCreateValidator;
 
-    public PlatformsController(IPlatformService platformService)
+    public PlatformsController(IPlatformService platformService, IValidatorWrapper<PlatformCreateDto> platformCreateValidator)
     {
         _platformService = platformService;
+        _platformCreateValidator = platformCreateValidator;
     }
 
     [HttpGet("{platformId:guid}", Name = "GetPlatformById")]
@@ -33,6 +36,7 @@ public class PlatformsController : ControllerBase
     [HttpPost("new")]
     public async Task<IActionResult> PostPlatformAsync([FromBody] PlatformCreateDto dto)
     {
+        _platformCreateValidator.ValidateAndThrow(dto);
         var viewDto = await _platformService.AddPlatformAsync(dto);
         return CreatedAtRoute("GetPlatformById", new { platformId = viewDto.Id }, viewDto);
     }
@@ -44,8 +48,8 @@ public class PlatformsController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("remove")]
-    public async Task<IActionResult> DeletePlatformAsync([FromQuery] long platformId)
+    [HttpDelete("remove/{platformId:guid}")]
+    public async Task<IActionResult> DeletePlatformAsync([FromRoute] Guid platformId)
     {
         await _platformService.DeletePlatformAsync(platformId);
         return NoContent();

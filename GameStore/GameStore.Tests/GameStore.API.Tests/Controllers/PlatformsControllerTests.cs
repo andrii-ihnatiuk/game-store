@@ -1,6 +1,7 @@
 ﻿using GameStore.API.Controllers;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Platform;
+using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -10,10 +11,11 @@ public class PlatformsControllerTests
 {
     private readonly PlatformsController _controller;
     private readonly Mock<IPlatformService> _platformService = new();
+    private readonly Mock<IValidatorWrapper<PlatformCreateDto>> _platformCreateValidator = new();
 
     public PlatformsControllerTests()
     {
-        _controller = new PlatformsController(_platformService.Object);
+        _controller = new PlatformsController(_platformService.Object, _platformCreateValidator.Object);
     }
 
     [Fact]
@@ -91,7 +93,7 @@ public class PlatformsControllerTests
     public async Task DeletePlatform_ReturnsNoContent()
     {
         // Arrange
-        const long platformId = 1;
+        var platformId = Guid.Empty;
         _platformService.Setup(s => s.DeletePlatformAsync(platformId))
             .Returns(Task.CompletedTask)
             .Verifiable();

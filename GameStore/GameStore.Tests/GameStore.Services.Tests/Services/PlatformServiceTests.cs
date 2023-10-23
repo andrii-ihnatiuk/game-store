@@ -164,7 +164,7 @@ public class PlatformServiceTests
     public async Task DeletePlatformAsync_CallsRepository_WithValidArguments()
     {
         // Arrange
-        const long platformId = 1;
+        var platformId = Guid.Empty;
         _unitOfWork.Setup(uow => uow.Platforms.DeleteAsync(platformId))
             .Returns(Task.CompletedTask);
 
