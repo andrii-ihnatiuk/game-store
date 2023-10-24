@@ -42,9 +42,13 @@ public static class ServicesConfiguration
         serviceCollection.AddSingleton<ILogger, NLogLogger>();
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
+        serviceCollection.AddScoped<IValidator<GameUpdateDto>, GameUpdateValidator>();
         serviceCollection.AddScoped<IValidator<PublisherCreateDto>, PublisherCreateValidator>();
+        serviceCollection.AddScoped<IValidator<PublisherUpdateDto>, PublisherUpdateValidator>();
         serviceCollection.AddScoped<IValidator<PlatformCreateDto>, PlatformCreateValidator>();
+        serviceCollection.AddScoped<IValidator<PlatformUpdateDto>, PlatformUpdateValidator>();
         serviceCollection.AddScoped<IValidator<GenreCreateDto>, GenreCreateValidator>();
+        serviceCollection.AddScoped<IValidator<GenreUpdateDto>, GenreUpdateValidator>();
         serviceCollection.AddScoped(typeof(IValidatorWrapper<>), typeof(ValidatorWrapper<>));
         ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
     }

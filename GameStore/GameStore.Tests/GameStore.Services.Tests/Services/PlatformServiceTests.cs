@@ -4,6 +4,7 @@ using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Services.Services;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Platform;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
@@ -47,6 +48,31 @@ public class PlatformServiceTests
                 It.IsAny<Func<IQueryable<Platform>, IIncludableQueryable<Platform, object>>>(),
                 It.IsAny<bool>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task GetGamesByPlatformAsync_ReturnsGames()
+    {
+        // Arrange
+        var platformId = Guid.Empty;
+        var gamesPlatforms = new List<GamePlatform> { new(), new() };
+        var games = gamesPlatforms.Select(gp => gp.Game).ToList();
+        _unitOfWork.Setup(uow => uow.GamesPlatforms.GetAsync(
+                It.IsAny<Expression<Func<GamePlatform, bool>>>(),
+                It.IsAny<Func<IQueryable<GamePlatform>, IOrderedQueryable<GamePlatform>>>(),
+                It.IsAny<Func<IQueryable<GamePlatform>, IIncludableQueryable<GamePlatform, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(gamesPlatforms);
+
+        _mapper.Setup(m => m.Map<IList<GameBriefDto>>(games))
+            .Returns(games.Select(game => new GameBriefDto()).ToList());
+
+        // Act
+        var gamesDto = await _service.GetGamesByPlatformAsync(platformId);
+
+        // Assert
+        Assert.NotNull(gamesDto);
+        Assert.IsAssignableFrom<IList<GameBriefDto>>(gamesDto);
     }
 
     [Fact]
@@ -122,10 +148,10 @@ public class PlatformServiceTests
     public async Task UpdatePlatformAsync_AllOk_CallsRepository()
     {
         // Arrange
-        var platformUpdateDto = new PlatformUpdateDto() { Id = Guid.Empty, Type = PlatformType };
+        var platformUpdateDto = new PlatformUpdateDto { Platform = new PlatformUpdateInnerDto { Id = Guid.Empty, Type = PlatformType } };
         var existingPlatform = new Platform() { Type = PlatformType };
 
-        _unitOfWork.Setup(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Id))
+        _unitOfWork.Setup(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Platform.Id))
             .ReturnsAsync(existingPlatform);
 
         _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Type == PlatformType))
@@ -138,7 +164,7 @@ public class PlatformServiceTests
         await _service.UpdatePlatformAsync(platformUpdateDto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Id), Times.Once);
+        _unitOfWork.Verify(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Platform.Id), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 
@@ -147,10 +173,10 @@ public class PlatformServiceTests
     {
         // Arrange
         const string updatedType = "updated-but-already-exists";
-        var platformUpdateDto = new PlatformUpdateDto() { Type = updatedType };
+        var platformUpdateDto = new PlatformUpdateDto { Platform = new PlatformUpdateInnerDto { Type = updatedType } };
         var existingPlatform = new Platform() { Type = PlatformType };
 
-        _unitOfWork.Setup(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Id))
+        _unitOfWork.Setup(uow => uow.Platforms.GetByIdAsync(platformUpdateDto.Platform.Id))
             .ReturnsAsync(existingPlatform);
 
         _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Type == updatedType))

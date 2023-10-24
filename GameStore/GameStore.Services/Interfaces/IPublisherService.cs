@@ -13,6 +13,7 @@ public interface IPublisherService
 
     Task<PublisherBriefDto> AddPublisherAsync(PublisherCreateDto dto);
 
-    // Task UpdatePublisherAsync(PublisherUpdateDto dto);
+    Task UpdatePublisherAsync(PublisherUpdateDto dto);
+
     Task DeletePublisherAsync(Guid id);
 }

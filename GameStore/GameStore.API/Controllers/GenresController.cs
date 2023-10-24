@@ -1,4 +1,5 @@
 using GameStore.Services.Interfaces;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,16 @@ public class GenresController : ControllerBase
 {
     private readonly IGenreService _genreService;
     private readonly IValidatorWrapper<GenreCreateDto> _genreCreateValidator;
+    private readonly IValidatorWrapper<GenreUpdateDto> _genreUpdateValidator;
 
-    public GenresController(IGenreService genreService, IValidatorWrapper<GenreCreateDto> genreCreateValidator)
+    public GenresController(
+        IGenreService genreService,
+        IValidatorWrapper<GenreCreateDto> genreCreateValidator,
+        IValidatorWrapper<GenreUpdateDto> genreUpdateValidator)
     {
         _genreService = genreService;
         _genreCreateValidator = genreCreateValidator;
+        _genreUpdateValidator = genreUpdateValidator;
     }
 
     [HttpGet("{genreId:guid}", Name = "GetGenreById")]
@@ -27,10 +33,24 @@ public class GenresController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IEnumerable<GenreBriefDto>>> GetAllGenresAsync()
+    public async Task<ActionResult<IList<GenreBriefDto>>> GetAllGenresAsync()
     {
         var genresDto = await _genreService.GetAllGenresAsync();
         return Ok(genresDto);
+    }
+
+    [HttpGet("{id:guid}/subgenres")]
+    public async Task<ActionResult<IList<GenreBriefDto>>> GetSubgenresAsync(Guid id)
+    {
+        var subgenres = await _genreService.GetSubgenresByParentAsync(id);
+        return Ok(subgenres);
+    }
+
+    [HttpGet("{id:guid}/games")]
+    public async Task<ActionResult<IList<GameBriefDto>>> GetGamesByGenreAsync(Guid id)
+    {
+        var games = await _genreService.GetGamesByGenreId(id);
+        return Ok(games);
     }
 
     [HttpPost("new")]
@@ -44,14 +64,15 @@ public class GenresController : ControllerBase
     [HttpPut("update")]
     public async Task<IActionResult> UpdateGenreAsync([FromBody] GenreUpdateDto dto)
     {
+        _genreUpdateValidator.ValidateAndThrow(dto);
         await _genreService.UpdateGenreAsync(dto);
         return Ok();
     }
 
-    [HttpDelete("remove/{genreId:guid}")]
-    public async Task<IActionResult> DeleteGenreAsync([FromRoute] Guid genreId)
+    [HttpDelete("remove/{id:guid}")]
+    public async Task<IActionResult> DeleteGenreAsync([FromRoute] Guid id)
     {
-        await _genreService.DeleteGenreAsync(genreId);
+        await _genreService.DeleteGenreAsync(id);
         return NoContent();
     }
 }

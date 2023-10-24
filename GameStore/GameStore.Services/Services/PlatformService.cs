@@ -3,7 +3,9 @@ using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Platform;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services.Services;
 
@@ -31,6 +33,15 @@ public class PlatformService : IPlatformService
         return _mapper.Map<IList<PlatformBriefDto>>(platforms);
     }
 
+    public async Task<IList<GameBriefDto>> GetGamesByPlatformAsync(Guid id)
+    {
+        var games = (await _unitOfWork.GamesPlatforms.GetAsync(
+                predicate: gp => gp.PlatformId == id,
+                include: q => q.Include(gp => gp.Game)))
+            .Select(gp => gp.Game);
+        return _mapper.Map<IList<GameBriefDto>>(games);
+    }
+
     public async Task<PlatformBriefDto> AddPlatformAsync(PlatformCreateDto dto)
     {
         var platform = _mapper.Map<Platform>(dto);
@@ -42,10 +53,10 @@ public class PlatformService : IPlatformService
 
     public async Task UpdatePlatformAsync(PlatformUpdateDto dto)
     {
-        var existingPlatform = await _unitOfWork.Platforms.GetByIdAsync(dto.Id);
-        if (existingPlatform.Type != dto.Type)
+        var existingPlatform = await _unitOfWork.Platforms.GetByIdAsync(dto.Platform.Id);
+        if (existingPlatform.Type != dto.Platform.Type)
         {
-            await ThrowIfPlatformTypeIsNotUnique(dto.Type);
+            await ThrowIfPlatformTypeIsNotUnique(dto.Platform.Type);
         }
 
         _mapper.Map(dto, existingPlatform);

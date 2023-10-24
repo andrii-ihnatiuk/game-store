@@ -2,21 +2,11 @@
 
 public class GameUpdateDto
 {
-    public Guid Id { get; set; }
-
-    public string Key { get; set; }
-
-    public string Name { get; set; }
-
-    public string? Description { get; set; }
-
-    public decimal Price { get; set; }
-
-    public short UnitInStock { get; set; }
-
-    public bool Discontinued { get; set; }
+    public GameUpdateInnerDto Game { get; set; }
 
     public IList<Guid>? Genres { get; set; }
 
     public IList<Guid>? Platforms { get; set; }
+
+    public string? Publisher { get; set; }
 }

@@ -73,10 +73,19 @@ public class GameService : IGameService
 
     public async Task UpdateGameAsync(GameUpdateDto dto)
     {
-        var existingGame = await _unitOfWork.Games.GetByIdAsync(dto.Id);
-        if (existingGame.Alias != dto.Key)
+        var existingGame = await _unitOfWork.Games.GetOneAsync(
+            predicate: g => g.Id == dto.Game.Id,
+            include: q =>
+            {
+                return q
+                    .Include(g => g.GameGenres)
+                    .Include(g => g.GamePlatforms);
+            },
+            noTracking: false);
+
+        if (existingGame.Alias != dto.Game.Key)
         {
-            await ThrowIfGameAliasIsNotUnique(dto.Key);
+            await ThrowIfGameAliasIsNotUnique(dto.Game.Key);
         }
 
         var updatedGame = _mapper.Map(dto, existingGame);
@@ -84,9 +93,10 @@ public class GameService : IGameService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task DeleteGameAsync(Guid gameId)
+    public async Task DeleteGameAsync(string alias)
     {
-        await _unitOfWork.Games.DeleteAsync(gameId);
+        var gameToRemove = await _unitOfWork.Games.GetOneAsync(g => g.Alias == alias);
+        await _unitOfWork.Games.DeleteAsync(gameToRemove.Id);
         await _unitOfWork.SaveAsync();
     }
 

@@ -21,7 +21,7 @@ public interface IGameService
 
     Task UpdateGameAsync(GameUpdateDto dto);
 
-    Task DeleteGameAsync(Guid gameId);
+    Task DeleteGameAsync(string alias);
 
     Task<Tuple<byte[], string>> DownloadAsync(string gameAlias);
 }

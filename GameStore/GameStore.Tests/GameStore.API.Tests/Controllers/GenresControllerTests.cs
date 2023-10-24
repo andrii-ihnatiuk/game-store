@@ -1,5 +1,6 @@
 ﻿using GameStore.API.Controllers;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,11 @@ public class GenresControllerTests
     private readonly GenresController _controller;
     private readonly Mock<IGenreService> _genreService = new();
     private readonly Mock<IValidatorWrapper<GenreCreateDto>> _genreCreateValidator = new();
+    private readonly Mock<IValidatorWrapper<GenreUpdateDto>> _genreUpdateValidator = new();
 
     public GenresControllerTests()
     {
-        _controller = new GenresController(_genreService.Object, _genreCreateValidator.Object);
+        _controller = new GenresController(_genreService.Object, _genreCreateValidator.Object, _genreUpdateValidator.Object);
     }
 
     [Fact]
@@ -51,6 +53,42 @@ public class GenresControllerTests
         _genreService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IList<GenreBriefDto>>(((OkObjectResult)result.Result).Value);
+    }
+
+    [Fact]
+    public async Task GetSubgenresAsync_ReturnsSubgenres()
+    {
+        // Arrange
+        Guid genreId = Guid.Empty;
+        _genreService.Setup(s => s.GetSubgenresByParentAsync(genreId))
+            .ReturnsAsync(new List<GenreBriefDto>())
+            .Verifiable();
+
+        // Act
+        var result = await _controller.GetSubgenresAsync(genreId);
+
+        // Assert
+        _genreService.Verify();
+        Assert.IsType<OkObjectResult>(result.Result);
+        Assert.IsAssignableFrom<IList<GenreBriefDto>>(((OkObjectResult)result.Result).Value);
+    }
+
+    [Fact]
+    public async Task GetGamesByGenreAsync_ReturnsGames()
+    {
+        // Arrange
+        Guid genreId = Guid.Empty;
+        _genreService.Setup(s => s.GetGamesByGenreId(genreId))
+            .ReturnsAsync(new List<GameBriefDto>())
+            .Verifiable();
+
+        // Act
+        var result = await _controller.GetGamesByGenreAsync(genreId);
+
+        // Assert
+        _genreService.Verify();
+        Assert.IsType<OkObjectResult>(result.Result);
+        Assert.IsAssignableFrom<IList<GameBriefDto>>(((OkObjectResult)result.Result).Value);
     }
 
     [Fact]

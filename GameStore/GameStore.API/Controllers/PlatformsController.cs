@@ -1,4 +1,5 @@
 using GameStore.Services.Interfaces;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,16 @@ public class PlatformsController : ControllerBase
 {
     private readonly IPlatformService _platformService;
     private readonly IValidatorWrapper<PlatformCreateDto> _platformCreateValidator;
+    private readonly IValidatorWrapper<PlatformUpdateDto> _platformUpdateValidator;
 
-    public PlatformsController(IPlatformService platformService, IValidatorWrapper<PlatformCreateDto> platformCreateValidator)
+    public PlatformsController(
+        IPlatformService platformService,
+        IValidatorWrapper<PlatformCreateDto> platformCreateValidator,
+        IValidatorWrapper<PlatformUpdateDto> platformUpdateValidator)
     {
         _platformService = platformService;
         _platformCreateValidator = platformCreateValidator;
+        _platformUpdateValidator = platformUpdateValidator;
     }
 
     [HttpGet("{platformId:guid}", Name = "GetPlatformById")]
@@ -33,6 +39,13 @@ public class PlatformsController : ControllerBase
         return Ok(platformsDto);
     }
 
+    [HttpGet("{id:guid}/games")]
+    public async Task<ActionResult<IList<GameBriefDto>>> GetGamesByPlatformAsync([FromRoute] Guid id)
+    {
+        var games = await _platformService.GetGamesByPlatformAsync(id);
+        return Ok(games);
+    }
+
     [HttpPost("new")]
     public async Task<IActionResult> PostPlatformAsync([FromBody] PlatformCreateDto dto)
     {
@@ -44,6 +57,7 @@ public class PlatformsController : ControllerBase
     [HttpPut("update")]
     public async Task<IActionResult> UpdatePlatformAsync([FromBody] PlatformUpdateDto dto)
     {
+        _platformUpdateValidator.ValidateAndThrow(dto);
         await _platformService.UpdatePlatformAsync(dto);
         return Ok();
     }

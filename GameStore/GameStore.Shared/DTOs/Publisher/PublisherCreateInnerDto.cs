@@ -1,6 +1,6 @@
 ﻿namespace GameStore.Shared.DTOs.Publisher;
 
-public class PublisherInnerDto
+public class PublisherCreateInnerDto
 {
     public string CompanyName { get; set; }
 

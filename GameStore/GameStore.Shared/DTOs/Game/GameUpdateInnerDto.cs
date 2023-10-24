@@ -1,8 +1,10 @@
 ﻿namespace GameStore.Shared.DTOs.Game;
 
-public class GameInnerDto
+public class GameUpdateInnerDto
 {
-    public string? Key { get; set; }
+    public Guid Id { get; set; }
+
+    public string Key { get; set; }
 
     public string Name { get; set; }
 

@@ -1,6 +1,9 @@
 ﻿using GameStore.API.Controllers;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Platform;
+using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -12,10 +15,11 @@ public class GamesControllerTests
     private readonly GamesController _controller;
     private readonly Mock<IGameService> _gameService = new();
     private readonly Mock<IValidatorWrapper<GameCreateDto>> _gameCreateValidator = new();
+    private readonly Mock<IValidatorWrapper<GameUpdateDto>> _gameUpdateValidator = new();
 
     public GamesControllerTests()
     {
-        _controller = new GamesController(_gameService.Object, _gameCreateValidator.Object);
+        _controller = new GamesController(_gameService.Object, _gameCreateValidator.Object, _gameUpdateValidator.Object);
     }
 
     [Fact]
@@ -51,6 +55,61 @@ public class GamesControllerTests
         _gameService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IEnumerable<GameBriefDto>>(((OkObjectResult)result.Result).Value);
+    }
+
+    [Fact]
+    public async Task GetGenresByGameAliasAsync_ReturnsGenres()
+    {
+        // Arrange
+        string gameAlias = "game-alias";
+        _gameService.Setup(s => s.GetGenresByGameAliasAsync(gameAlias))
+            .ReturnsAsync(new List<GenreBriefDto>())
+            .Verifiable();
+
+        // Act
+        var result = await _controller.GetGenresByGameAliasAsync(gameAlias);
+
+        // Assert
+        _gameService.Verify();
+        Assert.IsType<OkObjectResult>(result.Result);
+        Assert.IsAssignableFrom<IEnumerable<GenreBriefDto>>(((OkObjectResult)result.Result).Value);
+    }
+
+    [Fact]
+    public async Task GetPlatformsByGameAliasAsync_ReturnsPlatforms()
+    {
+        // Arrange
+        string gameAlias = "game-alias";
+        _gameService.Setup(s => s.GetPlatformsByGameAliasAsync(gameAlias))
+            .ReturnsAsync(new List<PlatformBriefDto>())
+            .Verifiable();
+
+        // Act
+        var result = await _controller.GetPlatformsByGameAliasAsync(gameAlias);
+
+        // Assert
+        _gameService.Verify();
+        Assert.IsType<OkObjectResult>(result.Result);
+        Assert.IsAssignableFrom<IEnumerable<PlatformBriefDto>>(((OkObjectResult)result.Result).Value);
+    }
+
+    [Fact]
+    public async Task GetPublisherByGameAliasAsync_ReturnsPublisher()
+    {
+        // Arrange
+        string gameAlias = "game-alias";
+        var publisher = new PublisherBriefDto();
+        _gameService.Setup(s => s.GetPublisherByGameAliasAsync(gameAlias))
+            .ReturnsAsync(publisher)
+            .Verifiable();
+
+        // Act
+        var result = await _controller.GetPublisherByGameAliasAsync(gameAlias);
+
+        // Assert
+        _gameService.Verify();
+        Assert.IsType<OkObjectResult>(result.Result);
+        Assert.Equal(publisher, ((OkObjectResult)result.Result).Value);
     }
 
     [Fact]
@@ -111,13 +170,13 @@ public class GamesControllerTests
     public async Task DeleteGame_ReturnsNoContent()
     {
         // Arrange
-        var gameId = Guid.Empty;
-        _gameService.Setup(s => s.DeleteGameAsync(gameId))
+        var gameAlias = "game-alias";
+        _gameService.Setup(s => s.DeleteGameAsync(gameAlias))
             .Returns(Task.CompletedTask)
             .Verifiable();
 
         // Act
-        var result = await _controller.DeleteGameAsync(gameId);
+        var result = await _controller.DeleteGameAsync(gameAlias);
 
         // Assert
         _gameService.Verify();

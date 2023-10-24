@@ -1,8 +1,8 @@
 ﻿namespace GameStore.Shared.DTOs.Genre;
 
-public class GenreInnerDto
+public class GenreCreateInnerDto
 {
     public string Name { get; set; }
 
-    public Guid? ParentGenreId { get; set; }
+    public string? ParentGenreId { get; set; }
 }
