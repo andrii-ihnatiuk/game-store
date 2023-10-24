@@ -1,5 +1,6 @@
 ﻿using GameStore.API.Controllers;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,11 @@ public class PlatformsControllerTests
     private readonly PlatformsController _controller;
     private readonly Mock<IPlatformService> _platformService = new();
     private readonly Mock<IValidatorWrapper<PlatformCreateDto>> _platformCreateValidator = new();
+    private readonly Mock<IValidatorWrapper<PlatformUpdateDto>> _platformUpdateValidator = new();
 
     public PlatformsControllerTests()
     {
-        _controller = new PlatformsController(_platformService.Object, _platformCreateValidator.Object);
+        _controller = new PlatformsController(_platformService.Object, _platformCreateValidator.Object, _platformUpdateValidator.Object);
     }
 
     [Fact]
@@ -51,6 +53,24 @@ public class PlatformsControllerTests
         _platformService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IList<PlatformBriefDto>>(((OkObjectResult)result.Result).Value);
+    }
+
+    [Fact]
+    public async Task GetGamesByPlatformAsync_ReturnsGames()
+    {
+        // Arrange
+        Guid platformId = Guid.Empty;
+        _platformService.Setup(s => s.GetGamesByPlatformAsync(platformId))
+            .ReturnsAsync(new List<GameBriefDto>())
+            .Verifiable();
+
+        // Act
+        var result = await _controller.GetGamesByPlatformAsync(platformId);
+
+        // Assert
+        _platformService.Verify();
+        Assert.IsType<OkObjectResult>(result.Result);
+        Assert.IsAssignableFrom<IList<GameBriefDto>>(((OkObjectResult)result.Result).Value);
     }
 
     [Fact]

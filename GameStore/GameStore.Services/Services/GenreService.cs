@@ -3,6 +3,7 @@ using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,21 @@ public class GenreService : IGenreService
         return _mapper.Map<IList<GenreBriefDto>>(genres);
     }
 
+    public async Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(Guid parentId)
+    {
+        var subgenres = await _unitOfWork.Genres.GetAsync(predicate: g => g.ParentGenreId == parentId);
+        return _mapper.Map<IList<GenreBriefDto>>(subgenres);
+    }
+
+    public async Task<IList<GameBriefDto>> GetGamesByGenreId(Guid id)
+    {
+        var games = (await _unitOfWork.GamesGenres.GetAsync(
+                predicate: gg => gg.GenreId == id,
+                include: q => q.Include(gg => gg.Game)))
+            .Select(gg => gg.Game);
+        return _mapper.Map<IList<GameBriefDto>>(games);
+    }
+
     public async Task<GenreBriefDto> AddGenreAsync(GenreCreateDto dto)
     {
         var genre = _mapper.Map<Genre>(dto);
@@ -46,10 +62,10 @@ public class GenreService : IGenreService
 
     public async Task UpdateGenreAsync(GenreUpdateDto dto)
     {
-        var existingGenre = await _unitOfWork.Genres.GetByIdAsync(dto.Id);
-        if (existingGenre.Name != dto.Name)
+        var existingGenre = await _unitOfWork.Genres.GetByIdAsync(dto.Genre.Id);
+        if (existingGenre.Name != dto.Genre.Name)
         {
-            await ThrowIfGenreNameIsNotUnique(dto.Name);
+            await ThrowIfGenreNameIsNotUnique(dto.Genre.Name);
         }
 
         var updatedGenre = _mapper.Map(dto, existingGenre);

@@ -2,7 +2,5 @@
 
 public class PlatformUpdateDto
 {
-    public Guid Id { get; set; }
-
-    public string Type { get; set; }
+    public PlatformUpdateInnerDto Platform { get; set; }
 }

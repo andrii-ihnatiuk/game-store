@@ -6,6 +6,9 @@ using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Platform;
+using GameStore.Shared.DTOs.Publisher;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 
@@ -47,6 +50,71 @@ public class GameServiceTests
                 It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object>>>(),
                 It.IsAny<bool>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task GetGenresByGameAliasAsync_ReturnsGenres()
+    {
+        // Arrange
+        var genresByGame = new List<GameGenre>();
+        _unitOfWork.Setup(uow => uow.GamesGenres.GetAsync(
+                It.IsAny<Expression<Func<GameGenre, bool>>>(),
+                It.IsAny<Func<IQueryable<GameGenre>, IOrderedQueryable<GameGenre>>>(),
+                It.IsAny<Func<IQueryable<GameGenre>, IIncludableQueryable<GameGenre, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(genresByGame);
+        _mapper.Setup(m => m.Map<IList<GenreBriefDto>>(It.IsAny<object>()))
+            .Returns(new List<GenreBriefDto>());
+
+        // Act
+        var genres = await _service.GetGenresByGameAliasAsync(GameAlias);
+
+        // Assert
+        Assert.NotNull(genres);
+        Assert.IsAssignableFrom<IEnumerable<GenreBriefDto>>(genres);
+    }
+
+    [Fact]
+    public async Task GetPlatformsByGameAliasAsync_ReturnsPlatforms()
+    {
+        // Arrange
+        var platformsByGame = new List<GamePlatform>();
+        _unitOfWork.Setup(uow => uow.GamesPlatforms.GetAsync(
+                It.IsAny<Expression<Func<GamePlatform, bool>>>(),
+                It.IsAny<Func<IQueryable<GamePlatform>, IOrderedQueryable<GamePlatform>>>(),
+                It.IsAny<Func<IQueryable<GamePlatform>, IIncludableQueryable<GamePlatform, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(platformsByGame);
+        _mapper.Setup(m => m.Map<IList<PlatformBriefDto>>(It.IsAny<object>()))
+            .Returns(new List<PlatformBriefDto>());
+
+        // Act
+        var platforms = await _service.GetPlatformsByGameAliasAsync(GameAlias);
+
+        // Assert
+        Assert.NotNull(platforms);
+        Assert.IsAssignableFrom<IEnumerable<PlatformBriefDto>>(platforms);
+    }
+
+    [Fact]
+    public async Task GetPublisherByGameAliasAsync_ReturnsPublisher()
+    {
+        // Arrange
+        var game = new Game() { Publisher = new Publisher() };
+        _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
+                It.IsAny<Expression<Func<Game, bool>>>(),
+                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(game);
+        _mapper.Setup(m => m.Map<PublisherBriefDto>(It.IsAny<Publisher>()))
+            .Returns(new PublisherBriefDto());
+
+        // Act
+        var publisher = await _service.GetPublisherByGameAliasAsync(GameAlias);
+
+        // Assert
+        Assert.NotNull(publisher);
+        Assert.IsType<PublisherBriefDto>(publisher);
     }
 
     [Fact]
@@ -166,11 +234,15 @@ public class GameServiceTests
     public async Task UpdateGameAsync_AllOk_CallsRepository()
     {
         // Arrange
-        var gameUpdateDto = new GameUpdateDto() { Id = Guid.Empty, Key = GameAlias };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = GameAlias } };
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
 
-        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id))
-            .ReturnsAsync(existingGame);
+        _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
+                It.IsAny<Expression<Func<Game, bool>>>(),
+                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object?>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(existingGame)
+            .Verifiable();
 
         _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
             .Returns(existingGame);
@@ -182,7 +254,7 @@ public class GameServiceTests
         await _service.UpdateGameAsync(gameUpdateDto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id), Times.Once);
+        _unitOfWork.Verify();
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 
@@ -191,9 +263,12 @@ public class GameServiceTests
     {
         // Arrange
         const string updatedAlias = "updated-but-already-exists";
-        var gameUpdateDto = new GameUpdateDto() { Id = Guid.Empty, Key = updatedAlias };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = updatedAlias } };
 
-        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id))
+        _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
+                It.IsAny<Expression<Func<Game, bool>>>(),
+                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object?>>?>(),
+                It.IsAny<bool>()))
             .ReturnsAsync(new Game() { Id = Guid.Empty, Alias = GameAlias });
 
         _unitOfWork.Setup(uow => uow.Games.ExistsAsync(g => g.Alias == updatedAlias))
@@ -208,10 +283,13 @@ public class GameServiceTests
     {
         // Arrange
         var gameGenres = new List<GameGenre>() { new() };
-        var gameUpdateDto = new GameUpdateDto() { Id = Guid.Empty, Key = GameAlias };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = GameAlias } };
 
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
-        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id))
+        _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
+                It.IsAny<Expression<Func<Game, bool>>>(),
+                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object?>>?>(),
+                It.IsAny<bool>()))
             .ReturnsAsync(existingGame);
 
         var updatedGame = new Game() { Id = Guid.Empty, Alias = GameAlias, GameGenres = gameGenres };
@@ -231,10 +309,13 @@ public class GameServiceTests
     {
         // Arrange
         var gamePlatforms = new List<GamePlatform> { new() };
-        var gameUpdateDto = new GameUpdateDto() { Id = Guid.Empty, Key = GameAlias };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = GameAlias } };
 
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
-        _unitOfWork.Setup(uow => uow.Games.GetByIdAsync(gameUpdateDto.Id))
+        _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
+                It.IsAny<Expression<Func<Game, bool>>>(),
+                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object?>>?>(),
+                It.IsAny<bool>()))
             .ReturnsAsync(existingGame);
 
         var updatedGame = new Game() { Id = Guid.Empty, Alias = GameAlias, GamePlatforms = gamePlatforms };
@@ -252,15 +333,19 @@ public class GameServiceTests
     public async Task DeleteGameAsync_CallsRepository_WithValidArguments()
     {
         // Arrange
-        var gameId = Guid.Empty;
-        _unitOfWork.Setup(uow => uow.Games.DeleteAsync(gameId)).Returns(Task.CompletedTask);
+        _unitOfWork.Setup(uow => uow.Games.DeleteAsync(GameAlias)).Returns(Task.CompletedTask);
         _unitOfWork.Setup(uow => uow.SaveAsync()).ReturnsAsync(1);
+        _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
+                g => g.Alias == GameAlias,
+                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new Game { Id = Guid.Empty });
 
         // Act
-        await _service.DeleteGameAsync(gameId);
+        await _service.DeleteGameAsync(GameAlias);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Games.DeleteAsync(gameId), Times.Once);
+        _unitOfWork.Verify(uow => uow.Games.DeleteAsync(Guid.Empty), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 

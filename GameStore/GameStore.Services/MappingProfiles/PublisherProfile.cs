@@ -1,9 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Diagnostics.CodeAnalysis;
+using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Shared.DTOs.Publisher;
 
 namespace GameStore.Services.MappingProfiles;
 
+[ExcludeFromCodeCoverage]
 public class PublisherProfile : Profile
 {
     public PublisherProfile()
@@ -11,8 +13,12 @@ public class PublisherProfile : Profile
         CreateMap<Publisher, PublisherBriefDto>();
         CreateMap<Publisher, PublisherFullDto>();
 
-        CreateMap<PublisherInnerDto, Publisher>();
+        CreateMap<PublisherCreateInnerDto, Publisher>();
         CreateMap<PublisherCreateDto, Publisher>()
+            .IncludeMembers(p => p.Publisher);
+
+        CreateMap<PublisherUpdateInnerDto, Publisher>();
+        CreateMap<PublisherUpdateDto, Publisher>()
             .IncludeMembers(p => p.Publisher);
     }
 }

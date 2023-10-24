@@ -13,10 +13,11 @@ public class PublishersControllerTests
     private readonly PublishersController _controller;
     private readonly Mock<IPublisherService> _publisherService = new();
     private readonly Mock<IValidatorWrapper<PublisherCreateDto>> _publisherCreateValidator = new();
+    private readonly Mock<IValidatorWrapper<PublisherUpdateDto>> _publisherUpdateValidator = new();
 
     public PublishersControllerTests()
     {
-        _controller = new PublishersController(_publisherService.Object, _publisherCreateValidator.Object);
+        _controller = new PublishersController(_publisherService.Object, _publisherCreateValidator.Object, _publisherUpdateValidator.Object);
     }
 
     [Fact]
@@ -86,5 +87,39 @@ public class PublishersControllerTests
         Assert.IsType<CreatedAtRouteResult>(actionResult.Result);
         var routeResult = actionResult.Result as CreatedAtRouteResult;
         Assert.Equal(routeResult.Value, publisherBriefDto);
+    }
+
+    [Fact]
+    public async Task UpdatePublisherAsync_ReturnsOkResult()
+    {
+        // Arrange
+        var dto = new PublisherUpdateDto();
+        _publisherService.Setup(s => s.UpdatePublisherAsync(dto))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+
+        // Act
+        var result = await _controller.UpdatePublisherAsync(dto);
+
+        // Assert
+        _publisherService.Verify();
+        Assert.IsType<OkResult>(result);
+    }
+
+    [Fact]
+    public async Task DeletePublisherAsync_ReturnsNoContentResult()
+    {
+        // Arrange
+        var publisherId = Guid.NewGuid();
+        _publisherService.Setup(s => s.DeletePublisherAsync(publisherId))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+
+        // Act
+        var result = await _controller.DeletePublisherAsync(publisherId);
+
+        // Assert
+        _publisherService.Verify();
+        Assert.IsType<NoContentResult>(result);
     }
 }

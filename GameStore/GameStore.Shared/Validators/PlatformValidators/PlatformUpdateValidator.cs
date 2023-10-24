@@ -5,9 +5,9 @@ using GameStore.Shared.DTOs.Platform;
 namespace GameStore.Shared.Validators.PlatformValidators;
 
 [ExcludeFromCodeCoverage]
-public class PlatformCreateValidator : AbstractValidator<PlatformCreateDto>
+public class PlatformUpdateValidator : AbstractValidator<PlatformUpdateDto>
 {
-    public PlatformCreateValidator()
+    public PlatformUpdateValidator()
     {
         RuleFor(p => p.Platform.Type)
             .NotEmpty()

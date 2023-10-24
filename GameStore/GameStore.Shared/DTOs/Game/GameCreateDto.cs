@@ -2,7 +2,7 @@
 
 public class GameCreateDto
 {
-    public GameInnerDto Game { get; set; }
+    public GameCreateInnerDto Game { get; set; }
 
     public string? Publisher { get; set; }
 

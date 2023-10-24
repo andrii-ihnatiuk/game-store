@@ -13,13 +13,16 @@ public class PublishersController : ControllerBase
 {
     private readonly IPublisherService _publisherService;
     private readonly IValidatorWrapper<PublisherCreateDto> _publisherCreateValidator;
+    private readonly IValidatorWrapper<PublisherUpdateDto> _publisherUpdateValidator;
 
     public PublishersController(
         IPublisherService publisherService,
-        IValidatorWrapper<PublisherCreateDto> publisherCreateValidator)
+        IValidatorWrapper<PublisherCreateDto> publisherCreateValidator,
+        IValidatorWrapper<PublisherUpdateDto> publisherUpdateValidator)
     {
         _publisherService = publisherService;
         _publisherCreateValidator = publisherCreateValidator;
+        _publisherUpdateValidator = publisherUpdateValidator;
     }
 
     [HttpGet("{companyName}", Name = "GetPublisherByName")]
@@ -49,5 +52,20 @@ public class PublishersController : ControllerBase
         _publisherCreateValidator.ValidateAndThrow(dto);
         var publisherBriefDto = await _publisherService.AddPublisherAsync(dto);
         return CreatedAtRoute("GetPublisherByName", new { CompanyName = publisherBriefDto.CompanyName }, publisherBriefDto);
+    }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdatePublisherAsync([FromBody] PublisherUpdateDto dto)
+    {
+        _publisherUpdateValidator.ValidateAndThrow(dto);
+        await _publisherService.UpdatePublisherAsync(dto);
+        return Ok();
+    }
+
+    [HttpDelete("remove/{id:guid}")]
+    public async Task<IActionResult> DeletePublisherAsync([FromRoute] Guid id)
+    {
+        await _publisherService.DeletePublisherAsync(id);
+        return NoContent();
     }
 }

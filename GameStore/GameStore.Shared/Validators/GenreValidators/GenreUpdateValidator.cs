@@ -5,9 +5,9 @@ using GameStore.Shared.DTOs.Genre;
 namespace GameStore.Shared.Validators.GenreValidators;
 
 [ExcludeFromCodeCoverage]
-public class GenreCreateValidator : AbstractValidator<GenreCreateDto>
+public class GenreUpdateValidator : AbstractValidator<GenreUpdateDto>
 {
-    public GenreCreateValidator()
+    public GenreUpdateValidator()
     {
         RuleFor(g => g.Genre.Name)
             .NotEmpty()

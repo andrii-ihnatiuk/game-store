@@ -2,5 +2,5 @@
 
 public class PublisherCreateDto
 {
-    public PublisherInnerDto Publisher { get; set; }
+    public PublisherCreateInnerDto Publisher { get; set; }
 }

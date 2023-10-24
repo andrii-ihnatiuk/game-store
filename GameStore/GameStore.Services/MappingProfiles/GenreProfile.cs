@@ -10,14 +10,27 @@ public class GenreProfile : Profile
 {
     public GenreProfile()
     {
-        CreateMap<GenreInnerDto, Genre>();
+        CreateMap<GenreCreateInnerDto, Genre>();
         CreateMap<GenreCreateDto, Genre>()
-            .IncludeMembers(g => g.Genre);
+            .IncludeMembers(g => g.Genre)
+            .ForMember(
+                dest => dest.ParentGenreId,
+                opts => opts.MapFrom(src => ConstructNullableGuidFromString(src.Genre.ParentGenreId)));
 
         CreateMap<Genre, GenreFullDto>();
 
         CreateMap<Genre, GenreBriefDto>();
 
-        CreateMap<GenreUpdateDto, Genre>();
+        CreateMap<GenreUpdateInnerDto, Genre>();
+        CreateMap<GenreUpdateDto, Genre>()
+            .IncludeMembers(g => g.Genre)
+            .ForMember(
+                dest => dest.ParentGenreId,
+                opts => opts.MapFrom(src => ConstructNullableGuidFromString(src.Genre.ParentGenreId)));
+    }
+
+    private static Guid? ConstructNullableGuidFromString(string? str)
+    {
+        return string.IsNullOrEmpty(str) ? null : new Guid(str);
     }
 }

@@ -14,11 +14,16 @@ public class GamesController : ControllerBase
 {
     private readonly IGameService _gameService;
     private readonly IValidatorWrapper<GameCreateDto> _gameCreateValidator;
+    private readonly IValidatorWrapper<GameUpdateDto> _gameUpdateValidator;
 
-    public GamesController(IGameService gameService, IValidatorWrapper<GameCreateDto> gameCreateValidator)
+    public GamesController(
+        IGameService gameService,
+        IValidatorWrapper<GameCreateDto> gameCreateValidator,
+        IValidatorWrapper<GameUpdateDto> gameUpdateValidator)
     {
         _gameService = gameService;
         _gameCreateValidator = gameCreateValidator;
+        _gameUpdateValidator = gameUpdateValidator;
     }
 
     [HttpGet("{gameAlias}", Name = "GetGameByAlias")]
@@ -78,14 +83,15 @@ public class GamesController : ControllerBase
     [HttpPut("update")]
     public async Task<IActionResult> UpdateGameAsync([FromBody] GameUpdateDto dto)
     {
+        _gameUpdateValidator.ValidateAndThrow(dto);
         await _gameService.UpdateGameAsync(dto);
         return Ok();
     }
 
-    [HttpDelete("remove")]
-    public async Task<IActionResult> DeleteGameAsync([FromQuery] Guid gameId)
+    [HttpDelete("remove/{alias}")]
+    public async Task<IActionResult> DeleteGameAsync([FromRoute] string alias)
     {
-        await _gameService.DeleteGameAsync(gameId);
+        await _gameService.DeleteGameAsync(alias);
         return NoContent();
     }
 }
