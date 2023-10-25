@@ -13,4 +13,8 @@ public interface IOrderService
     Task<OrderBriefDto> GetOrderByIdAsync(Guid orderId);
 
     Task<IList<OrderDetailDto>> GetOrderDetailsAsync(Guid orderId);
+
+    Task<IList<PaymentMethodDto>> GetAvailablePaymentMethodsAsync();
+
+    Task DeleteGameFromCartAsync(Guid customerId, string gameAlias);
 }

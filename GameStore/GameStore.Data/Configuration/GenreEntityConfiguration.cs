@@ -12,10 +12,6 @@ internal class GenreEntityConfiguration : IEntityTypeConfiguration<Genre>
     {
         builder.HasKey(gnr => gnr.Id);
 
-        builder
-            .Property(gnr => gnr.Id)
-            .ValueGeneratedOnAdd();
-
         builder.HasIndex(gnr => gnr.Name).IsUnique(true);
 
         builder

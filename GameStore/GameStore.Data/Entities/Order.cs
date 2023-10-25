@@ -12,5 +12,9 @@ public class Order
 
     public decimal Sum { get; set; }
 
+    public Guid? PaymentMethodId { get; set; }
+
+    public PaymentMethod? PaymentMethod { get; set; }
+
     public IList<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 }

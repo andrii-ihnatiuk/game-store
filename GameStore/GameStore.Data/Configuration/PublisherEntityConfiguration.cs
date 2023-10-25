@@ -13,9 +13,6 @@ public class PublisherEntityConfiguration : IEntityTypeConfiguration<Publisher>
         builder.HasKey(p => p.Id);
         builder.HasIndex(p => p.CompanyName).IsUnique(true);
 
-        builder.Property(p => p.Id)
-            .ValueGeneratedOnAdd();
-
         builder
             .HasMany(p => p.Games)
             .WithOne(g => g.Publisher)

@@ -6,12 +6,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace GameStore.Data.Configuration;
 
 [ExcludeFromCodeCoverage]
-internal class PlatformEntityConfiguration : IEntityTypeConfiguration<Platform>
+public class PaymentMethodEntityConfiguration : IEntityTypeConfiguration<PaymentMethod>
 {
-    public void Configure(EntityTypeBuilder<Platform> builder)
+    public void Configure(EntityTypeBuilder<PaymentMethod> builder)
     {
-        builder.HasKey(p => p.Id);
+        builder.HasKey(m => m.Id);
 
-        builder.HasIndex(p => p.Type).IsUnique(true);
+        builder.HasIndex(m => m.Title).IsUnique(true);
     }
 }

@@ -37,9 +37,9 @@
   "orderApiUrl": "orders/{id}",
   "ordersApiUrl": "orders",
   "orderDetailsApiUrl": "orders/{id}/details",
-  "buyGameApiUrl": "game/{key}/buy",
-  "cancelGameBuyApiUrl": "",
+  "buyGameApiUrl": "cart/buy/{key}",
+  "cancelGameBuyApiUrl": "cart/remove/{key}/",
   "basketApiUrl": "cart",
-  "makeOrderInfoApiUrl": "",
+  "makeOrderInfoApiUrl": "payment/methods",
   "payApiUrl": ""
 }
