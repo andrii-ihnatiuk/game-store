@@ -20,5 +20,7 @@ public interface IUnitOfWork : IDisposable
 
     IGenericRepository<OrderDetail> OrderDetails { get; }
 
+    IGenericRepository<PaymentMethod> PaymentMethods { get; }
+
     Task<int> SaveAsync();
 }

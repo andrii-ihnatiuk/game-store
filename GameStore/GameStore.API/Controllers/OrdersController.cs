@@ -17,8 +17,8 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
-    [Route("/game/{gameAlias}/buy")]
-    public async Task<IActionResult> AddGameToCart(string gameAlias)
+    [Route("/cart/buy/{gameAlias}")]
+    public async Task<IActionResult> AddGameToCartAsync(string gameAlias)
     {
         await _orderService.AddGameToCartAsync(CustomerId, gameAlias);
         return Ok();
@@ -47,5 +47,21 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<IList<OrderDetailDto>>> GetOrderDetailsAsync(Guid orderId)
     {
         return Ok(await _orderService.GetOrderDetailsAsync(orderId));
+    }
+
+    [HttpGet]
+    [Route("/payment/methods")]
+    public async Task<ActionResult<PaymentMethodListDto>> GetAvailablePaymentMethodsAsync()
+    {
+        var paymentMethodsDto = await _orderService.GetAvailablePaymentMethodsAsync();
+        return Ok(new PaymentMethodListDto { PaymentMethods = paymentMethodsDto });
+    }
+
+    [HttpDelete]
+    [Route("/cart/remove/{gameAlias}")]
+    public async Task<IActionResult> DeleteGameFromCartAsync(string gameAlias)
+    {
+        await _orderService.DeleteGameFromCartAsync(CustomerId, gameAlias);
+        return NoContent();
     }
 }

@@ -69,7 +69,7 @@ namespace GameStore.Data.Migrations
                             Discontinued = false,
                             Name = "The Legend of Zelda: Breath of the Wild",
                             Price = 1500.2m,
-                            PublisherId = new Guid("3f8fc430-d0a5-4779-a3a4-5e0add54fde6"),
+                            PublisherId = new Guid("defd4ed1-a967-48af-83fb-4e5ffee412b0"),
                             UnitInStock = (short)50
                         },
                         new
@@ -80,8 +80,41 @@ namespace GameStore.Data.Migrations
                             Discontinued = true,
                             Name = "Grand Theft Auto V",
                             Price = 500m,
-                            PublisherId = new Guid("08029ea0-8bd8-494c-b3c5-b65a61538f81"),
+                            PublisherId = new Guid("ec62c5de-e415-4e74-bc75-3a7606563c78"),
                             UnitInStock = (short)32
+                        },
+                        new
+                        {
+                            Id = new Guid("e2e928c4-ab49-4bc0-a904-37c34e1385cc"),
+                            Alias = "overwatch-2",
+                            Description = "Overwatch 2 is a free-to-play, team-based action game.",
+                            Discontinued = false,
+                            Name = "Overwatch 2",
+                            Price = 1200m,
+                            PublisherId = new Guid("3f8fc430-d0a5-4779-a3a4-5e0add54fde6"),
+                            UnitInStock = (short)20
+                        },
+                        new
+                        {
+                            Id = new Guid("4b5f1e22-cd59-4523-a4e9-f0c0239ab820"),
+                            Alias = "hearthstone",
+                            Description = "Hearthstone is a fast-paced strategy card game from Blizzard Entertainment.",
+                            Discontinued = false,
+                            Name = "Hearthstone",
+                            Price = 800m,
+                            PublisherId = new Guid("3f8fc430-d0a5-4779-a3a4-5e0add54fde6"),
+                            UnitInStock = (short)45
+                        },
+                        new
+                        {
+                            Id = new Guid("352997f0-9cb6-4951-8b55-10df09d2e168"),
+                            Alias = "star-wars-jedi",
+                            Description = "A 3rd person action-adventure title from Respawn.",
+                            Discontinued = false,
+                            Name = "Star Wars Jedi: Fallen Order",
+                            Price = 1400m,
+                            PublisherId = new Guid("08029ea0-8bd8-494c-b3c5-b65a61538f81"),
+                            UnitInStock = (short)34
                         });
                 });
 
@@ -114,6 +147,36 @@ namespace GameStore.Data.Migrations
                         {
                             GameId = new Guid("95ffb14c-267a-432a-9d7c-22f887290d49"),
                             GenreId = new Guid("e96511b9-e864-44cc-899f-8313609ffb63")
+                        },
+                        new
+                        {
+                            GameId = new Guid("e2e928c4-ab49-4bc0-a904-37c34e1385cc"),
+                            GenreId = new Guid("e96511b9-e864-44cc-899f-8313609ffb63")
+                        },
+                        new
+                        {
+                            GameId = new Guid("e2e928c4-ab49-4bc0-a904-37c34e1385cc"),
+                            GenreId = new Guid("f82e27c8-760e-4cb8-866f-60bb33caeaac")
+                        },
+                        new
+                        {
+                            GameId = new Guid("4b5f1e22-cd59-4523-a4e9-f0c0239ab820"),
+                            GenreId = new Guid("073f790e-a105-491d-965c-946e841c3b3e")
+                        },
+                        new
+                        {
+                            GameId = new Guid("4b5f1e22-cd59-4523-a4e9-f0c0239ab820"),
+                            GenreId = new Guid("d9eaef23-9680-4d25-869b-4ed91847fd03")
+                        },
+                        new
+                        {
+                            GameId = new Guid("352997f0-9cb6-4951-8b55-10df09d2e168"),
+                            GenreId = new Guid("e96511b9-e864-44cc-899f-8313609ffb63")
+                        },
+                        new
+                        {
+                            GameId = new Guid("352997f0-9cb6-4951-8b55-10df09d2e168"),
+                            GenreId = new Guid("dd2bf352-9cfd-4b88-b46f-08217104f90d")
                         });
                 });
 
@@ -145,6 +208,46 @@ namespace GameStore.Data.Migrations
                         new
                         {
                             GameId = new Guid("95ffb14c-267a-432a-9d7c-22f887290d49"),
+                            PlatformId = new Guid("83262eb9-517e-4581-b7ba-88b57c33d721")
+                        },
+                        new
+                        {
+                            GameId = new Guid("e2e928c4-ab49-4bc0-a904-37c34e1385cc"),
+                            PlatformId = new Guid("4adb2c38-f819-43cd-aa78-f46d482ceeb7")
+                        },
+                        new
+                        {
+                            GameId = new Guid("e2e928c4-ab49-4bc0-a904-37c34e1385cc"),
+                            PlatformId = new Guid("83262eb9-517e-4581-b7ba-88b57c33d721")
+                        },
+                        new
+                        {
+                            GameId = new Guid("4b5f1e22-cd59-4523-a4e9-f0c0239ab820"),
+                            PlatformId = new Guid("a9f806b4-28c5-4d7b-a776-65dfe029de8f")
+                        },
+                        new
+                        {
+                            GameId = new Guid("4b5f1e22-cd59-4523-a4e9-f0c0239ab820"),
+                            PlatformId = new Guid("467762c6-8a10-4570-b829-e29de78a0757")
+                        },
+                        new
+                        {
+                            GameId = new Guid("4b5f1e22-cd59-4523-a4e9-f0c0239ab820"),
+                            PlatformId = new Guid("4adb2c38-f819-43cd-aa78-f46d482ceeb7")
+                        },
+                        new
+                        {
+                            GameId = new Guid("352997f0-9cb6-4951-8b55-10df09d2e168"),
+                            PlatformId = new Guid("467762c6-8a10-4570-b829-e29de78a0757")
+                        },
+                        new
+                        {
+                            GameId = new Guid("352997f0-9cb6-4951-8b55-10df09d2e168"),
+                            PlatformId = new Guid("4adb2c38-f819-43cd-aa78-f46d482ceeb7")
+                        },
+                        new
+                        {
+                            GameId = new Guid("352997f0-9cb6-4951-8b55-10df09d2e168"),
                             PlatformId = new Guid("83262eb9-517e-4581-b7ba-88b57c33d721")
                         });
                 });
@@ -277,10 +380,15 @@ namespace GameStore.Data.Migrations
                     b.Property<DateTime?>("PaidDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("PaymentMethodId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("Sum")
                         .HasColumnType("money");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PaymentMethodId");
 
                     b.ToTable("Order");
                 });
@@ -322,6 +430,55 @@ namespace GameStore.Data.Migrations
                     b.ToTable("OrderDetail");
                 });
 
+            modelBuilder.Entity("GameStore.Data.Entities.PaymentMethod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
+
+                    b.ToTable("PaymentMethod");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("77301abc-0738-4540-aa3a-19db9f6bc2dc"),
+                            Description = "Use a bank of your choice to make payments!",
+                            ImageUrl = "https://static.vecteezy.com/system/resources/thumbnails/000/594/232/small/B001.jpg",
+                            Title = "Bank"
+                        },
+                        new
+                        {
+                            Id = new Guid("32bda162-d288-4a60-a684-9bd7caf61951"),
+                            Description = "Simply pay with IBox!",
+                            ImageUrl = "https://logowik.com/content/uploads/images/ibox9043.logowik.com.webp",
+                            Title = "IBox terminal"
+                        },
+                        new
+                        {
+                            Id = new Guid("d84def54-1f51-4f1d-aedc-fc1d18b4fa12"),
+                            Description = "Pay with your favourite card!",
+                            ImageUrl = "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0013/4323/brand.gif?itok=fSmoZrGH",
+                            Title = "Visa"
+                        });
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Platform", b =>
                 {
                     b.Property<Guid>("Id")
@@ -348,7 +505,7 @@ namespace GameStore.Data.Migrations
                         new
                         {
                             Id = new Guid("467762c6-8a10-4570-b829-e29de78a0757"),
-                            Type = "browser"
+                            Type = "cloud"
                         },
                         new
                         {
@@ -408,6 +565,20 @@ namespace GameStore.Data.Migrations
                             CompanyName = "Ubisoft",
                             Description = "Ubisoft Entertainment SA is a French video game company headquartered in Montreal.",
                             HomePage = "https://www.ubisoft.com/"
+                        },
+                        new
+                        {
+                            Id = new Guid("defd4ed1-a967-48af-83fb-4e5ffee412b0"),
+                            CompanyName = "Nintendo",
+                            Description = "Nintendo Co., Ltd.[b] is a Japanese multinational video game company headquartered in Kyoto.",
+                            HomePage = "https://www.nintendo.com/"
+                        },
+                        new
+                        {
+                            Id = new Guid("ec62c5de-e415-4e74-bc75-3a7606563c78"),
+                            CompanyName = "Rockstar Games",
+                            Description = "Rockstar Games, Inc. is an American video game publisher based in New York City.",
+                            HomePage = "https://www.rockstargames.com/"
                         });
                 });
 
@@ -464,6 +635,15 @@ namespace GameStore.Data.Migrations
                     b.HasOne("GameStore.Data.Entities.Genre", null)
                         .WithMany("SubGenres")
                         .HasForeignKey("ParentGenreId");
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Order", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId");
+
+                    b.Navigation("PaymentMethod");
                 });
 
             modelBuilder.Entity("GameStore.Data.Entities.OrderDetail", b =>

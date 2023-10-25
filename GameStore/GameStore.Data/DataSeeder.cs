@@ -10,6 +10,9 @@ internal static class DataSeeder
 {
     private static readonly Guid GameId1 = new("8e9d1000-50e0-4bd8-8159-42c7431f32b5");
     private static readonly Guid GameId2 = new("95ffb14c-267a-432a-9d7c-22f887290d49");
+    private static readonly Guid GameId3 = new("e2e928c4-ab49-4bc0-a904-37c34e1385cc");
+    private static readonly Guid GameId4 = new("4b5f1e22-cd59-4523-a4e9-f0c0239ab820");
+    private static readonly Guid GameId5 = new("352997f0-9cb6-4951-8b55-10df09d2e168");
 
     private static readonly Guid GenreId1 = new("073F790E-A105-491D-965C-946E841C3B3E");
     private static readonly Guid GenreId2 = new("04B04522-E758-4F8C-B58F-F59DD8DE54B5");
@@ -36,6 +39,12 @@ internal static class DataSeeder
     private static readonly Guid PublisherId1 = new("3f8fc430-d0a5-4779-a3a4-5e0add54fde6");
     private static readonly Guid PublisherId2 = new("08029ea0-8bd8-494c-b3c5-b65a61538f81");
     private static readonly Guid PublisherId3 = new("97fd0c5c-0504-4687-9a36-a65e699ca393");
+    private static readonly Guid PublisherId4 = new("defd4ed1-a967-48af-83fb-4e5ffee412b0");
+    private static readonly Guid PublisherId5 = new("ec62c5de-e415-4e74-bc75-3a7606563c78");
+
+    private static readonly Guid PaymentMethodId1 = new("77301abc-0738-4540-aa3a-19db9f6bc2dc");
+    private static readonly Guid PaymentMethodId2 = new("32bda162-d288-4a60-a684-9bd7caf61951");
+    private static readonly Guid PaymentMethodId3 = new("d84def54-1f51-4f1d-aedc-fc1d18b4fa12");
 
     public static void SeedData(this ModelBuilder modelBuilder)
     {
@@ -43,6 +52,7 @@ internal static class DataSeeder
         SeedPlatforms(modelBuilder.Entity<Platform>());
         SeedPublishers(modelBuilder.Entity<Publisher>());
         SeedGamesContainingGenresAndPlatformsAndPublishers(modelBuilder);
+        SeedPaymentMethods(modelBuilder.Entity<PaymentMethod>());
     }
 
     private static void SeedGamesContainingGenresAndPlatformsAndPublishers(ModelBuilder builder)
@@ -57,7 +67,7 @@ internal static class DataSeeder
                 Discontinued = false,
                 UnitInStock = 50,
                 Price = 1500.2M,
-                PublisherId = PublisherId1,
+                PublisherId = PublisherId4,
             },
             new Game()
             {
@@ -68,18 +78,65 @@ internal static class DataSeeder
                 Discontinued = true,
                 UnitInStock = 32,
                 Price = 500M,
+                PublisherId = PublisherId5,
+            },
+            new Game()
+            {
+                Id = GameId3,
+                Alias = "overwatch-2",
+                Name = "Overwatch 2",
+                Description = "Overwatch 2 is a free-to-play, team-based action game.",
+                Discontinued = false,
+                UnitInStock = 20,
+                Price = 1200M,
+                PublisherId = PublisherId1,
+            },
+            new Game()
+            {
+                Id = GameId4,
+                Alias = "hearthstone",
+                Name = "Hearthstone",
+                Description = "Hearthstone is a fast-paced strategy card game from Blizzard Entertainment.",
+                Discontinued = false,
+                UnitInStock = 45,
+                Price = 800M,
+                PublisherId = PublisherId1,
+            },
+            new Game()
+            {
+                Id = GameId5,
+                Alias = "star-wars-jedi",
+                Name = "Star Wars Jedi: Fallen Order",
+                Description = "A 3rd person action-adventure title from Respawn.",
+                Discontinued = false,
+                UnitInStock = 34,
+                Price = 1400M,
                 PublisherId = PublisherId2,
             });
 
         builder.Entity<GameGenre>().HasData(
             new GameGenre() { GameId = GameId1, GenreId = GenreId14 },
             new GameGenre() { GameId = GameId1, GenreId = GenreId11 },
-            new GameGenre() { GameId = GameId2, GenreId = GenreId11 });
+            new GameGenre() { GameId = GameId2, GenreId = GenreId11 },
+            new GameGenre() { GameId = GameId3, GenreId = GenreId11 },
+            new GameGenre() { GameId = GameId3, GenreId = GenreId12 },
+            new GameGenre() { GameId = GameId4, GenreId = GenreId1 },
+            new GameGenre() { GameId = GameId4, GenreId = GenreId15 },
+            new GameGenre() { GameId = GameId5, GenreId = GenreId11 },
+            new GameGenre() { GameId = GameId5, GenreId = GenreId14 });
 
         builder.Entity<GamePlatform>().HasData(
             new GamePlatform() { GameId = GameId1, PlatformId = PlatformId4 },
             new GamePlatform() { GameId = GameId2, PlatformId = PlatformId3 },
-            new GamePlatform() { GameId = GameId2, PlatformId = PlatformId4 });
+            new GamePlatform() { GameId = GameId2, PlatformId = PlatformId4 },
+            new GamePlatform() { GameId = GameId3, PlatformId = PlatformId3 },
+            new GamePlatform() { GameId = GameId3, PlatformId = PlatformId4 },
+            new GamePlatform() { GameId = GameId4, PlatformId = PlatformId1 },
+            new GamePlatform() { GameId = GameId4, PlatformId = PlatformId2 },
+            new GamePlatform() { GameId = GameId4, PlatformId = PlatformId3 },
+            new GamePlatform() { GameId = GameId5, PlatformId = PlatformId2 },
+            new GamePlatform() { GameId = GameId5, PlatformId = PlatformId3 },
+            new GamePlatform() { GameId = GameId5, PlatformId = PlatformId4 });
     }
 
     private static void SeedGenres(EntityTypeBuilder<Genre> builder)
@@ -107,7 +164,7 @@ internal static class DataSeeder
     {
         builder.HasData(
             new Platform { Id = PlatformId1, Type = "mobile" },
-            new Platform { Id = PlatformId2, Type = "browser" },
+            new Platform { Id = PlatformId2, Type = "cloud" },
             new Platform { Id = PlatformId3, Type = "desktop" },
             new Platform { Id = PlatformId4, Type = "console" });
     }
@@ -115,8 +172,18 @@ internal static class DataSeeder
     private static void SeedPublishers(EntityTypeBuilder<Publisher> builder)
     {
         builder.HasData(
-            new Publisher() { Id = PublisherId1, CompanyName = "Activision", Description = "Activision Publishing, Inc. is an American video game publisher based in Santa Monica, California.", HomePage = "https://www.activision.com/" },
+            new Publisher { Id = PublisherId1, CompanyName = "Activision", Description = "Activision Publishing, Inc. is an American video game publisher based in Santa Monica, California.", HomePage = "https://www.activision.com/" },
             new Publisher { Id = PublisherId2, CompanyName = "Electronic Arts", Description = "Electronic Arts Inc. is a global leader in digital interactive entertainment.", HomePage = "https://www.ea.com/" },
-            new Publisher { Id = PublisherId3, CompanyName = "Ubisoft", Description = "Ubisoft Entertainment SA is a French video game company headquartered in Montreal.", HomePage = "https://www.ubisoft.com/", });
+            new Publisher { Id = PublisherId3, CompanyName = "Ubisoft", Description = "Ubisoft Entertainment SA is a French video game company headquartered in Montreal.", HomePage = "https://www.ubisoft.com/", },
+            new Publisher { Id = PublisherId4, CompanyName = "Nintendo", Description = "Nintendo Co., Ltd.[b] is a Japanese multinational video game company headquartered in Kyoto.", HomePage = "https://www.nintendo.com/", },
+            new Publisher { Id = PublisherId5, CompanyName = "Rockstar Games", Description = "Rockstar Games, Inc. is an American video game publisher based in New York City.", HomePage = "https://www.rockstargames.com/", });
+    }
+
+    private static void SeedPaymentMethods(EntityTypeBuilder<PaymentMethod> builder)
+    {
+        builder.HasData(
+            new PaymentMethod { Id = PaymentMethodId1, Title = "Bank", Description = "Use a bank of your choice to make payments!", ImageUrl = "https://static.vecteezy.com/system/resources/thumbnails/000/594/232/small/B001.jpg" },
+            new PaymentMethod { Id = PaymentMethodId2, Title = "IBox terminal", Description = "Simply pay with IBox!", ImageUrl = "https://logowik.com/content/uploads/images/ibox9043.logowik.com.webp" },
+            new PaymentMethod { Id = PaymentMethodId3, Title = "Visa", Description = "Pay with your favourite card!", ImageUrl = "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0013/4323/brand.gif?itok=fSmoZrGH" });
     }
 }

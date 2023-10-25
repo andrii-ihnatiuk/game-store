@@ -12,14 +12,16 @@ public class OrderEntityConfiguration : IEntityTypeConfiguration<Order>
     {
         builder.HasKey(o => o.Id);
 
-        builder.Property(o => o.Id)
-            .ValueGeneratedOnAdd();
-
         builder.Property(o => o.Sum)
             .HasColumnType("money");
 
         builder.HasMany(o => o.OrderDetails)
             .WithOne(od => od.Order)
             .HasForeignKey(od => od.OrderId);
+
+        builder.HasOne(o => o.PaymentMethod)
+            .WithMany()
+            .HasForeignKey(o => o.PaymentMethodId)
+            .IsRequired(false);
     }
 }

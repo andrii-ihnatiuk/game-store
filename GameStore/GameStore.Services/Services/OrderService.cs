@@ -22,7 +22,7 @@ public class OrderService : IOrderService
     public async Task AddGameToCartAsync(Guid customerId, string gameAlias)
     {
         var order = await GetExistingOrderOrCreateNewAsync(customerId);
-        await AddGameToOrderOrIncrementQuantity(order, gameAlias);
+        await AddGameToOrderOrIncrementQuantityAsync(order, gameAlias);
         await _unitOfWork.SaveAsync();
     }
 
@@ -52,6 +52,21 @@ public class OrderService : IOrderService
         return _mapper.Map<IList<OrderDetailDto>>(order.OrderDetails);
     }
 
+    public async Task<IList<PaymentMethodDto>> GetAvailablePaymentMethodsAsync()
+    {
+        var methods = await _unitOfWork.PaymentMethods.GetAsync();
+        return _mapper.Map<IList<PaymentMethodDto>>(methods);
+    }
+
+    public async Task DeleteGameFromCartAsync(Guid customerId, string gameAlias)
+    {
+        var orderDetail = await _unitOfWork.OrderDetails.GetOneAsync(
+            predicate: d => d.Order.CustomerId == customerId && d.Product.Alias == gameAlias,
+            noTracking: false);
+        await DeleteOrderDetailOrDecrementQuantityAsync(orderDetail);
+        await _unitOfWork.SaveAsync();
+    }
+
     private async Task<Order> GetExistingOrderOrCreateNewAsync(Guid customerId, bool noTracking = false)
     {
         Order order;
@@ -78,7 +93,7 @@ public class OrderService : IOrderService
         return order;
     }
 
-    private async Task AddGameToOrderOrIncrementQuantity(Order order, string gameAlias)
+    private async Task AddGameToOrderOrIncrementQuantityAsync(Order order, string gameAlias)
     {
         var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == gameAlias);
         var orderDetail = order.OrderDetails.FirstOrDefault(od => od.ProductId == game.Id);
@@ -101,5 +116,17 @@ public class OrderService : IOrderService
         }
 
         order.Sum = order.OrderDetails.Select(d => d.Price * d.Quantity).Sum();
+    }
+
+    private async Task DeleteOrderDetailOrDecrementQuantityAsync(OrderDetail orderDetail)
+    {
+        if (orderDetail.Quantity > 1)
+        {
+            orderDetail.Quantity -= 1;
+        }
+        else
+        {
+            await _unitOfWork.OrderDetails.DeleteAsync(orderDetail.Id);
+        }
     }
 }

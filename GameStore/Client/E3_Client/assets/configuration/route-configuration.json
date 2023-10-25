@@ -26,5 +26,5 @@
   "Order": "order",
   "Orders": "orders",
   "Basket": "basket",
-  "MakeOrder": ""
+  "MakeOrder": "payment"
 }
