@@ -26,8 +26,26 @@ public class OrdersController : ControllerBase
 
     [HttpGet]
     [Route("/cart")]
-    public async Task<ActionResult<IList<CartItemDto>>> GetCustomerCart()
+    public async Task<ActionResult<IList<OrderDetailDto>>> GetCartByCustomerAsync()
     {
         return Ok(await _orderService.GetCartByCustomerAsync(CustomerId));
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<OrderBriefDto>> GetPaidOrdersByCustomerAsync()
+    {
+        return Ok(await _orderService.GetPaidOrdersByCustomerAsync(CustomerId));
+    }
+
+    [HttpGet("{orderId:guid}")]
+    public async Task<ActionResult<OrderBriefDto>> GetOrderByIdAsync(Guid orderId)
+    {
+        return Ok(await _orderService.GetOrderByIdAsync(orderId));
+    }
+
+    [HttpGet("{orderId:guid}/details")]
+    public async Task<ActionResult<IList<OrderDetailDto>>> GetOrderDetailsAsync(Guid orderId)
+    {
+        return Ok(await _orderService.GetOrderDetailsAsync(orderId));
     }
 }

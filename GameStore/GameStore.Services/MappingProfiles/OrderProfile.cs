@@ -10,6 +10,8 @@ public class OrderProfile : Profile
 {
     public OrderProfile()
     {
-        CreateMap<OrderDetail, CartItemDto>();
+        CreateMap<OrderDetail, OrderDetailDto>();
+
+        CreateMap<Order, OrderBriefDto>();
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace GameStore.Shared.DTOs.Order;
 
-public class CartItemDto
+public class OrderDetailDto
 {
     public Guid Id { get; set; }
 

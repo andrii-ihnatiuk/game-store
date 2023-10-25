@@ -34,9 +34,9 @@
   "addPublisherApiUrl": "publishers/new",
   "deletePublisherApiUrl": "publishers/remove/{id}",
 
-  "orderApiUrl": "",
-  "ordersApiUrl": "",
-  "orderDetailsApiUrl": "",
+  "orderApiUrl": "orders/{id}",
+  "ordersApiUrl": "orders",
+  "orderDetailsApiUrl": "orders/{id}/details",
   "buyGameApiUrl": "game/{key}/buy",
   "cancelGameBuyApiUrl": "",
   "basketApiUrl": "cart",
