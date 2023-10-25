@@ -17,13 +17,10 @@ public class OrderDetailEntityConfiguration : IEntityTypeConfiguration<OrderDeta
 
         builder.HasOne(od => od.Product)
             .WithMany()
-            .HasForeignKey(od => od.ProductId)
-            .IsRequired(false)
-            .OnDelete(DeleteBehavior.SetNull);
+            .HasForeignKey(od => od.ProductId);
 
         builder.HasOne(od => od.Order)
             .WithMany(o => o.OrderDetails)
-            .HasForeignKey(od => od.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(od => od.OrderId);
     }
 }

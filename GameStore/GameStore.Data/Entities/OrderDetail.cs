@@ -14,7 +14,7 @@ public class OrderDetail
 
     public DateTime CreationDate { get; set; }
 
-    public Guid? ProductId { get; set; }
+    public Guid ProductId { get; set; }
 
     public Guid OrderId { get; set; }
 

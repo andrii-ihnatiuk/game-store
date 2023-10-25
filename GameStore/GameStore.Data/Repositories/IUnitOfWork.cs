@@ -16,5 +16,9 @@ public interface IUnitOfWork : IDisposable
 
     IGenericRepository<GamePlatform> GamesPlatforms { get; }
 
+    IGenericRepository<Order> Orders { get; }
+
+    IGenericRepository<OrderDetail> OrderDetails { get; }
+
     Task<int> SaveAsync();
 }

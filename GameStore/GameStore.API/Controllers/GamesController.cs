@@ -27,9 +27,16 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("{gameAlias}", Name = "GetGameByAlias")]
-    public async Task<IActionResult> GetGameAsync([FromRoute] string gameAlias)
+    public async Task<IActionResult> GetGameByAliasAsync([FromRoute] string gameAlias)
     {
         var gameFullDto = await _gameService.GetGameByAliasAsync(gameAlias);
+        return Ok(gameFullDto);
+    }
+
+    [HttpGet("id/{id:guid}")]
+    public async Task<IActionResult> GetGameByIdAsync([FromRoute] Guid id)
+    {
+        var gameFullDto = await _gameService.GetGameByIdAsync(id);
         return Ok(gameFullDto);
     }
 
