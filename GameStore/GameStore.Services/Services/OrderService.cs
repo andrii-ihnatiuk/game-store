@@ -26,10 +26,30 @@ public class OrderService : IOrderService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task<IList<CartItemDto>> GetCartByCustomerAsync(Guid customerId)
+    public async Task<IList<OrderDetailDto>> GetCartByCustomerAsync(Guid customerId)
     {
         var order = await GetExistingOrderOrCreateNewAsync(customerId, noTracking: true);
-        return _mapper.Map<IList<CartItemDto>>(order.OrderDetails);
+        return _mapper.Map<IList<OrderDetailDto>>(order.OrderDetails);
+    }
+
+    public async Task<IList<OrderBriefDto>> GetPaidOrdersByCustomerAsync(Guid customerId)
+    {
+        var paidOrders = await _unitOfWork.Orders.GetAsync(o => o.CustomerId == customerId && o.PaidDate != null);
+        return _mapper.Map<IList<OrderBriefDto>>(paidOrders);
+    }
+
+    public async Task<OrderBriefDto> GetOrderByIdAsync(Guid orderId)
+    {
+        var order = await _unitOfWork.Orders.GetByIdAsync(orderId);
+        return _mapper.Map<OrderBriefDto>(order);
+    }
+
+    public async Task<IList<OrderDetailDto>> GetOrderDetailsAsync(Guid orderId)
+    {
+        var order = await _unitOfWork.Orders.GetOneAsync(
+            predicate: o => o.Id == orderId,
+            include: q => q.Include(o => o.OrderDetails));
+        return _mapper.Map<IList<OrderDetailDto>>(order.OrderDetails);
     }
 
     private async Task<Order> GetExistingOrderOrCreateNewAsync(Guid customerId, bool noTracking = false)
