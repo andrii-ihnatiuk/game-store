@@ -29,6 +29,12 @@ public class GameService : IGameService
         return _mapper.Map<Game, GameFullDto>(game);
     }
 
+    public async Task<GameFullDto> GetGameByIdAsync(Guid id)
+    {
+        var game = await _unitOfWork.Games.GetOneAsync(g => g.Id == id);
+        return _mapper.Map<Game, GameFullDto>(game);
+    }
+
     public async Task<IList<GenreBriefDto>> GetGenresByGameAliasAsync(string alias)
     {
         var genresByGame = (await _unitOfWork.GamesGenres.GetAsync(

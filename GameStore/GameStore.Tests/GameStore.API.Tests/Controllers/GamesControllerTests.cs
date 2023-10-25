@@ -32,7 +32,7 @@ public class GamesControllerTests
             .Verifiable();
 
         // Act
-        var result = await _controller.GetGameAsync(gameAlias);
+        var result = await _controller.GetGameByAliasAsync(gameAlias);
 
         // Assert
         _gameService.Verify();

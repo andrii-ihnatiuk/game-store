@@ -9,6 +9,8 @@ public interface IGameService
 {
     Task<GameFullDto> GetGameByAliasAsync(string alias);
 
+    Task<GameFullDto> GetGameByIdAsync(Guid id);
+
     Task<IList<GenreBriefDto>> GetGenresByGameAliasAsync(string alias);
 
     Task<IList<PlatformBriefDto>> GetPlatformsByGameAliasAsync(string alias);

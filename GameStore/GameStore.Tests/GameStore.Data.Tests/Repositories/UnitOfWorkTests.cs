@@ -12,8 +12,10 @@ public class UnitOfWorkTests : IDisposable
     private readonly Mock<IGenericRepository<Genre>> _genreRepoMock = new();
     private readonly Mock<IGenericRepository<Platform>> _platformRepoMock = new();
     private readonly Mock<IGenericRepository<Publisher>> _publisherRepoMock = new();
-    private readonly Mock<IGenericRepository<GameGenre>> _gamesGenresMock = new();
-    private readonly Mock<IGenericRepository<GamePlatform>> _gamesPlatformsMock = new();
+    private readonly Mock<IGenericRepository<GameGenre>> _gamesGenresRepoMock = new();
+    private readonly Mock<IGenericRepository<GamePlatform>> _gamesPlatformsRepoMock = new();
+    private readonly Mock<IGenericRepository<Order>> _ordersRepoMock = new();
+    private readonly Mock<IGenericRepository<OrderDetail>> _orderDetailsRepoMock = new();
     private readonly GameStoreDbContext _context;
     private readonly UnitOfWork _unitOfWork;
 
@@ -26,8 +28,10 @@ public class UnitOfWorkTests : IDisposable
             _genreRepoMock.Object,
             _platformRepoMock.Object,
             _publisherRepoMock.Object,
-            _gamesGenresMock.Object,
-            _gamesPlatformsMock.Object);
+            _gamesGenresRepoMock.Object,
+            _gamesPlatformsRepoMock.Object,
+            _ordersRepoMock.Object,
+            _orderDetailsRepoMock.Object);
     }
 
     [Fact]

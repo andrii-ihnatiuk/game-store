@@ -35,6 +35,7 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IGenreService, GenreService>();
         serviceCollection.AddScoped<IPlatformService, PlatformService>();
         serviceCollection.AddScoped<IPublisherService, PublisherService>();
+        serviceCollection.AddScoped<IOrderService, OrderService>();
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
 
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());

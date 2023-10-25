@@ -2,7 +2,7 @@
   "baseApiUrl": "https://localhost:7250/",
 
   "gameApiUrl": "games/{key}",
-  "gameByIdApiUrl": "games/{id}",
+  "gameByIdApiUrl": "games/id/{id}",
   "gamesApiUrl": "games",
   "gamesByGenreApiUrl": "genres/{id}/games",
   "gamesByPublisherApiUrl": "publishers/{id}/games",
@@ -37,9 +37,9 @@
   "orderApiUrl": "",
   "ordersApiUrl": "",
   "orderDetailsApiUrl": "",
-  "buyGameApiUrl": "",
+  "buyGameApiUrl": "game/{key}/buy",
   "cancelGameBuyApiUrl": "",
-  "basketApiUrl": "",
+  "basketApiUrl": "cart",
   "makeOrderInfoApiUrl": "",
   "payApiUrl": ""
 }
