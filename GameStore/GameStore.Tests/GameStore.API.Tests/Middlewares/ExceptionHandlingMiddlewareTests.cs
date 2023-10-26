@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using GameStore.API.Middlewares;
-using GameStore.API.Models;
 using GameStore.Data.Exceptions;
+using GameStore.Services.Models;
 using GameStore.Shared.Loggers;
 using Microsoft.AspNetCore.Http;
 using Moq;

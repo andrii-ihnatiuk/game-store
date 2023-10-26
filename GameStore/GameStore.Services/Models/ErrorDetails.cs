@@ -1,4 +1,4 @@
-﻿namespace GameStore.API.Models;
+﻿namespace GameStore.Services.Models;
 
 public class ErrorDetails
 {

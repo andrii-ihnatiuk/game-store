@@ -1,4 +1,5 @@
 ﻿using GameStore.Services.Interfaces;
+using GameStore.Services.Models;
 using GameStore.Shared.DTOs.Order;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,7 +33,7 @@ public class OrdersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<OrderBriefDto>> GetPaidOrdersByCustomerAsync()
+    public async Task<ActionResult<IList<OrderBriefDto>>> GetPaidOrdersByCustomerAsync()
     {
         return Ok(await _orderService.GetPaidOrdersByCustomerAsync(CustomerId));
     }
@@ -55,6 +56,18 @@ public class OrdersController : ControllerBase
     {
         var paymentMethodsDto = await _orderService.GetAvailablePaymentMethodsAsync();
         return Ok(new PaymentMethodListDto { PaymentMethods = paymentMethodsDto });
+    }
+
+    [HttpPost("pay")]
+    public async Task<IActionResult> PayForOrderAsync(PaymentDto payment)
+    {
+        var paymentResult = await _orderService.RequestPaymentAsync(payment, CustomerId);
+        IActionResult actionResult = paymentResult switch
+        {
+            BankPaymentResult result => File(result.InvoiceFileBytes, result.ContentType, result.FileDownloadName),
+            _ => BadRequest(),
+        };
+        return actionResult;
     }
 
     [HttpDelete]

@@ -183,7 +183,7 @@ public class GenreServiceTests
         _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Name == GenreName))
             .ReturnsAsync(false);
 
-        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Id == genre.ParentGenreId))
+        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
             .ReturnsAsync(false);
 
         // Act and Assert
@@ -253,7 +253,7 @@ public class GenreServiceTests
         _mapper.Setup(m => m.Map(genreUpdateDto, existingGenre))
             .Returns(updatedGenre);
 
-        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Id == updatedGenre.ParentGenreId))
+        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
             .ReturnsAsync(false);
 
         // Act and Assert

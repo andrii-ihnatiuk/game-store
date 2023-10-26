@@ -41,5 +41,5 @@
   "cancelGameBuyApiUrl": "cart/remove/{key}/",
   "basketApiUrl": "cart",
   "makeOrderInfoApiUrl": "payment/methods",
-  "payApiUrl": ""
+  "payApiUrl": "orders/pay"
 }

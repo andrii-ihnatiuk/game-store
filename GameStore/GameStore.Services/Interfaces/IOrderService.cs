@@ -16,5 +16,7 @@ public interface IOrderService
 
     Task<IList<PaymentMethodDto>> GetAvailablePaymentMethodsAsync();
 
+    Task<IPaymentResult> RequestPaymentAsync(PaymentDto payment, Guid customerId);
+
     Task DeleteGameFromCartAsync(Guid customerId, string gameAlias);
 }

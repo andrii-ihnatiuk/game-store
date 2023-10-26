@@ -202,7 +202,7 @@ public class GameServiceTests
         _unitOfWork.Setup(uow => uow.Games.ExistsAsync(g => g.Alias == GameAlias))
             .ReturnsAsync(false);
 
-        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Id == It.IsAny<Guid>()))
+        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
             .ReturnsAsync(false);
 
         // Act and Assert
@@ -223,7 +223,27 @@ public class GameServiceTests
         _unitOfWork.Setup(uow => uow.Games.ExistsAsync(g => g.Alias == GameAlias))
             .ReturnsAsync(false);
 
-        _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Id == It.IsAny<Guid>()))
+        _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(It.IsAny<Expression<Func<Platform, bool>>>()))
+            .ReturnsAsync(false);
+
+        // Act and Assert
+        await Assert.ThrowsAsync<ForeignKeyException>(() => _service.AddGameAsync(gameCreateDto));
+    }
+
+    [Fact]
+    public async Task AddGameAsync_WhenPublisherDoesNotExist_ThrowsForeignKeyException()
+    {
+        // Arrange
+        var gameCreateDto = new GameCreateDto();
+        var game = new Game() { Alias = GameAlias, PublisherId = Guid.Empty };
+
+        _mapper.Setup(m => m.Map<Game>(gameCreateDto))
+            .Returns(game);
+
+        _unitOfWork.Setup(uow => uow.Games.ExistsAsync(g => g.Alias == GameAlias))
+            .ReturnsAsync(false);
+
+        _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(It.IsAny<Expression<Func<Publisher, bool>>>()))
             .ReturnsAsync(false);
 
         // Act and Assert
@@ -297,7 +317,7 @@ public class GameServiceTests
             .Returns(updatedGame);
 
         // ExistsAsync is called on updatedGame list
-        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(g => g.Id == It.IsAny<Guid>()))
+        _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
             .ReturnsAsync(false);
 
         // Act and Assert
@@ -322,7 +342,31 @@ public class GameServiceTests
         _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
             .Returns(updatedGame);
 
-        _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(p => p.Id == It.IsAny<Guid>()))
+        _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(It.IsAny<Expression<Func<Platform, bool>>>()))
+            .ReturnsAsync(false);
+
+        // Act and Assert
+        await Assert.ThrowsAsync<ForeignKeyException>(() => _service.UpdateGameAsync(gameUpdateDto));
+    }
+
+    [Fact]
+    public async Task UpdateGameAsync_WhenPublisherDoesNotExist_ThrowsForeignKeyException()
+    {
+        // Arrange
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = GameAlias } };
+
+        var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
+        _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
+                It.IsAny<Expression<Func<Game, bool>>>(),
+                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object?>>?>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(existingGame);
+
+        var updatedGame = new Game() { Id = Guid.Empty, Alias = GameAlias, PublisherId = Guid.Empty };
+        _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
+            .Returns(updatedGame);
+
+        _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(It.IsAny<Expression<Func<Publisher, bool>>>()))
             .ReturnsAsync(false);
 
         // Act and Assert
