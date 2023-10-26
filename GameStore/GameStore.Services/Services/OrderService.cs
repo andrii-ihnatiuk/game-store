@@ -1,9 +1,14 @@
-﻿using AutoMapper;
+﻿using System.Globalization;
+using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
+using GameStore.Services.Models;
 using GameStore.Shared.DTOs.Order;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services.Services;
@@ -23,6 +28,7 @@ public class OrderService : IOrderService
     {
         var order = await GetExistingOrderOrCreateNewAsync(customerId);
         await AddGameToOrderOrIncrementQuantityAsync(order, gameAlias);
+        RecalculateTotalSumFor(order);
         await _unitOfWork.SaveAsync();
     }
 
@@ -58,13 +64,61 @@ public class OrderService : IOrderService
         return _mapper.Map<IList<PaymentMethodDto>>(methods);
     }
 
+    public async Task<IPaymentResult> RequestPaymentAsync(PaymentDto payment, Guid customerId)
+    {
+        var order = await _unitOfWork.Orders.GetOneAsync(
+            predicate: o => o.CustomerId == customerId && o.PaidDate == null,
+            include: q => q.Include(o => o.OrderDetails),
+            noTracking: false);
+
+        IPaymentResult result = payment.Method switch
+        {
+            "Bank" => RequestBankPayment(order),
+            "Visa" => throw new NotImplementedException(),
+            "IBox terminal" => throw new NotImplementedException(),
+            _ => throw new NotImplementedException(),
+        };
+        return result;
+    }
+
     public async Task DeleteGameFromCartAsync(Guid customerId, string gameAlias)
     {
-        var orderDetail = await _unitOfWork.OrderDetails.GetOneAsync(
-            predicate: d => d.Order.CustomerId == customerId && d.Product.Alias == gameAlias,
+        var order = await _unitOfWork.Orders.GetOneAsync(
+            predicate: o => o.CustomerId == customerId && o.PaidDate == null,
+            include: q => q.Include(o => o.OrderDetails),
             noTracking: false);
-        await DeleteOrderDetailOrDecrementQuantityAsync(orderDetail);
+
+        DeleteGameFromOrderOrDecrementQuantity(order, gameAlias);
+        RecalculateTotalSumFor(order);
         await _unitOfWork.SaveAsync();
+    }
+
+    private static BankPaymentResult RequestBankPayment(Order order)
+    {
+        const int validity = 3;
+        var customerId = order.CustomerId.ToString();
+        var validThru = DateTime.UtcNow.AddDays(validity).ToString("dddd, dd MMMM yyyy HH:mm", CultureInfo.InvariantCulture);
+        const string fileType = "application/pdf";
+        var fileName = $"{customerId}_{DateTime.UtcNow:u}.pdf";
+
+        using var stream = new MemoryStream();
+        var writer = new PdfWriter(stream);
+        var pdf = new PdfDocument(writer);
+        var document = new Document(pdf);
+
+        document.Add(new Paragraph($"Customer ID: {customerId}"));
+        document.Add(new Paragraph($"Order ID: {order.Id}"));
+        document.Add(new Paragraph($"Valid thru: {validThru}"));
+        document.Add(new Paragraph($"Sum: {order.Sum}"));
+        document.Close();
+
+        var result = new BankPaymentResult()
+        {
+            InvoiceFileBytes = stream.ToArray(),
+            FileDownloadName = fileName,
+            ContentType = fileType,
+        };
+        return result;
     }
 
     private async Task<Order> GetExistingOrderOrCreateNewAsync(Guid customerId, bool noTracking = false)
@@ -110,23 +164,29 @@ public class OrderService : IOrderService
                 ProductId = game.Id,
                 Price = game.Price,
                 Quantity = 1,
-                ProductName = game.Name,
+                ProductName = game.Alias,
                 Discount = 0,
             });
         }
-
-        order.Sum = order.OrderDetails.Select(d => d.Price * d.Quantity).Sum();
     }
 
-    private async Task DeleteOrderDetailOrDecrementQuantityAsync(OrderDetail orderDetail)
+    private static void RecalculateTotalSumFor(Order order)
     {
+        order.Sum = order.OrderDetails
+            .Select(d => (d.Price * d.Quantity) - (d.Price * d.Quantity * (decimal)d.Discount / 100))
+            .Sum();
+    }
+
+    private static void DeleteGameFromOrderOrDecrementQuantity(Order order, string gameAlias)
+    {
+        var orderDetail = order.OrderDetails.First(d => d.ProductName == gameAlias);
         if (orderDetail.Quantity > 1)
         {
             orderDetail.Quantity -= 1;
         }
         else
         {
-            await _unitOfWork.OrderDetails.DeleteAsync(orderDetail.Id);
+            order.OrderDetails.Remove(orderDetail);
         }
     }
 }

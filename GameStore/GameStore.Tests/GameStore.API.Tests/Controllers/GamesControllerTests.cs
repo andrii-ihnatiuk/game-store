@@ -23,7 +23,7 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetGameByAlias_ReturnsGameFullDto()
+    public async Task GetGameByAliasAsync_ReturnsGameFullDto()
     {
         // Arrange
         const string gameAlias = "game-alias";
@@ -41,7 +41,24 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetAllGames_ReturnsGames()
+    public async Task GetGameByIdAsync_ReturnsGameFullDto()
+    {
+        // Arrange
+        _gameService.Setup(s => s.GetGameByIdAsync(Guid.Empty))
+            .ReturnsAsync(new GameFullDto())
+            .Verifiable();
+
+        // Act
+        var result = await _controller.GetGameByIdAsync(Guid.Empty);
+
+        // Assert
+        _gameService.Verify();
+        Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<GameFullDto>(((OkObjectResult)result).Value);
+    }
+
+    [Fact]
+    public async Task GetAllGamesAsync_ReturnsGames()
     {
         // Arrange
         _gameService.Setup(s => s.GetAllGamesAsync())
