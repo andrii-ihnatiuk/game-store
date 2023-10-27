@@ -25,7 +25,7 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async Task AddGameToCartAsync_CreatesNewOrderWhenNoneExists()
+    public async Task AddGameToCartAsync_WhenOrderDoNotExist_CreatesNewOrder()
     {
         // Arrange
         var game = new Game { Price = 100, Id = ProductId, Alias = GameAlias, Name = "name" };
@@ -46,6 +46,39 @@ public class OrderServiceTests
 
         // Assert
         _unitOfWork.Verify(u => u.Orders.AddAsync(It.IsAny<Order>()), Times.Once);
+        _unitOfWork.Verify(u => u.SaveAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task AddGameToCartAsync_WhenOrderExists_IncrementsQuantity()
+    {
+        // Arrange
+        var order = new Order()
+        {
+            Id = Guid.Empty,
+            OrderDetails = new List<OrderDetail>()
+            {
+                new() { ProductId = ProductId, Quantity = 2 },
+            },
+        };
+        var game = new Game { Price = 100, Id = ProductId, Alias = GameAlias, Name = "name" };
+        _unitOfWork.Setup(u => u.Orders.GetOneAsync(
+                It.IsAny<Expression<Func<Order, bool>>>(),
+                It.IsAny<Func<IQueryable<Order>, IIncludableQueryable<Order, object>>>(),
+                false))
+            .ReturnsAsync(order);
+
+        _unitOfWork.Setup(u => u.Games.GetOneAsync(
+                It.IsAny<Expression<Func<Game, bool>>>(),
+                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(game);
+
+        // Act
+        await _service.AddGameToCartAsync(CustomerId, GameAlias);
+
+        // Assert
+        Assert.Equal(3, order.OrderDetails.First().Quantity);
         _unitOfWork.Verify(u => u.SaveAsync(), Times.Once);
     }
 
@@ -130,29 +163,6 @@ public class OrderServiceTests
 
         // Assert
         Assert.Equal(orderDetailDtos.Count, result.Count);
-    }
-
-    [Fact]
-    public async Task GetAvailablePaymentMethodsAsync_ReturnsCorrectAmountOfPaymentMethods()
-    {
-        // Arrange
-        var methods = new List<PaymentMethod>() { new() };
-        _unitOfWork.Setup(u => u.PaymentMethods.GetAsync(
-                It.IsAny<Expression<Func<PaymentMethod, bool>>>(),
-                It.IsAny<Func<IQueryable<PaymentMethod>, IOrderedQueryable<PaymentMethod>>>(),
-                It.IsAny<Func<IQueryable<PaymentMethod>, IIncludableQueryable<PaymentMethod, object>>>(),
-                It.IsAny<bool>()))
-            .ReturnsAsync(methods);
-
-        var methodDtos = new List<PaymentMethodDto> { new() };
-        _mapper.Setup(m => m.Map<IList<PaymentMethodDto>>(It.IsAny<IEnumerable<PaymentMethod>>()))
-            .Returns(methodDtos);
-
-        // Act
-        var result = await _service.GetAvailablePaymentMethodsAsync();
-
-        // Assert
-        Assert.Equal(methodDtos.Count, result.Count);
     }
 
     [Fact]

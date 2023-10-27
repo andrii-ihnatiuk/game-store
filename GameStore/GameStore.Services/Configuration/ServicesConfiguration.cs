@@ -5,6 +5,7 @@ using FluentValidation;
 using GameStore.Data;
 using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
+using GameStore.Services.PaymentStrategies;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -30,13 +31,18 @@ public static class ServicesConfiguration
         serviceCollection.AddDbContext<GameStoreDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
 
         serviceCollection.AddScoped<IGameService, GameService>();
         serviceCollection.AddScoped<IGenreService, GenreService>();
         serviceCollection.AddScoped<IPlatformService, PlatformService>();
         serviceCollection.AddScoped<IPublisherService, PublisherService>();
         serviceCollection.AddScoped<IOrderService, OrderService>();
-        serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
+        serviceCollection.AddScoped<IPaymentService, PaymentService>();
+
+        serviceCollection.AddScoped<IPaymentStrategy, BankPaymentStrategy>();
+        serviceCollection.AddScoped<IPaymentStrategy, TerminalPaymentStrategy>();
+        serviceCollection.AddScoped<IPaymentStrategyResolver, PaymentStrategyResolver>();
 
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
 

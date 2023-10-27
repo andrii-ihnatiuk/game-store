@@ -11,10 +11,12 @@ public class OrdersController : ControllerBase
 {
     private static readonly Guid CustomerId = new("43efd8db-5b4b-4fcf-94d6-7916c7263f43");
     private readonly IOrderService _orderService;
+    private readonly IPaymentService _paymentService;
 
-    public OrdersController(IOrderService orderService)
+    public OrdersController(IOrderService orderService, IPaymentService paymentService)
     {
         _orderService = orderService;
+        _paymentService = paymentService;
     }
 
     [HttpGet]
@@ -54,17 +56,18 @@ public class OrdersController : ControllerBase
     [Route("/payment/methods")]
     public async Task<ActionResult<PaymentMethodListDto>> GetAvailablePaymentMethodsAsync()
     {
-        var paymentMethodsDto = await _orderService.GetAvailablePaymentMethodsAsync();
+        var paymentMethodsDto = await _paymentService.GetAvailablePaymentMethodsAsync();
         return Ok(new PaymentMethodListDto { PaymentMethods = paymentMethodsDto });
     }
 
     [HttpPost("pay")]
     public async Task<IActionResult> PayForOrderAsync(PaymentDto payment)
     {
-        var paymentResult = await _orderService.RequestPaymentAsync(payment, CustomerId);
+        var paymentResult = await _paymentService.RequestPaymentAsync(payment, CustomerId);
         IActionResult actionResult = paymentResult switch
         {
             BankPaymentResult result => File(result.InvoiceFileBytes, result.ContentType, result.FileDownloadName),
+            TerminalPaymentResult result => Ok(result),
             _ => BadRequest(),
         };
         return actionResult;
