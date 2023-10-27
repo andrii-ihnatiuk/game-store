@@ -2,6 +2,8 @@
 using GameStore.Services.Interfaces;
 using GameStore.Services.Models;
 using GameStore.Shared.DTOs.Order;
+using GameStore.Shared.DTOs.Payment;
+using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -13,11 +15,12 @@ public class OrdersControllerTests
     private static readonly Guid OrderId = Guid.NewGuid();
     private readonly Mock<IOrderService> _orderService = new();
     private readonly Mock<IPaymentService> _paymentService = new();
+    private readonly Mock<IValidatorWrapper<PaymentDto>> _paymentValidator = new();
     private readonly OrdersController _controller;
 
     public OrdersControllerTests()
     {
-        _controller = new OrdersController(_orderService.Object, _paymentService.Object);
+        _controller = new OrdersController(_orderService.Object, _paymentService.Object, _paymentValidator.Object);
     }
 
     [Fact]

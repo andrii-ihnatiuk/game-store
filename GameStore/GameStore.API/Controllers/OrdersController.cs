@@ -1,6 +1,8 @@
 ﻿using GameStore.Services.Interfaces;
 using GameStore.Services.Models;
 using GameStore.Shared.DTOs.Order;
+using GameStore.Shared.DTOs.Payment;
+using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStore.API.Controllers;
@@ -12,11 +14,13 @@ public class OrdersController : ControllerBase
     private static readonly Guid CustomerId = new("43efd8db-5b4b-4fcf-94d6-7916c7263f43");
     private readonly IOrderService _orderService;
     private readonly IPaymentService _paymentService;
+    private readonly IValidatorWrapper<PaymentDto> _paymentValidator;
 
-    public OrdersController(IOrderService orderService, IPaymentService paymentService)
+    public OrdersController(IOrderService orderService, IPaymentService paymentService, IValidatorWrapper<PaymentDto> paymentValidator)
     {
         _orderService = orderService;
         _paymentService = paymentService;
+        _paymentValidator = paymentValidator;
     }
 
     [HttpGet]
@@ -63,11 +67,13 @@ public class OrdersController : ControllerBase
     [HttpPost("pay")]
     public async Task<IActionResult> PayForOrderAsync(PaymentDto payment)
     {
+        _paymentValidator.ValidateAndThrow(payment);
         var paymentResult = await _paymentService.RequestPaymentAsync(payment, CustomerId);
         IActionResult actionResult = paymentResult switch
         {
             BankPaymentResult result => File(result.InvoiceFileBytes, result.ContentType, result.FileDownloadName),
             TerminalPaymentResult result => Ok(result),
+            VisaPaymentResult result => Ok(result),
             _ => BadRequest(),
         };
         return actionResult;

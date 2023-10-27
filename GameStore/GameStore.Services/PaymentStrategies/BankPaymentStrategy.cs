@@ -1,14 +1,13 @@
 ﻿using System.Globalization;
 using GameStore.Data.Entities;
 using GameStore.Data.Repositories;
-using GameStore.Services.Constants;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Models;
-using GameStore.Shared.DTOs.Order;
+using GameStore.Shared.Constants;
+using GameStore.Shared.DTOs.Payment;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
-using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services.PaymentStrategies;
 
@@ -27,6 +26,7 @@ public class BankPaymentStrategy : IPaymentStrategy
     {
         var order = await GetOrderForPaymentAsync(customerId);
         byte[] fileBytes = GeneratePdfInvoice(order);
+        await UpdateOrderStatusAsync(order);
         return ConvertToBankPaymentResult(fileBytes);
     }
 
@@ -34,7 +34,6 @@ public class BankPaymentStrategy : IPaymentStrategy
     {
         return await _unitOfWork.Orders.GetOneAsync(
             predicate: o => o.CustomerId == customerId && o.PaidDate == null,
-            include: q => q.Include(o => o.OrderDetails),
             noTracking: false);
     }
 
@@ -68,5 +67,11 @@ public class BankPaymentStrategy : IPaymentStrategy
             FileDownloadName = fileName,
             ContentType = fileType,
         };
+    }
+
+    private async Task UpdateOrderStatusAsync(Order order)
+    {
+        order.Status = OrderStatus.Checkout;
+        await _unitOfWork.SaveAsync();
     }
 }

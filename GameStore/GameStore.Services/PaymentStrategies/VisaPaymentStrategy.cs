@@ -9,32 +9,32 @@ using GameStore.Services.Interfaces;
 using GameStore.Services.Models;
 using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Payment;
-using GameStore.Shared.DTOs.Payment.Terminal;
+using GameStore.Shared.DTOs.Payment.Visa;
 using Microsoft.Extensions.Options;
 
 namespace GameStore.Services.PaymentStrategies;
 
-public class TerminalPaymentStrategy : IPaymentStrategy
+public class VisaPaymentStrategy : IPaymentStrategy
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly TerminalSettings _apiSettings;
+    private readonly VisaSettings _apiSettings;
 
-    public TerminalPaymentStrategy(IUnitOfWork unitOfWork, IOptions<TerminalSettings> apiSettings, IHttpClientFactory httpClientFactory)
+    public VisaPaymentStrategy(IUnitOfWork unitOfWork, IOptions<VisaSettings> apiSettings, IHttpClientFactory httpClientFactory)
     {
         _unitOfWork = unitOfWork;
         _httpClientFactory = httpClientFactory;
         _apiSettings = apiSettings.Value;
     }
 
-    public string Name => PaymentStrategyName.Terminal;
+    public string Name => PaymentStrategyName.Visa;
 
     public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, Guid customerId)
     {
         var order = await GetOrderForPaymentAsync(customerId);
-        var terminalPaymentResult = await SendPaymentRequestAsync(order);
+        var visaPaymentResult = await SendPaymentRequestAsync(payment, order);
         await UpdateOrderStatusAsync(order);
-        return terminalPaymentResult;
+        return visaPaymentResult;
     }
 
     private async Task<Order> GetOrderForPaymentAsync(Guid customerId)
@@ -44,20 +44,23 @@ public class TerminalPaymentStrategy : IPaymentStrategy
             noTracking: false);
     }
 
-    private async Task<TerminalPaymentResult> SendPaymentRequestAsync(Order order)
+    private async Task<VisaPaymentResult> SendPaymentRequestAsync(PaymentDto payment, Order order)
     {
         using var client = _httpClientFactory.CreateClient();
-        var paymentData = new TerminalTransactionRequestDto
+        var paymentData = new VisaTransactionRequestDto()
         {
+            CardNumber = payment.Model.CardNumber,
+            CardHolderName = payment.Model.Holder,
+            ExpirationYear = payment.Model.YearExpire,
+            ExpirationMonth = payment.Model.MonthExpire,
             TransactionAmount = order.Sum,
-            AccountNumber = order.CustomerId,
-            InvoiceNumber = order.Id,
+            Cvv = payment.Model.Cvv2,
         };
 
         var content = new StringContent(JsonSerializer.Serialize(paymentData), Encoding.UTF8, "application/json");
         var response = await client.PostAsync(_apiSettings.ApiUrl, content);
         ThrowPaymentExceptionIfRequestIsNotSuccessful(response);
-        return await ConvertResponseToTerminalPaymentResultAsync(response);
+        return new VisaPaymentResult();
     }
 
     private void ThrowPaymentExceptionIfRequestIsNotSuccessful(HttpResponseMessage responseMessage)
@@ -74,23 +77,6 @@ public class TerminalPaymentStrategy : IPaymentStrategy
         }
 
         throw new PaymentException(message);
-    }
-
-    private static async Task<TerminalPaymentResult> ConvertResponseToTerminalPaymentResultAsync(HttpResponseMessage responseMessage)
-    {
-        string responseString = await responseMessage.Content.ReadAsStringAsync();
-        var terminalResponse = JsonSerializer.Deserialize<TerminalTransactionResponseDto>(responseString, new JsonSerializerOptions()
-        {
-            PropertyNameCaseInsensitive = true,
-        });
-
-        return new TerminalPaymentResult
-        {
-            OrderId = terminalResponse.InvoiceNumber,
-            UserId = terminalResponse.AccountNumber,
-            Method = terminalResponse.PaymentMethod,
-            Sum = terminalResponse.Amount,
-        };
     }
 
     private async Task UpdateOrderStatusAsync(Order order)

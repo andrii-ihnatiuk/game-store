@@ -1,5 +1,6 @@
 using GameStore.API.Middlewares;
 using GameStore.Services.Configuration;
+using GameStore.Services.Configuration.Payment;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 
@@ -35,6 +36,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddResponseCaching();
 builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient();
 
 LogManager.Setup().LoadConfigurationFromFile("nlog.config", false);
 
@@ -42,6 +44,8 @@ builder.Services.Configure<RouteOptions>(options =>
 {
     options.LowercaseUrls = true;
 });
+builder.Services.Configure<VisaSettings>(builder.Configuration.GetSection("Payment:VisaSettings"));
+builder.Services.Configure<TerminalSettings>(builder.Configuration.GetSection("Payment:IBoxSettings"));
 
 var app = builder.Build();
 

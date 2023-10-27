@@ -15,6 +15,9 @@ public class OrderEntityConfiguration : IEntityTypeConfiguration<Order>
         builder.Property(o => o.Sum)
             .HasColumnType("money");
 
+        builder.Property(o => o.Status)
+            .HasConversion<string>();
+
         builder.HasMany(o => o.OrderDetails)
             .WithOne(od => od.Order)
             .HasForeignKey(od => od.OrderId);

@@ -5,6 +5,7 @@ using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Order;
+using GameStore.Shared.DTOs.Payment;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 
