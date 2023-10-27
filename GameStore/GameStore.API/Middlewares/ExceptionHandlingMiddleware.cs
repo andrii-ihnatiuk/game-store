@@ -2,6 +2,7 @@
 using System.Text.Json;
 using FluentValidation;
 using GameStore.Data.Exceptions;
+using GameStore.Services.Exceptions;
 using GameStore.Services.Models;
 using ILogger = GameStore.Shared.Loggers.ILogger;
 
@@ -39,6 +40,7 @@ public class ExceptionHandlingMiddleware
         {
             Message = "An error occured during request processing.",
             Errors = new List<string> { exception.Message },
+            Status = StatusCodes.Status500InternalServerError,
         };
         object response = errorDetails;
 
@@ -57,8 +59,10 @@ public class ExceptionHandlingMiddleware
                 errorDetails.Status = StatusCodes.Status400BadRequest;
                 response = string.Join("\n", ex.Errors.Select(s => s.ErrorMessage));
                 break;
+            case PaymentException ex:
+                response = ex.Message;
+                break;
             default:
-                errorDetails.Status = StatusCodes.Status500InternalServerError;
                 errorDetails.Message = "Internal server error, please retry later.";
                 break;
         }

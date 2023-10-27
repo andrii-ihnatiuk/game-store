@@ -12,11 +12,12 @@ public class OrdersControllerTests
     private const string GameAlias = "testGame";
     private static readonly Guid OrderId = Guid.NewGuid();
     private readonly Mock<IOrderService> _orderService = new();
+    private readonly Mock<IPaymentService> _paymentService = new();
     private readonly OrdersController _controller;
 
     public OrdersControllerTests()
     {
-        _controller = new OrdersController(_orderService.Object);
+        _controller = new OrdersController(_orderService.Object, _paymentService.Object);
     }
 
     [Fact]
@@ -100,7 +101,7 @@ public class OrdersControllerTests
     {
         // Arrange
         var paymentMethodsDto = new List<PaymentMethodDto> { new(), new() };
-        _orderService.Setup(o => o.GetAvailablePaymentMethodsAsync()).ReturnsAsync(paymentMethodsDto);
+        _paymentService.Setup(o => o.GetAvailablePaymentMethodsAsync()).ReturnsAsync(paymentMethodsDto);
 
         // Act
         var result = await _controller.GetAvailablePaymentMethodsAsync();
@@ -116,7 +117,7 @@ public class OrdersControllerTests
     {
         // Arrange
         var paymentDto = new PaymentDto();
-        _orderService.Setup(o => o.RequestPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<Guid>()))
+        _paymentService.Setup(o => o.RequestPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<Guid>()))
             .ReturnsAsync(default(BankPaymentResult));
 
         // Act
@@ -127,12 +128,12 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task PayForOrderAsync_ReturnsFileContentResultBankPayment()
+    public async Task PayForOrderAsync_WhenBankPayment_ReturnsFileContentResult()
     {
         // Arrange
         var paymentDto = new PaymentDto();
         var paymentResult = new BankPaymentResult { InvoiceFileBytes = Array.Empty<byte>(), ContentType = "application/pdf", FileDownloadName = "invoice.pdf" };
-        _orderService.Setup(o => o.RequestPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<Guid>())).ReturnsAsync(paymentResult);
+        _paymentService.Setup(o => o.RequestPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<Guid>())).ReturnsAsync(paymentResult);
 
         // Act
         var result = await _controller.PayForOrderAsync(paymentDto);
