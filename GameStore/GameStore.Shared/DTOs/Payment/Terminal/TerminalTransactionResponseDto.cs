@@ -1,6 +1,6 @@
-﻿namespace GameStore.Services.Models;
+﻿namespace GameStore.Shared.DTOs.Payment.Terminal;
 
-public class TerminalResponse
+public class TerminalTransactionResponseDto
 {
     public Guid AccountNumber { get; set; }
 

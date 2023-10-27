@@ -1,4 +1,6 @@
-﻿namespace GameStore.Data.Entities;
+﻿using GameStore.Shared.Constants;
+
+namespace GameStore.Data.Entities;
 
 public class Order
 {
@@ -9,6 +11,8 @@ public class Order
     public DateTime OrderDate { get; set; }
 
     public DateTime? PaidDate { get; set; }
+
+    public OrderStatus Status { get; set; } = OrderStatus.Open;
 
     public decimal Sum { get; set; }
 

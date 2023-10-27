@@ -9,12 +9,14 @@ using GameStore.Services.PaymentStrategies;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Loggers;
 using GameStore.Shared.Validators;
 using GameStore.Shared.Validators.GameValidators;
 using GameStore.Shared.Validators.GenreValidators;
+using GameStore.Shared.Validators.PaymentValidators;
 using GameStore.Shared.Validators.PlatformValidators;
 using GameStore.Shared.Validators.PublisherValidators;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +44,7 @@ public static class ServicesConfiguration
 
         serviceCollection.AddScoped<IPaymentStrategy, BankPaymentStrategy>();
         serviceCollection.AddScoped<IPaymentStrategy, TerminalPaymentStrategy>();
+        serviceCollection.AddScoped<IPaymentStrategy, VisaPaymentStrategy>();
         serviceCollection.AddScoped<IPaymentStrategyResolver, PaymentStrategyResolver>();
 
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -56,6 +59,7 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IValidator<PlatformUpdateDto>, PlatformUpdateValidator>();
         serviceCollection.AddScoped<IValidator<GenreCreateDto>, GenreCreateValidator>();
         serviceCollection.AddScoped<IValidator<GenreUpdateDto>, GenreUpdateValidator>();
+        serviceCollection.AddScoped<IValidator<PaymentDto>, PaymentValidator>();
         serviceCollection.AddScoped(typeof(IValidatorWrapper<>), typeof(ValidatorWrapper<>));
         ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
     }
