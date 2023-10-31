@@ -43,8 +43,8 @@
   "makeOrderInfoApiUrl": "payment/methods",
   "payApiUrl": "orders/pay",
   
-  "addCommentApiUrl": "addCommentApiUrl",
-  "commentsByGameApiUrl": "commentsByGameApiUrl",
+  "addCommentApiUrl": "comments/{key}/new",
+  "commentsByGameApiUrl": "comments/{key}",
   "deleteCommentApiUrl": "deleteCommentApiUrl",
   "getBanDurationsApiUrl": "getBanDurationsApiUrl",
   "banUserApiUrl": "banUserApiUrl"
