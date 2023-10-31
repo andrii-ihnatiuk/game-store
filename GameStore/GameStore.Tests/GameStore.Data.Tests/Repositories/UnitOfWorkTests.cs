@@ -17,6 +17,7 @@ public class UnitOfWorkTests : IDisposable
     private readonly Mock<IGenericRepository<Order>> _ordersRepoMock = new();
     private readonly Mock<IGenericRepository<OrderDetail>> _orderDetailsRepoMock = new();
     private readonly Mock<IGenericRepository<PaymentMethod>> _paymentMethodsRepoMock = new();
+    private readonly Mock<IGenericRepository<Comment>> _commentsRepoMock = new();
     private readonly GameStoreDbContext _context;
     private readonly UnitOfWork _unitOfWork;
 
@@ -33,7 +34,8 @@ public class UnitOfWorkTests : IDisposable
             _gamesPlatformsRepoMock.Object,
             _ordersRepoMock.Object,
             _orderDetailsRepoMock.Object,
-            _paymentMethodsRepoMock.Object);
+            _paymentMethodsRepoMock.Object,
+            _commentsRepoMock.Object);
     }
 
     [Fact]

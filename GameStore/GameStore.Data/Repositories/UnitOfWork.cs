@@ -17,7 +17,8 @@ public class UnitOfWork : IUnitOfWork
         IGenericRepository<GamePlatform> gamesPlatformsRepository,
         IGenericRepository<Order> ordersRepository,
         IGenericRepository<OrderDetail> orderDetailsRepository,
-        IGenericRepository<PaymentMethod> paymentMethodsRepository)
+        IGenericRepository<PaymentMethod> paymentMethodsRepository,
+        IGenericRepository<Comment> commentsRepository)
     {
         _context = context;
         Games = gameRepository;
@@ -29,6 +30,7 @@ public class UnitOfWork : IUnitOfWork
         Orders = ordersRepository;
         OrderDetails = orderDetailsRepository;
         PaymentMethods = paymentMethodsRepository;
+        Comments = commentsRepository;
     }
 
     public IGenericRepository<Game> Games { get; }
@@ -48,6 +50,8 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<OrderDetail> OrderDetails { get; }
 
     public IGenericRepository<PaymentMethod> PaymentMethods { get; }
+
+    public IGenericRepository<Comment> Comments { get; }
 
     public async Task<int> SaveAsync()
     {

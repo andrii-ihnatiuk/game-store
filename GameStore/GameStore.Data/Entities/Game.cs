@@ -23,4 +23,6 @@ public class Game
     public IList<GameGenre> GameGenres { get; set; } = new List<GameGenre>();
 
     public IList<GamePlatform> GamePlatforms { get; set; } = new List<GamePlatform>();
+
+    public IList<Comment> Comments { get; set; } = new List<Comment>();
 }

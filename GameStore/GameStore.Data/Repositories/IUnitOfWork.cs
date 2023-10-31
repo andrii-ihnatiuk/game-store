@@ -22,5 +22,7 @@ public interface IUnitOfWork : IDisposable
 
     IGenericRepository<PaymentMethod> PaymentMethods { get; }
 
+    IGenericRepository<Comment> Comments { get; }
+
     Task<int> SaveAsync();
 }
