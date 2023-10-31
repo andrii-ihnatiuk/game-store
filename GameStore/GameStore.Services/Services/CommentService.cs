@@ -2,6 +2,7 @@
 using GameStore.Data.Entities;
 using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Comment;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,7 @@ namespace GameStore.Services.Services;
 
 public class CommentService : ICommentService
 {
+    private const string OnDeleteMessage = "A comment/quote was deleted";
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
@@ -35,11 +37,25 @@ public class CommentService : ICommentService
             predicate: g => g.Alias == gameAlias,
             noTracking: false);
 
-        game.Comments.Add(_mapper.Map<Comment>(commentDto));
+        var comment = _mapper.Map<Comment>(commentDto);
+        await DefineCommentIntroByTypeAsync(comment, gameAlias);
+        game.Comments.Add(comment);
         await _unitOfWork.SaveAsync();
 
         var updatedComments = await GetCommentsByGameAliasAsync(gameAlias);
         return _mapper.Map<IList<CommentBriefDto>>(updatedComments);
+    }
+
+    public async Task DeleteCommentAsync(Guid commentId)
+    {
+        var comment = await _unitOfWork.Comments.GetOneAsync(
+            predicate: c => c.Id == commentId,
+            include: q => q.Include(c => c.Replies.Where(r => r.Type == CommentType.Quote)),
+            noTracking: false);
+
+        comment.Body = OnDeleteMessage;
+        UpdateIntoForQuotingCommentsAsync(comment);
+        await _unitOfWork.SaveAsync();
     }
 
     private async Task LoadRepliesTree(IList<Comment> comments)
@@ -65,5 +81,35 @@ public class CommentService : ICommentService
         {
             await LoadRepliesTree(children);
         }
+    }
+
+    private async Task DefineCommentIntroByTypeAsync(Comment comment, string gameAlias)
+    {
+        if (comment.ParentId is null)
+        {
+            return;
+        }
+
+        var parent = await _unitOfWork.Comments.GetOneAsync(c => c.Id == comment.ParentId);
+        comment.Intro = comment.Type switch
+        {
+            CommentType.Quote => BuildQuoteInto(parent.Body),
+            CommentType.Reply => $"<a href=\"games/{gameAlias}#comment{parent.Id}\">[{parent.Author}]</a>&nbsp;",
+            CommentType.Plain => string.Empty,
+            _ => string.Empty,
+        };
+    }
+
+    private static void UpdateIntoForQuotingCommentsAsync(Comment comment)
+    {
+        foreach (var reply in comment.Replies)
+        {
+            reply.Intro = BuildQuoteInto(OnDeleteMessage);
+        }
+    }
+
+    private static string BuildQuoteInto(string message)
+    {
+        return $"<i>«{message}»</i><br/>";
     }
 }
