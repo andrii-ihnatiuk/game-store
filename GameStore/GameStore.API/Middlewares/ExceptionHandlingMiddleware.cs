@@ -62,6 +62,9 @@ public class ExceptionHandlingMiddleware
             case PaymentException ex:
                 response = ex.Message;
                 break;
+            case UserBannedException ex:
+                response = ex.Message;
+                break;
             default:
                 errorDetails.Message = "Internal server error, please retry later.";
                 break;

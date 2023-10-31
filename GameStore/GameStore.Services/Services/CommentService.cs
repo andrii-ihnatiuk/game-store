@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Repositories;
+using GameStore.Services.Exceptions;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Comment;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GameStore.Services.Services;
 
@@ -13,11 +15,13 @@ public class CommentService : ICommentService
     private const string OnDeleteMessage = "A comment/quote was deleted";
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IMemoryCache _memoryCache;
 
-    public CommentService(IUnitOfWork unitOfWork, IMapper mapper)
+    public CommentService(IUnitOfWork unitOfWork, IMapper mapper, IMemoryCache memoryCache)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _memoryCache = memoryCache;
     }
 
     public async Task<IList<CommentBriefDto>> GetCommentsByGameAliasAsync(string gameAlias)
@@ -31,8 +35,31 @@ public class CommentService : ICommentService
         return _mapper.Map<IList<CommentBriefDto>>(comments);
     }
 
+    public IList<string> GetBanDurations()
+    {
+        return new[] { "1 hour", "1 day", "1 week", "1 month", "Permanent", };
+    }
+
+    public void BanUser(BanUserDto banDto)
+    {
+        var bannedUsers = _memoryCache.TryGetValue("banned_users", out Dictionary<string, DateTime> date) ? date : new Dictionary<string, DateTime>();
+        var banEndDate = GetBanEndDate(banDto.Duration);
+        if (bannedUsers.ContainsKey(banDto.User))
+        {
+            bannedUsers[banDto.User] = banEndDate;
+        }
+        else
+        {
+            bannedUsers.Add(banDto.User, banEndDate);
+        }
+
+        _memoryCache.Set("banned_users", bannedUsers);
+    }
+
     public async Task<IList<CommentBriefDto>> AddCommentToGameAsync(string gameAlias, CommentCreateDto commentDto)
     {
+        ThrowIfUserBanned(commentDto.Comment.Name);
+
         var game = await _unitOfWork.Games.GetOneAsync(
             predicate: g => g.Alias == gameAlias,
             noTracking: false);
@@ -111,5 +138,33 @@ public class CommentService : ICommentService
     private static string BuildQuoteInto(string message)
     {
         return $"<i>«{message}»</i><br/>";
+    }
+
+    private static DateTime GetBanEndDate(string durationStr)
+    {
+        var dateTime = DateTime.UtcNow;
+        return durationStr switch
+        {
+            "1 hour" => dateTime.AddHours(1),
+            "1 day" => dateTime.AddDays(1),
+            "1 week" => dateTime.AddDays(7),
+            "1 month" => dateTime.AddMonths(1),
+            "Permanent" => DateTime.MaxValue,
+            _ => DateTime.MinValue,
+        };
+    }
+
+    private void ThrowIfUserBanned(string user)
+    {
+        if (_memoryCache.Get("banned_users") is not Dictionary<string, DateTime> bannedUsers)
+        {
+            return;
+        }
+
+        var banEndDate = bannedUsers.TryGetValue(user, out DateTime date) ? date : DateTime.MinValue;
+        if (DateTime.UtcNow < banEndDate)
+        {
+            throw new UserBannedException($"You are banned to write comments until {banEndDate:dd/MM/yyyy HH:mm}");
+        }
     }
 }

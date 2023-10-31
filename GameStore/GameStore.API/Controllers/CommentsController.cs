@@ -24,6 +24,21 @@ public class CommentsController : ControllerBase
         return Ok(await _commentService.GetCommentsByGameAliasAsync(gameAlias));
     }
 
+    [HttpGet]
+    [Route("/ban/durations")]
+    public IActionResult GetBanDurationsAsync()
+    {
+        return Ok(_commentService.GetBanDurations());
+    }
+
+    [HttpPost]
+    [Route("/ban")]
+    public IActionResult BanUser(BanUserDto banDto)
+    {
+        _commentService.BanUser(banDto);
+        return Ok();
+    }
+
     [HttpPost("{gameAlias}/new")]
     public async Task<IActionResult> AddCommentToGameAsync([FromRoute] string gameAlias, [FromBody] CommentCreateDto commentCreateDto)
     {
