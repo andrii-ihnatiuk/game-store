@@ -31,4 +31,11 @@ public class CommentsController : ControllerBase
         var result = await _commentService.AddCommentToGameAsync(gameAlias, commentCreateDto);
         return Ok(result);
     }
+
+    [HttpDelete("{gameAlias}/remove/{commentId:guid}")]
+    public async Task<IActionResult> DeleteCommentAsync(Guid commentId)
+    {
+        await _commentService.DeleteCommentAsync(commentId);
+        return NoContent();
+    }
 }

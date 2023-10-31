@@ -1,4 +1,6 @@
-﻿namespace GameStore.Data.Entities;
+﻿using GameStore.Shared.Constants;
+
+namespace GameStore.Data.Entities;
 
 public class Comment
 {
@@ -7,6 +9,10 @@ public class Comment
     public string Author { get; set; }
 
     public string Body { get; set; }
+
+    public CommentType Type { get; set; } = CommentType.Plain;
+
+    public string Intro { get; set; } = string.Empty;
 
     public Guid? ParentId { get; set; }
 

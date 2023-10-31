@@ -10,6 +10,9 @@ public class CommentEntityConfiguration : IEntityTypeConfiguration<Comment>
     {
         builder.HasKey(c => c.Id);
 
+        builder.Property(c => c.Type)
+            .HasConversion<string>();
+
         builder.HasOne(c => c.Game)
             .WithMany(g => g.Comments)
             .HasForeignKey(c => c.GameId);

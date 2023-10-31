@@ -1,8 +1,10 @@
-﻿using FluentValidation;
+﻿using System.Diagnostics.CodeAnalysis;
+using FluentValidation;
 using GameStore.Shared.DTOs.Comment;
 
 namespace GameStore.Shared.Validators.CommentValidators;
 
+[ExcludeFromCodeCoverage]
 public class CommentCreateValidator : AbstractValidator<CommentCreateDto>
 {
     public CommentCreateValidator()
