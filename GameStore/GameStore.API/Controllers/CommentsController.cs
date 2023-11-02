@@ -40,7 +40,7 @@ public class CommentsController : ControllerBase
     }
 
     [HttpPost("{gameAlias}/new")]
-    public async Task<IActionResult> AddCommentToGameAsync([FromRoute] string gameAlias, [FromBody] CommentCreateDto commentCreateDto)
+    public async Task<ActionResult<IList<CommentBriefDto>>> AddCommentToGameAsync([FromRoute] string gameAlias, [FromBody] CommentCreateDto commentCreateDto)
     {
         _commentCreateValidator.ValidateAndThrow(commentCreateDto);
         var result = await _commentService.AddCommentToGameAsync(gameAlias, commentCreateDto);

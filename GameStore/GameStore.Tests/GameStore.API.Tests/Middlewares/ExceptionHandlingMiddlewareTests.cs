@@ -1,10 +1,13 @@
 ﻿using System.Text.Json;
+using FluentValidation.Results;
 using GameStore.API.Middlewares;
 using GameStore.Data.Exceptions;
+using GameStore.Services.Exceptions;
 using GameStore.Services.Models;
 using GameStore.Shared.Loggers;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace GameStore.Tests.GameStore.API.Tests.Middlewares;
 
@@ -81,6 +84,62 @@ public class ExceptionHandlingMiddlewareTests
 
         Assert.Equal(StatusCodes.Status400BadRequest, _context.Response.StatusCode);
         Assert.Equal(StatusCodes.Status400BadRequest, errorDetails.Status);
+        Assert.True(_context.Response.ContentType == "application/json");
+    }
+
+    [Fact]
+    public async Task Invoke_Captured_ValidationException_HandledCorrectly()
+    {
+        // Arrange
+        IEnumerable<ValidationFailure> failures = new[] { new ValidationFailure("property", "Validation error message") };
+        var validationException = new ValidationException("Validation failed", errors: failures);
+        var middleware = new ExceptionHandlingMiddleware(_ => throw validationException, _logger.Object);
+
+        // Act
+        await middleware.Invoke(_context);
+
+        // Assert
+        _context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var reader = new StreamReader(_context.Response.Body);
+        string responseBody = await reader.ReadToEndAsync();
+        Assert.Contains("Validation error message", responseBody);
+        Assert.Equal(StatusCodes.Status400BadRequest, _context.Response.StatusCode);
+        Assert.True(_context.Response.ContentType == "application/json");
+    }
+
+    [Fact]
+    public async Task Invoke_Captured_PaymentException_HandledCorrectly()
+    {
+        // Arrange
+        var middleware = new ExceptionHandlingMiddleware(_ => throw new PaymentException("Payment failed"), _logger.Object);
+
+        // Act
+        await middleware.Invoke(_context);
+
+        // Assert
+        _context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var reader = new StreamReader(_context.Response.Body);
+        string responseBody = await reader.ReadToEndAsync();
+        Assert.Contains("Payment failed", responseBody);
+        Assert.Equal(StatusCodes.Status500InternalServerError, _context.Response.StatusCode);
+        Assert.True(_context.Response.ContentType == "application/json");
+    }
+
+    [Fact]
+    public async Task Invoke_Captured_UserBannedException_HandledCorrectly()
+    {
+        // Arrange
+        var middleware = new ExceptionHandlingMiddleware(_ => throw new UserBannedException("User is banned"), _logger.Object);
+
+        // Act
+        await middleware.Invoke(_context);
+
+        // Assert
+        _context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var reader = new StreamReader(_context.Response.Body);
+        string responseBody = await reader.ReadToEndAsync();
+        Assert.Contains("User is banned", responseBody);
+        Assert.Equal(StatusCodes.Status500InternalServerError, _context.Response.StatusCode);
         Assert.True(_context.Response.ContentType == "application/json");
     }
 
