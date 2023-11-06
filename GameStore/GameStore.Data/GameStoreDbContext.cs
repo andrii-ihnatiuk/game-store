@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using GameStore.Data.Entities;
+using GameStore.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Data;
@@ -18,13 +19,13 @@ public sealed class GameStoreDbContext : DbContext
 
     public override int SaveChanges()
     {
-        SetOrderDateTimeProperties();
+        SetTimestamps();
         return base.SaveChanges();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        SetOrderDateTimeProperties();
+        SetTimestamps();
         return base.SaveChangesAsync(cancellationToken);
     }
 
@@ -34,23 +35,14 @@ public sealed class GameStoreDbContext : DbContext
         modelBuilder.SeedData();
     }
 
-    private void SetOrderDateTimeProperties()
+    private void SetTimestamps()
     {
-        var entries = ChangeTracker.Entries().Where(e => e.State == EntityState.Added);
+        var entries = ChangeTracker.Entries()
+            .Where(e => e is { State: EntityState.Added, Entity: ICreationTrackable });
 
         foreach (var entry in entries)
         {
-            switch (entry.Entity)
-            {
-                case OrderDetail orderDetail:
-                    orderDetail.CreationDate = DateTime.UtcNow;
-                    break;
-                case Order order:
-                    order.OrderDate = DateTime.UtcNow;
-                    break;
-                default:
-                    break;
-            }
+            ((ICreationTrackable)entry.Entity).CreationDate = DateTime.UtcNow;
         }
     }
 }

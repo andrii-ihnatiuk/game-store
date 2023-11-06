@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using GameStore.Data.Entities;
-using GameStore.Data.Repositories;
+using GameStore.Data.Interfaces;
 using GameStore.Services.Configuration.Payment;
 using GameStore.Services.Exceptions;
 using GameStore.Services.Interfaces;

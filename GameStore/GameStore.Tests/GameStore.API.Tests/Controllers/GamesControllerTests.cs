@@ -61,17 +61,17 @@ public class GamesControllerTests
     public async Task GetAllGamesAsync_ReturnsGames()
     {
         // Arrange
-        _gameService.Setup(s => s.GetAllGamesAsync())
-            .ReturnsAsync(new List<GameBriefDto>())
+        _gameService.Setup(s => s.GetAllGamesAsync(It.IsAny<GamesFilterOptions>()))
+            .ReturnsAsync(new FilteredGamesDto())
             .Verifiable();
 
         // Act
-        var result = await _controller.GetAllGamesAsync();
+        var result = await _controller.GetAllGamesAsync(new GamesFilterOptions());
 
         // Assert
         _gameService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
-        Assert.IsAssignableFrom<IEnumerable<GameBriefDto>>(((OkObjectResult)result.Result).Value);
+        Assert.IsType<FilteredGamesDto>(((OkObjectResult)result.Result).Value);
     }
 
     [Fact]

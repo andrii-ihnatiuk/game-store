@@ -1,6 +1,8 @@
-﻿namespace GameStore.Data.Entities;
+﻿using GameStore.Data.Interfaces;
 
-public class OrderDetail
+namespace GameStore.Data.Entities;
+
+public class OrderDetail : ICreationTrackable
 {
     public Guid Id { get; set; }
 

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Reflection;
 using FluentValidation;
 using GameStore.Data;
+using GameStore.Data.Interfaces;
 using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
 using GameStore.Services.PaymentStrategies;
@@ -36,6 +37,7 @@ public static class ServicesConfiguration
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
+        serviceCollection.AddScoped<IGameRepository, GameRepository>();
 
         serviceCollection.AddScoped<IGameService, GameService>();
         serviceCollection.AddScoped<IGenreService, GenreService>();

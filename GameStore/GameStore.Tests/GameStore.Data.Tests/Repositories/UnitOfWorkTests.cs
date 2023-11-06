@@ -1,6 +1,6 @@
 ﻿using GameStore.Data;
 using GameStore.Data.Entities;
-using GameStore.Data.Repositories;
+using GameStore.Data.Interfaces;
 using GameStore.Tests.Util;
 using Moq;
 
@@ -8,7 +8,7 @@ namespace GameStore.Tests.GameStore.Data.Tests.Repositories;
 
 public class UnitOfWorkTests : IDisposable
 {
-    private readonly Mock<IGenericRepository<Game>> _gameRepoMock = new();
+    private readonly Mock<IGameRepository> _gameRepoMock = new();
     private readonly Mock<IGenericRepository<Genre>> _genreRepoMock = new();
     private readonly Mock<IGenericRepository<Platform>> _platformRepoMock = new();
     private readonly Mock<IGenericRepository<Publisher>> _publisherRepoMock = new();

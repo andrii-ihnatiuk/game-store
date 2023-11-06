@@ -2,7 +2,7 @@
 using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
-using GameStore.Data.Repositories;
+using GameStore.Data.Interfaces;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;

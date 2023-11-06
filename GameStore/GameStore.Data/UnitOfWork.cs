@@ -1,6 +1,7 @@
 ﻿using GameStore.Data.Entities;
+using GameStore.Data.Interfaces;
 
-namespace GameStore.Data.Repositories;
+namespace GameStore.Data;
 
 public class UnitOfWork : IUnitOfWork
 {
@@ -9,7 +10,7 @@ public class UnitOfWork : IUnitOfWork
 
     public UnitOfWork(
         GameStoreDbContext context,
-        IGenericRepository<Game> gameRepository,
+        IGameRepository gameRepository,
         IGenericRepository<Genre> genreRepository,
         IGenericRepository<Platform> platformRepository,
         IGenericRepository<Publisher> publishersRepository,
@@ -33,7 +34,7 @@ public class UnitOfWork : IUnitOfWork
         Comments = commentsRepository;
     }
 
-    public IGenericRepository<Game> Games { get; }
+    public IGameRepository Games { get; }
 
     public IGenericRepository<Genre> Genres { get; }
 

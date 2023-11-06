@@ -1,6 +1,8 @@
-﻿namespace GameStore.Data.Entities;
+﻿using GameStore.Data.Interfaces;
 
-public class Game
+namespace GameStore.Data.Entities;
+
+public class Game : ICreationTrackable
 {
     public Guid Id { get; set; }
 
@@ -15,6 +17,10 @@ public class Game
     public short UnitInStock { get; set; }
 
     public bool Discontinued { get; set; }
+
+    public DateTime? PublishDate { get; set; }
+
+    public DateTime CreationDate { get; set; }
 
     public Guid? PublisherId { get; set; }
 
