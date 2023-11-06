@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
-using GameStore.Data.Repositories;
+using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Order;
 using Microsoft.EntityFrameworkCore;
@@ -81,6 +81,7 @@ public class OrderService : IOrderService
             {
                 CustomerId = customerId,
                 Sum = 0,
+                OrderDate = DateTime.UtcNow,
             };
             if (!noTracking)
             {

@@ -2,7 +2,7 @@
 using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
-using GameStore.Data.Repositories;
+using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -61,10 +61,15 @@ public class GameService : IGameService
         return _mapper.Map<PublisherBriefDto>(game.Publisher);
     }
 
-    public async Task<IList<GameBriefDto>> GetAllGamesAsync()
+    public async Task<FilteredGamesDto> GetAllGamesAsync(GamesFilterOptions filterOptions)
     {
-        var games = await _unitOfWork.Games.GetAsync(orderBy: q => q.OrderBy(g => g.Id));
-        return _mapper.Map<IList<GameBriefDto>>(games);
+        var gamesFiltered = await _unitOfWork.Games.GetFilteredGamesAsync(filterOptions);
+        return new FilteredGamesDto()
+        {
+            Games = _mapper.Map<IList<GameBriefDto>>(gamesFiltered),
+            CurrentPage = 1,
+            TotalPages = 1,
+        };
     }
 
     public async Task<GameBriefDto> AddGameAsync(GameCreateDto dto)

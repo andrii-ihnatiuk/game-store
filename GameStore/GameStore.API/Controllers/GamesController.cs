@@ -41,9 +41,9 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<IList<GameBriefDto>>> GetAllGamesAsync()
+    public async Task<ActionResult<FilteredGamesDto>> GetAllGamesAsync([FromQuery] GamesFilterOptions filterOptions)
     {
-        var gamesDto = await _gameService.GetAllGamesAsync();
+        var gamesDto = await _gameService.GetAllGamesAsync(filterOptions);
         return Ok(gamesDto);
     }
 

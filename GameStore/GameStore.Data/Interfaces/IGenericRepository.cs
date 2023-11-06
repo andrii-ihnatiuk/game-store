@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace GameStore.Data.Repositories;
+namespace GameStore.Data.Interfaces;
 
 public interface IGenericRepository<T>
     where T : class

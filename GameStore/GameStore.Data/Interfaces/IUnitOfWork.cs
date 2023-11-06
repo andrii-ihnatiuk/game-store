@@ -1,10 +1,10 @@
 ﻿using GameStore.Data.Entities;
 
-namespace GameStore.Data.Repositories;
+namespace GameStore.Data.Interfaces;
 
 public interface IUnitOfWork : IDisposable
 {
-    IGenericRepository<Game> Games { get; }
+    IGameRepository Games { get; }
 
     IGenericRepository<Genre> Genres { get; }
 

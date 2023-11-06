@@ -3,7 +3,7 @@ using System.Text;
 using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
-using GameStore.Data.Repositories;
+using GameStore.Data.Interfaces;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -122,11 +122,7 @@ public class GameServiceTests
     {
         // Arrange
         var gamesData = new List<Game> { new(), new() };
-        _unitOfWork.Setup(uow => uow.Games.GetAsync(
-                It.IsAny<Expression<Func<Game, bool>>>(),
-                It.IsAny<Func<IQueryable<Game>, IOrderedQueryable<Game>>>(),
-                It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object>>>(),
-                It.IsAny<bool>()))
+        _unitOfWork.Setup(uow => uow.Games.GetFilteredGamesAsync(It.IsAny<GamesFilterOptions>()))
             .ReturnsAsync(gamesData)
             .Verifiable();
 
@@ -134,11 +130,11 @@ public class GameServiceTests
             .Returns(new List<GameBriefDto> { new(), new() });
 
         // Act
-        var games = await _service.GetAllGamesAsync();
+        var games = await _service.GetAllGamesAsync(new GamesFilterOptions());
 
         // Assert
         _unitOfWork.Verify();
-        Assert.Equal(gamesData.Count, games.Count);
+        Assert.Equal(gamesData.Count, games.Games.Count);
     }
 
     [Fact]

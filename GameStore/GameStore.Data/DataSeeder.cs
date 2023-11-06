@@ -68,6 +68,8 @@ internal static class DataSeeder
                 UnitInStock = 50,
                 Price = 1500.2M,
                 PublisherId = PublisherId4,
+                PublishDate = new DateTime(2017, 4, 23, 0, 0, 0, DateTimeKind.Utc),
+                CreationDate = new DateTime(2023, 10, 20, 0, 0, 0, DateTimeKind.Utc),
             },
             new Game()
             {
@@ -79,6 +81,8 @@ internal static class DataSeeder
                 UnitInStock = 32,
                 Price = 500M,
                 PublisherId = PublisherId5,
+                PublishDate = new DateTime(2013, 9, 17, 0, 0, 0, DateTimeKind.Utc),
+                CreationDate = new DateTime(2023, 10, 21, 0, 0, 0, DateTimeKind.Utc),
             },
             new Game()
             {
@@ -90,6 +94,8 @@ internal static class DataSeeder
                 UnitInStock = 20,
                 Price = 1200M,
                 PublisherId = PublisherId1,
+                PublishDate = new DateTime(2022, 10, 4, 0, 0, 0, DateTimeKind.Utc),
+                CreationDate = new DateTime(2023, 10, 22, 0, 0, 0, DateTimeKind.Utc),
             },
             new Game()
             {
@@ -101,6 +107,8 @@ internal static class DataSeeder
                 UnitInStock = 45,
                 Price = 800M,
                 PublisherId = PublisherId1,
+                PublishDate = new DateTime(2014, 4, 11, 0, 0, 0, DateTimeKind.Utc),
+                CreationDate = new DateTime(2023, 10, 23, 0, 0, 0, DateTimeKind.Utc),
             },
             new Game()
             {
@@ -112,6 +120,8 @@ internal static class DataSeeder
                 UnitInStock = 34,
                 Price = 1400M,
                 PublisherId = PublisherId2,
+                PublishDate = new DateTime(2019, 9, 15, 0, 0, 0, DateTimeKind.Utc),
+                CreationDate = new DateTime(2023, 10, 24, 0, 0, 0, DateTimeKind.Utc),
             });
 
         builder.Entity<GameGenre>().HasData(

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using GameStore.Data.Entities;
-using GameStore.Data.Repositories;
+using GameStore.Data.Interfaces;
 using GameStore.Services.Exceptions;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.Constants;
@@ -26,12 +26,10 @@ public class CommentService : ICommentService
 
     public async Task<IList<CommentBriefDto>> GetCommentsByGameAliasAsync(string gameAlias)
     {
-        var comments = await _unitOfWork.Comments.GetAsync(
-            predicate: c => c.Game.Alias == gameAlias && c.ParentId == null,
-            include: q => q.Include(c => c.Replies));
-
-        var repliesFlat = comments.SelectMany(c => c.Replies).ToList();
-        await LoadRepliesTree(repliesFlat);
+        var comments = (await _unitOfWork.Comments.GetAsync(
+                predicate: c => c.Game.Alias == gameAlias,
+                noTracking: false))
+            .Where(c => c.ParentId == null);
         return _mapper.Map<IList<CommentBriefDto>>(comments);
     }
 
@@ -42,17 +40,11 @@ public class CommentService : ICommentService
 
     public void BanUser(BanUserDto banDto)
     {
-        var bannedUsers = _memoryCache.TryGetValue("banned_users", out Dictionary<string, DateTime> date) ? date : new Dictionary<string, DateTime>();
+        var bannedUsers = _memoryCache.TryGetValue("banned_users", out Dictionary<string, DateTime> dict)
+            ? dict
+            : new Dictionary<string, DateTime>();
         var banEndDate = GetBanEndDate(banDto.Duration);
-        if (bannedUsers.ContainsKey(banDto.User))
-        {
-            bannedUsers[banDto.User] = banEndDate;
-        }
-        else
-        {
-            bannedUsers.Add(banDto.User, banEndDate);
-        }
-
+        bannedUsers[banDto.User] = banEndDate;
         _memoryCache.Set("banned_users", bannedUsers);
     }
 
@@ -83,31 +75,6 @@ public class CommentService : ICommentService
         comment.Body = OnDeleteMessage;
         UpdateIntoForQuotingCommentsAsync(comment);
         await _unitOfWork.SaveAsync();
-    }
-
-    private async Task LoadRepliesTree(IList<Comment> comments)
-    {
-        var parents = comments.Select(c => c.Id);
-
-        // get the next level of replies, include their children to reduce amount of queries
-        var replies = await _unitOfWork.Comments.GetAsync(
-            predicate: c => parents.Contains((Guid)c.ParentId!),
-            include: q => q.Include(c => c.Replies));
-
-        // assign replies to their parent
-        foreach (var reply in replies)
-        {
-            var foundParent = comments.First(c => c.Id == reply.ParentId);
-            foundParent.Replies.Add(reply);
-        }
-
-        var children = replies.SelectMany(r => r.Replies).ToList();
-
-        // load the next level of replies
-        if (children.Count > 0)
-        {
-            await LoadRepliesTree(children);
-        }
     }
 
     private async Task DefineCommentIntroByTypeAsync(Comment comment, string gameAlias)
