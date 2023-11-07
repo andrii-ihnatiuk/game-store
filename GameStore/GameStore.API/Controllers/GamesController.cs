@@ -15,15 +15,18 @@ public class GamesController : ControllerBase
     private readonly IGameService _gameService;
     private readonly IValidatorWrapper<GameCreateDto> _gameCreateValidator;
     private readonly IValidatorWrapper<GameUpdateDto> _gameUpdateValidator;
+    private readonly IValidatorWrapper<GamesFilterDto> _gamesFilterValidator;
 
     public GamesController(
         IGameService gameService,
         IValidatorWrapper<GameCreateDto> gameCreateValidator,
-        IValidatorWrapper<GameUpdateDto> gameUpdateValidator)
+        IValidatorWrapper<GameUpdateDto> gameUpdateValidator,
+        IValidatorWrapper<GamesFilterDto> gamesFilterValidator)
     {
         _gameService = gameService;
         _gameCreateValidator = gameCreateValidator;
         _gameUpdateValidator = gameUpdateValidator;
+        _gamesFilterValidator = gamesFilterValidator;
     }
 
     [HttpGet("{gameAlias}", Name = "GetGameByAlias")]
@@ -41,9 +44,10 @@ public class GamesController : ControllerBase
     }
 
     [HttpGet("")]
-    public async Task<ActionResult<FilteredGamesDto>> GetAllGamesAsync([FromQuery] GamesFilterOptions filterOptions)
+    public async Task<ActionResult<FilteredGamesDto>> GetAllGamesAsync([FromQuery] GamesFilterDto filter)
     {
-        var gamesDto = await _gameService.GetAllGamesAsync(filterOptions);
+        _gamesFilterValidator.ValidateAndThrow(filter);
+        var gamesDto = await _gameService.GetAllGamesAsync(filter);
         return Ok(gamesDto);
     }
 

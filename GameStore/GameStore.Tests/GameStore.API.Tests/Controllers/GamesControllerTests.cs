@@ -16,10 +16,11 @@ public class GamesControllerTests
     private readonly Mock<IGameService> _gameService = new();
     private readonly Mock<IValidatorWrapper<GameCreateDto>> _gameCreateValidator = new();
     private readonly Mock<IValidatorWrapper<GameUpdateDto>> _gameUpdateValidator = new();
+    private readonly Mock<IValidatorWrapper<GamesFilterDto>> _gamesFilterValidator = new();
 
     public GamesControllerTests()
     {
-        _controller = new GamesController(_gameService.Object, _gameCreateValidator.Object, _gameUpdateValidator.Object);
+        _controller = new GamesController(_gameService.Object, _gameCreateValidator.Object, _gameUpdateValidator.Object, _gamesFilterValidator.Object);
     }
 
     [Fact]
@@ -61,12 +62,12 @@ public class GamesControllerTests
     public async Task GetAllGamesAsync_ReturnsGames()
     {
         // Arrange
-        _gameService.Setup(s => s.GetAllGamesAsync(It.IsAny<GamesFilterOptions>()))
+        _gameService.Setup(s => s.GetAllGamesAsync(It.IsAny<GamesFilterDto>()))
             .ReturnsAsync(new FilteredGamesDto())
             .Verifiable();
 
         // Act
-        var result = await _controller.GetAllGamesAsync(new GamesFilterOptions());
+        var result = await _controller.GetAllGamesAsync(new GamesFilterDto());
 
         // Assert
         _gameService.Verify();

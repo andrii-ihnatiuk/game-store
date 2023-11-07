@@ -66,6 +66,7 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IValidator<GenreUpdateDto>, GenreUpdateValidator>();
         serviceCollection.AddScoped<IValidator<CommentCreateDto>, CommentCreateValidator>();
         serviceCollection.AddScoped<IValidator<PaymentDto>, PaymentValidator>();
+        serviceCollection.AddScoped<IValidator<GamesFilterDto>, GamesFilterValidator>();
         serviceCollection.AddScoped(typeof(IValidatorWrapper<>), typeof(ValidatorWrapper<>));
         ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
     }

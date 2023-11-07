@@ -17,7 +17,7 @@ public interface IGameService
 
     Task<PublisherBriefDto> GetPublisherByGameAliasAsync(string alias);
 
-    Task<FilteredGamesDto> GetAllGamesAsync(GamesFilterOptions filterOptions);
+    Task<FilteredGamesDto> GetAllGamesAsync(GamesFilterDto filterDto);
 
     Task<GameBriefDto> AddGameAsync(GameCreateDto dto);
 

@@ -4,6 +4,7 @@ using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Interfaces;
+using GameStore.Data.Models;
 using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -122,15 +123,17 @@ public class GameServiceTests
     {
         // Arrange
         var gamesData = new List<Game> { new(), new() };
-        _unitOfWork.Setup(uow => uow.Games.GetFilteredGamesAsync(It.IsAny<GamesFilterOptions>()))
-            .ReturnsAsync(gamesData)
+        _unitOfWork.Setup(uow => uow.Games.GetFilteredGamesAsync(It.IsAny<GamesFilter>()))
+            .ReturnsAsync(new Tuple<IList<Game>, int>(gamesData, 1))
             .Verifiable();
 
-        _mapper.Setup(m => m.Map<IEnumerable<GameBriefDto>>(gamesData))
+        _mapper.Setup(m => m.Map<IEnumerable<GameBriefDto>>(It.IsAny<IEnumerable<Game>>()))
             .Returns(new List<GameBriefDto> { new(), new() });
+        _mapper.Setup(m => m.Map<GamesFilter>(It.IsAny<GamesFilterDto>()))
+            .Returns(new GamesFilter());
 
         // Act
-        var games = await _service.GetAllGamesAsync(new GamesFilterOptions());
+        var games = await _service.GetAllGamesAsync(new GamesFilterDto());
 
         // Assert
         _unitOfWork.Verify();
