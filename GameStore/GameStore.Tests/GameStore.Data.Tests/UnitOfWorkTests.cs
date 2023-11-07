@@ -4,7 +4,7 @@ using GameStore.Data.Interfaces;
 using GameStore.Tests.Util;
 using Moq;
 
-namespace GameStore.Tests.GameStore.Data.Tests.Repositories;
+namespace GameStore.Tests.GameStore.Data.Tests;
 
 public class UnitOfWorkTests : IDisposable
 {

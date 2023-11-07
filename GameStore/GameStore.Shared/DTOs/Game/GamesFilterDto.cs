@@ -1,6 +1,6 @@
 ﻿namespace GameStore.Shared.DTOs.Game;
 
-public class GamesFilterOptions
+public class GamesFilterDto
 {
     public IList<Guid> Genres { get; set; } = new List<Guid>();
 
@@ -15,4 +15,12 @@ public class GamesFilterOptions
     public string? DatePublishing { get; set; }
 
     public string? Name { get; set; }
+
+    public string? Sort { get; set; }
+
+    public int? Page { get; set; }
+
+    public string? PageCount { get; set; }
+
+    public string Trigger { get; set; }
 }
