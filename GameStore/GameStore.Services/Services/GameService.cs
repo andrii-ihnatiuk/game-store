@@ -27,7 +27,9 @@ public class GameService : IGameService
 
     public async Task<GameFullDto> GetGameByAliasAsync(string alias)
     {
-        var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == alias);
+        var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == alias, noTracking: false);
+        game.PageViews += 1;
+        await _unitOfWork.SaveAsync();
         return _mapper.Map<Game, GameFullDto>(game);
     }
 

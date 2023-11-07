@@ -18,6 +18,8 @@ public class Game : ICreationTrackable
 
     public bool Discontinued { get; set; }
 
+    public ulong PageViews { get; set; }
+
     public DateTime? PublishDate { get; set; }
 
     public DateTime CreationDate { get; set; }
