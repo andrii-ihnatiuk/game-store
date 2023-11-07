@@ -114,7 +114,7 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
             SortingOption.PriceAsc => query.OrderBy(g => g.Price),
             SortingOption.PriceDesc => query.OrderByDescending(g => g.Price),
             SortingOption.MostCommented => query.OrderByDescending(g => g.Comments.Count),
-            SortingOption.MostPopular => throw new NotImplementedException(),
+            SortingOption.MostPopular => query.OrderByDescending(g => g.PageViews),
             SortingOption.Newest => query.OrderByDescending(g => g.CreationDate),
             _ => throw new ArgumentOutOfRangeException(nameof(GamesFilterDto.Sort)),
         };
