@@ -1,5 +1,5 @@
 ﻿using GameStore.API.Controllers;
-using GameStore.Application.Interfaces;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Comment;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Mvc;

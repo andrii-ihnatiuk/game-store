@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
-using GameStore.Application.Interfaces;
-using GameStore.Application.Services;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
+using GameStore.Services.Interfaces.Payment;
+using GameStore.Services.Payment;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.DTOs.Payment;
 using Microsoft.EntityFrameworkCore.Query;

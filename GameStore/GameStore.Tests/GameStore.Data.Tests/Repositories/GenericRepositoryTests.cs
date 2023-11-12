@@ -1,7 +1,7 @@
 ﻿using GameStore.Data;
 using GameStore.Data.Entities;
-using GameStore.Data.Exceptions;
 using GameStore.Data.Repositories;
+using GameStore.Shared.Exceptions;
 using GameStore.Tests.Util;
 using Microsoft.EntityFrameworkCore;
 

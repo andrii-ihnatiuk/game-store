@@ -1,4 +1,4 @@
-﻿using GameStore.Application.Interfaces;
+﻿using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;

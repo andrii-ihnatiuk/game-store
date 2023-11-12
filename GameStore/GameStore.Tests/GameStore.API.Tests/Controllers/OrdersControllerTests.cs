@@ -1,6 +1,7 @@
 ﻿using GameStore.API.Controllers;
-using GameStore.Application.Interfaces;
-using GameStore.Application.Models;
+using GameStore.Services.Interfaces;
+using GameStore.Services.Interfaces.Payment;
+using GameStore.Services.Models;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.Validators;

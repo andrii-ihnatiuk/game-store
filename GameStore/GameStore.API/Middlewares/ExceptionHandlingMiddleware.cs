@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
 using FluentValidation;
-using GameStore.Application.Exceptions;
 using GameStore.Application.Models;
-using GameStore.Data.Exceptions;
+using GameStore.Shared.Exceptions;
 using ILogger = GameStore.Shared.Loggers.ILogger;
 
 namespace GameStore.API.Middlewares;

@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
-using GameStore.Data.Exceptions;
 using GameStore.Data.Interfaces;
+using GameStore.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 
