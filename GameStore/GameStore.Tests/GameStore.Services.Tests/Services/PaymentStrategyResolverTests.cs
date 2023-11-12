@@ -1,6 +1,6 @@
-﻿using GameStore.Services.Exceptions;
-using GameStore.Services.Interfaces;
-using GameStore.Services.Services;
+﻿using GameStore.Application.Exceptions;
+using GameStore.Application.Interfaces;
+using GameStore.Application.Services;
 using Moq;
 
 namespace GameStore.Tests.GameStore.Services.Tests.Services;

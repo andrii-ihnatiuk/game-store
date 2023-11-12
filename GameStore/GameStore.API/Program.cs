@@ -1,6 +1,6 @@
 using GameStore.API.Middlewares;
-using GameStore.Services.Configuration;
-using GameStore.Services.Configuration.Payment;
+using GameStore.Application.Configuration;
+using GameStore.Application.Configuration.Payment;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 

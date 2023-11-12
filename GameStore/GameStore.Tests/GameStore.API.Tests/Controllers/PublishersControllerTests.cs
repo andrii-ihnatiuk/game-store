@@ -1,5 +1,5 @@
 ﻿using GameStore.API.Controllers;
-using GameStore.Services.Interfaces;
+using GameStore.Application.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;

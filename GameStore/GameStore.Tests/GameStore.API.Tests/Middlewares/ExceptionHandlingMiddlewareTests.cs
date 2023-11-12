@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using FluentValidation.Results;
 using GameStore.API.Middlewares;
+using GameStore.Application.Exceptions;
+using GameStore.Application.Models;
 using GameStore.Data.Exceptions;
-using GameStore.Services.Exceptions;
-using GameStore.Services.Models;
 using GameStore.Shared.Loggers;
 using Microsoft.AspNetCore.Http;
 using Moq;

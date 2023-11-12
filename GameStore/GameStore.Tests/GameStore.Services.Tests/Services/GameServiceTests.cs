@@ -1,11 +1,11 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
 using AutoMapper;
+using GameStore.Application.Services;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Interfaces;
 using GameStore.Data.Models;
-using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;

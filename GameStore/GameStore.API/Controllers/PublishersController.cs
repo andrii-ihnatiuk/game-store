@@ -1,5 +1,5 @@
-﻿using GameStore.Data.Entities;
-using GameStore.Services.Interfaces;
+﻿using GameStore.Application.Interfaces;
+using GameStore.Data.Entities;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;

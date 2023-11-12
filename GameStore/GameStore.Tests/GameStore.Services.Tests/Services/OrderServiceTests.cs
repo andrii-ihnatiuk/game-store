@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
+using GameStore.Application.Services;
 using GameStore.Data.Entities;
 using GameStore.Data.Exceptions;
 using GameStore.Data.Interfaces;
-using GameStore.Services.Services;
 using GameStore.Shared.DTOs.Order;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
