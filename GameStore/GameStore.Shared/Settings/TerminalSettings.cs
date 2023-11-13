@@ -1,4 +1,4 @@
-﻿namespace GameStore.Services.Configuration.Payment;
+﻿namespace GameStore.Shared.Settings;
 
 public class TerminalSettings
 {

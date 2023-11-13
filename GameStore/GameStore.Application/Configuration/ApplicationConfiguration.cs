@@ -18,6 +18,7 @@ using GameStore.Shared.Validators.PlatformValidators;
 using GameStore.Shared.Validators.PublisherValidators;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Northwind.Services.Configuration;
 
 namespace GameStore.Application.Configuration;
 
@@ -26,7 +27,9 @@ public static class ApplicationConfiguration
 {
     public static void AddApplicationServices(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        serviceCollection.AddAutoMapper(typeof(Services.MappingProfiles.GameProfile).Assembly);
+        serviceCollection.AddAutoMapper(
+            typeof(Services.MappingProfiles.GameProfile).Assembly,
+            typeof(Northwind.Services.MappingProfiles.OrderProfile).Assembly);
 
         serviceCollection.AddSingleton<ILogger, NLogLogger>();
 
@@ -45,5 +48,6 @@ public static class ApplicationConfiguration
         ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
 
         serviceCollection.AddCoreServices(configuration);
+        serviceCollection.AddNorthwindServices();
     }
 }

@@ -2,9 +2,9 @@
 
 public class OrderBriefDto
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
 
-    public Guid CustomerId { get; set; }
+    public string CustomerId { get; set; }
 
     public DateTime OrderDate { get; set; }
 }
