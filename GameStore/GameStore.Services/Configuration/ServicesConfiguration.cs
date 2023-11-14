@@ -5,6 +5,7 @@ using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Payment;
 using GameStore.Services.Payment.Strategies;
+using GameStore.Shared.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,8 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IGenreService, GenreService>();
         serviceCollection.AddScoped<IPlatformService, PlatformService>();
         serviceCollection.AddScoped<IPublisherService, PublisherService>();
-        serviceCollection.AddScoped<IOrderService, OrderService>();
+        serviceCollection.AddScoped<IOrderService, CoreOrderService>();
+        serviceCollection.AddScoped<ICoreOrderService, CoreOrderService>();
         serviceCollection.AddScoped<IPaymentService, PaymentService>();
         serviceCollection.AddScoped<ICommentService, CommentService>();
 

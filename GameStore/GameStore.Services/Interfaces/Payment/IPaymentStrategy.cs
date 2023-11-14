@@ -6,5 +6,5 @@ public interface IPaymentStrategy
 {
     string Name { get; }
 
-    Task<IPaymentResult> ProcessPayment(PaymentDto payment, Guid customerId);
+    Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId);
 }

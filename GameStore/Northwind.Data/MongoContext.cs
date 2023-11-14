@@ -1,6 +1,7 @@
 ﻿using GameStore.Shared.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using Northwind.Data.Attributes;
 using Northwind.Data.Interfaces;
 
 namespace Northwind.Data;
@@ -21,9 +22,10 @@ public class MongoContext : IMongoContext
 
     private MongoClient Client { get; }
 
-    public IMongoCollection<T> GetCollection<T>(string name)
+    public IMongoCollection<T> GetCollection<T>(string? name)
     {
-        return Database.GetCollection<T>(name);
+        string collectionName = name ?? GetCollectionNameFromType(typeof(T));
+        return Database.GetCollection<T>(collectionName);
     }
 
     public void AddCommand(Func<Task> command)
@@ -48,5 +50,12 @@ public class MongoContext : IMongoContext
             await session.AbortTransactionAsync();
             return false;
         }
+    }
+
+    private static string GetCollectionNameFromType(Type type)
+    {
+        object? attribute = type.GetCustomAttributes(typeof(BsonCollectionAttribute), inherit: false).FirstOrDefault();
+        string? name = (attribute as BsonCollectionAttribute)?.CollectionName;
+        return name ?? type.Name;
     }
 }

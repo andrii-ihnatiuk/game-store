@@ -39,6 +39,7 @@
 
   "orderApiUrl": "orders/{id}",
   "ordersApiUrl": "orders",
+  "historyApiUrl": "orders/history",
   "orderDetailsApiUrl": "orders/{id}/details",
   "buyGameApiUrl": "cart/buy/{key}",
   "cancelGameBuyApiUrl": "cart/remove/{key}/",

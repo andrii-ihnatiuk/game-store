@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using FluentValidation;
+using GameStore.Application.Interfaces;
+using GameStore.Application.Services;
 using GameStore.Services.Configuration;
 using GameStore.Shared.DTOs.Comment;
 using GameStore.Shared.DTOs.Game;
@@ -28,10 +30,13 @@ public static class ApplicationConfiguration
     public static void AddApplicationServices(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddAutoMapper(
-            typeof(Services.MappingProfiles.GameProfile).Assembly,
+            typeof(GameStore.Services.MappingProfiles.GameProfile).Assembly,
             typeof(Northwind.Services.MappingProfiles.OrderProfile).Assembly);
 
         serviceCollection.AddSingleton<ILogger, NLogLogger>();
+
+        serviceCollection.AddScoped<IOrderFacadeService, OrderFacadeService>();
+        serviceCollection.AddScoped<IOrderServiceProvider, OrderServiceProvider>();
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
         serviceCollection.AddScoped<IValidator<GameUpdateDto>, GameUpdateValidator>();

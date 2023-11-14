@@ -1,4 +1,5 @@
 ﻿using GameStore.API.Controllers;
+using GameStore.Application.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
@@ -13,22 +14,23 @@ namespace GameStore.Tests.GameStore.API.Tests.Controllers;
 public class OrdersControllerTests
 {
     private const string GameAlias = "testGame";
-    private static readonly Guid OrderId = Guid.NewGuid();
-    private readonly Mock<IOrderService> _orderService = new();
+    private static readonly string OrderId = Guid.NewGuid().ToString();
+    private readonly Mock<ICoreOrderService> _orderService = new();
+    private readonly Mock<IOrderFacadeService> _orderFacadeService = new();
     private readonly Mock<IPaymentService> _paymentService = new();
     private readonly Mock<IValidatorWrapper<PaymentDto>> _paymentValidator = new();
     private readonly OrdersController _controller;
 
     public OrdersControllerTests()
     {
-        _controller = new OrdersController(_orderService.Object, _paymentService.Object, _paymentValidator.Object);
+        _controller = new OrdersController(_orderService.Object, _orderFacadeService.Object, _paymentService.Object, _paymentValidator.Object);
     }
 
     [Fact]
     public async Task AddGameToCartAsync_ReturnsOkResult()
     {
         // Arrange
-        _orderService.Setup(o => o.AddGameToCartAsync(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+        _orderService.Setup(o => o.AddGameToCartAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
 
         // Act
         var result = await _controller.AddGameToCartAsync(GameAlias);
@@ -42,7 +44,7 @@ public class OrdersControllerTests
     {
         // Arrange
         var orderDetails = new List<OrderDetailDto> { new(), new() };
-        _orderService.Setup(o => o.GetCartByCustomerAsync(It.IsAny<Guid>())).ReturnsAsync(orderDetails);
+        _orderService.Setup(o => o.GetCartByCustomerAsync(It.IsAny<string>())).ReturnsAsync(orderDetails);
 
         // Act
         var result = await _controller.GetCartByCustomerAsync();
@@ -58,10 +60,12 @@ public class OrdersControllerTests
     {
         // Arrange
         var paidOrders = new List<OrderBriefDto> { new(), new() };
-        _orderService.Setup(o => o.GetPaidOrdersByCustomerAsync(It.IsAny<Guid>())).ReturnsAsync(paidOrders);
+        _orderFacadeService
+            .Setup(o => o.GetOrdersHistoryByCustomerAsync(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .ReturnsAsync(paidOrders);
 
         // Act
-        var result = await _controller.GetPaidOrdersByCustomerAsync();
+        var result = await _controller.GetOrdersHistoryByCustomerAsync();
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -73,7 +77,7 @@ public class OrdersControllerTests
     {
         // Arrange
         var order = new OrderBriefDto();
-        _orderService.Setup(o => o.GetOrderByIdAsync(It.IsAny<Guid>())).ReturnsAsync(order);
+        _orderFacadeService.Setup(o => o.GetOrderByIdAsync(It.IsAny<string>())).ReturnsAsync(order);
 
         // Act
         var result = await _controller.GetOrderByIdAsync(OrderId);
@@ -89,7 +93,7 @@ public class OrdersControllerTests
     {
         // Arrange
         var orderDetails = new List<OrderDetailDto> { new(), new() };
-        _orderService.Setup(o => o.GetOrderDetailsAsync(It.IsAny<Guid>())).ReturnsAsync(orderDetails);
+        _orderFacadeService.Setup(o => o.GetOrderDetailsAsync(It.IsAny<string>())).ReturnsAsync(orderDetails);
 
         // Act
         var result = await _controller.GetOrderDetailsAsync(OrderId);
@@ -121,7 +125,7 @@ public class OrdersControllerTests
     {
         // Arrange
         var paymentDto = new PaymentDto();
-        _paymentService.Setup(o => o.RequestPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<Guid>()))
+        _paymentService.Setup(o => o.RequestPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<string>()))
             .ReturnsAsync(default(BankPaymentResult));
 
         // Act
@@ -137,7 +141,7 @@ public class OrdersControllerTests
         // Arrange
         var paymentDto = new PaymentDto();
         var paymentResult = new BankPaymentResult { InvoiceFileBytes = Array.Empty<byte>(), ContentType = "application/pdf", FileDownloadName = "invoice.pdf" };
-        _paymentService.Setup(o => o.RequestPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<Guid>())).ReturnsAsync(paymentResult);
+        _paymentService.Setup(o => o.RequestPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<string>())).ReturnsAsync(paymentResult);
 
         // Act
         var result = await _controller.PayForOrderAsync(paymentDto);
@@ -153,7 +157,7 @@ public class OrdersControllerTests
     public async Task DeleteGameFromCartAsync_ReturnsNoContentResult()
     {
         // Arrange
-        _orderService.Setup(o => o.DeleteGameFromCartAsync(It.IsAny<Guid>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+        _orderService.Setup(o => o.DeleteGameFromCartAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
 
         // Act
         var result = await _controller.DeleteGameFromCartAsync(GameAlias);

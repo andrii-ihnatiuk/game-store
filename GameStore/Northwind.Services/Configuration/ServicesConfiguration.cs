@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using GameStore.Shared.Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.Serialization.Conventions;
 using Northwind.Data;
 using Northwind.Data.Interfaces;
 using Northwind.Data.Repositories;
-using Northwind.Services.Interfaces;
 
 namespace Northwind.Services.Configuration;
 
@@ -20,6 +20,6 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IMongoContext, MongoContext>();
         serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-        serviceCollection.AddScoped<IOrderService, OrderService>();
+        serviceCollection.AddScoped<IOrderService, MongoOrderService>();
     }
 }
