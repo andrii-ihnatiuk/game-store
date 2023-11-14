@@ -3,13 +3,13 @@ using System.Text;
 using System.Text.Json;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
-using GameStore.Services.Configuration.Payment;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.DTOs.Payment.Visa;
 using GameStore.Shared.Exceptions;
+using GameStore.Shared.Settings;
 using Microsoft.Extensions.Options;
 
 namespace GameStore.Services.Payment.Strategies;
