@@ -25,7 +25,7 @@ public class PaymentService : IPaymentService
         return _mapper.Map<IList<PaymentMethodDto>>(methods);
     }
 
-    public Task<IPaymentResult> RequestPaymentAsync(PaymentDto payment, Guid customerId)
+    public Task<IPaymentResult> RequestPaymentAsync(PaymentDto payment, string customerId)
     {
         var strategy = _strategyResolver.Resolve(payment.Method);
         return strategy.ProcessPayment(payment, customerId);

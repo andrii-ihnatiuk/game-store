@@ -4,7 +4,7 @@ namespace Northwind.Data.Interfaces;
 
 public interface IMongoContext
 {
-    IMongoCollection<T> GetCollection<T>(string name);
+    IMongoCollection<T> GetCollection<T>(string? name = null);
 
     void AddCommand(Func<Task> command);
 

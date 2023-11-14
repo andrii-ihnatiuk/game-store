@@ -22,7 +22,7 @@ public class BankPaymentStrategy : IPaymentStrategy
 
     public string Name => PaymentStrategyName.Bank;
 
-    public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, Guid customerId)
+    public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId)
     {
         var order = await GetOrderForPaymentAsync(customerId);
         byte[] fileBytes = GeneratePdfInvoice(order);
@@ -30,7 +30,7 @@ public class BankPaymentStrategy : IPaymentStrategy
         return ConvertToBankPaymentResult(fileBytes);
     }
 
-    private async Task<Order> GetOrderForPaymentAsync(Guid customerId)
+    private async Task<Order> GetOrderForPaymentAsync(string customerId)
     {
         return await _unitOfWork.Orders.GetOneAsync(
             predicate: o => o.CustomerId == customerId && o.PaidDate == null,

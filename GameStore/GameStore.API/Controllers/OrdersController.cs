@@ -1,4 +1,7 @@
-﻿using GameStore.Services.Interfaces;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using GameStore.Application.Interfaces;
+using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.DTOs.Order;
@@ -12,14 +15,20 @@ namespace GameStore.API.Controllers;
 [Route("[controller]")]
 public class OrdersController : ControllerBase
 {
-    private static readonly Guid CustomerId = new("43efd8db-5b4b-4fcf-94d6-7916c7263f43");
-    private readonly IOrderService _orderService;
+    private static readonly string CustomerId = "VINET";
+    private readonly ICoreOrderService _coreOrderService;
+    private readonly IOrderFacadeService _orderFacadeService;
     private readonly IPaymentService _paymentService;
     private readonly IValidatorWrapper<PaymentDto> _paymentValidator;
 
-    public OrdersController(IOrderService orderService, IPaymentService paymentService, IValidatorWrapper<PaymentDto> paymentValidator)
+    public OrdersController(
+        ICoreOrderService coreOrderService,
+        IOrderFacadeService orderFacadeService,
+        IPaymentService paymentService,
+        IValidatorWrapper<PaymentDto> paymentValidator)
     {
-        _orderService = orderService;
+        _coreOrderService = coreOrderService;
+        _orderFacadeService = orderFacadeService;
         _paymentService = paymentService;
         _paymentValidator = paymentValidator;
     }
@@ -28,7 +37,7 @@ public class OrdersController : ControllerBase
     [Route("/cart/buy/{gameAlias}")]
     public async Task<IActionResult> AddGameToCartAsync(string gameAlias)
     {
-        await _orderService.AddGameToCartAsync(CustomerId, gameAlias);
+        await _coreOrderService.AddGameToCartAsync(CustomerId, gameAlias);
         return Ok();
     }
 
@@ -36,25 +45,27 @@ public class OrdersController : ControllerBase
     [Route("/cart")]
     public async Task<ActionResult<IList<OrderDetailDto>>> GetCartByCustomerAsync()
     {
-        return Ok(await _orderService.GetCartByCustomerAsync(CustomerId));
+        return Ok(await _coreOrderService.GetCartByCustomerAsync(CustomerId));
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IList<OrderBriefDto>>> GetPaidOrdersByCustomerAsync()
+    [HttpGet("history")]
+    public async Task<ActionResult<IList<OrderBriefDto>>> GetOrdersHistoryByCustomerAsync(string? start = null, string? end = null)
     {
-        return Ok(await _orderService.GetPaidOrdersByCustomerAsync(CustomerId));
+        var lowerDate = start is null ? DateTime.MinValue : GetDateTimeFromString(start);
+        var upperDate = end is null ? DateTime.MaxValue : GetDateTimeFromString(end);
+        return Ok(await _orderFacadeService.GetOrdersHistoryByCustomerAsync(CustomerId, lowerDate, upperDate));
     }
 
-    [HttpGet("{orderId:guid}")]
-    public async Task<ActionResult<OrderBriefDto>> GetOrderByIdAsync(Guid orderId)
+    [HttpGet("{orderId}")]
+    public async Task<ActionResult<OrderBriefDto>> GetOrderByIdAsync(string orderId)
     {
-        return Ok(await _orderService.GetOrderByIdAsync(orderId));
+        return Ok(await _orderFacadeService.GetOrderByIdAsync(orderId));
     }
 
-    [HttpGet("{orderId:guid}/details")]
-    public async Task<ActionResult<IList<OrderDetailDto>>> GetOrderDetailsAsync(Guid orderId)
+    [HttpGet("{orderId}/details")]
+    public async Task<ActionResult<IList<OrderDetailDto>>> GetOrderDetailsAsync(string orderId)
     {
-        return Ok(await _orderService.GetOrderDetailsAsync(orderId));
+        return Ok(await _orderFacadeService.GetOrderDetailsAsync(orderId));
     }
 
     [HttpGet]
@@ -84,7 +95,16 @@ public class OrdersController : ControllerBase
     [Route("/cart/remove/{gameAlias}")]
     public async Task<IActionResult> DeleteGameFromCartAsync(string gameAlias)
     {
-        await _orderService.DeleteGameFromCartAsync(CustomerId, gameAlias);
+        await _coreOrderService.DeleteGameFromCartAsync(CustomerId, gameAlias);
         return NoContent();
+    }
+
+    private static DateTime GetDateTimeFromString(string dateString)
+    {
+        dateString = dateString[..dateString.IndexOf(" (", StringComparison.Ordinal)];
+        dateString = Regex.Replace(dateString, @"GMT\s", "GMT+");
+        const string format = "ddd MMM dd yyyy HH:mm:ss 'GMT'zzz";
+        var dateTimeOffset = DateTimeOffset.ParseExact(dateString, format, CultureInfo.InvariantCulture);
+        return dateTimeOffset.DateTime;
     }
 }

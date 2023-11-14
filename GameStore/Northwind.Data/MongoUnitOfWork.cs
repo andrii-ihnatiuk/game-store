@@ -9,13 +9,17 @@ public class MongoUnitOfWork : IMongoUnitOfWork
 
     public MongoUnitOfWork(
         IMongoContext context,
-        IGenericRepository<Order> ordersRepository)
+        IGenericRepository<Order> ordersRepository,
+        IGenericRepository<OrderDetail> orderDetailsRepository)
     {
         _context = context;
         Orders = ordersRepository;
+        OrderDetails = orderDetailsRepository;
     }
 
     public IGenericRepository<Order> Orders { get; }
+
+    public IGenericRepository<OrderDetail> OrderDetails { get; }
 
     public Task<bool> SaveChangesAsync()
     {

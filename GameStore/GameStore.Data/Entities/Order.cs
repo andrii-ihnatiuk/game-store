@@ -6,7 +6,7 @@ public class Order
 {
     public Guid Id { get; set; }
 
-    public Guid CustomerId { get; set; } = new Guid("43efd8db-5b4b-4fcf-94d6-7916c7263f43");
+    public string CustomerId { get; set; } = "VINET";
 
     public DateTime OrderDate { get; set; }
 

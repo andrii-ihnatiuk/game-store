@@ -7,5 +7,5 @@ public interface IPaymentService
 {
     Task<IList<PaymentMethodDto>> GetAvailablePaymentMethodsAsync();
 
-    Task<IPaymentResult> RequestPaymentAsync(PaymentDto payment, Guid customerId);
+    Task<IPaymentResult> RequestPaymentAsync(PaymentDto payment, string customerId);
 }

@@ -13,15 +13,15 @@ namespace GameStore.Tests.GameStore.Services.Tests.Services;
 public class OrderServiceTests
 {
     private const string GameAlias = "game";
-    private static readonly Guid CustomerId = Guid.NewGuid();
+    private static readonly string CustomerId = "customer-id";
     private static readonly Guid ProductId = Guid.NewGuid();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IMapper> _mapper = new();
-    private readonly OrderService _service;
+    private readonly CoreOrderService _service;
 
     public OrderServiceTests()
     {
-        _service = new OrderService(_unitOfWork.Object, _mapper.Object);
+        _service = new CoreOrderService(_unitOfWork.Object, _mapper.Object);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ public class OrderServiceTests
             .Returns(orderDtos);
 
         // Act
-        var result = await _service.GetPaidOrdersByCustomerAsync(CustomerId);
+        var result = await _service.GetPaidOrdersByCustomerAsync(CustomerId, DateTime.MinValue, DateTime.MaxValue);
 
         // Assert
         Assert.Equal(orderDtos.Count, result.Count);
@@ -137,7 +137,7 @@ public class OrderServiceTests
         _mapper.Setup(m => m.Map<OrderBriefDto>(order)).Returns(orderDto);
 
         // Act
-        var result = await _service.GetOrderByIdAsync(Guid.Empty);
+        var result = await _service.GetOrderByIdAsync(Guid.Empty.ToString());
 
         // Assert
         Assert.Equal(orderDto, result);
@@ -159,7 +159,7 @@ public class OrderServiceTests
             .Returns(orderDetailDtos);
 
         // Act
-        var result = await _service.GetOrderDetailsAsync(Guid.Empty);
+        var result = await _service.GetOrderDetailsAsync(Guid.Empty.ToString());
 
         // Assert
         Assert.Equal(orderDetailDtos.Count, result.Count);
