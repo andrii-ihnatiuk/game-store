@@ -20,8 +20,10 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IMongoContext, MongoContext>();
         serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         serviceCollection.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+        serviceCollection.AddScoped<ICategoryRepository, CategoryRepository>();
 
         serviceCollection.AddScoped<IOrderService, MongoOrderService>();
         serviceCollection.AddScoped<IGameService, MongoProductService>();
+        serviceCollection.AddScoped<IGenreService, MongoCategoryService>();
     }
 }

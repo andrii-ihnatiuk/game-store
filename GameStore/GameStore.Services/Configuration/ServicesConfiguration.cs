@@ -24,7 +24,8 @@ public static class ServicesConfiguration
 
         serviceCollection.AddScoped<IGameService, CoreGameService>();
         serviceCollection.AddScoped<ICoreGameService, CoreGameService>();
-        serviceCollection.AddScoped<IGenreService, GenreService>();
+        serviceCollection.AddScoped<IGenreService, CoreGenreService>();
+        serviceCollection.AddScoped<ICoreGenreService, CoreGenreService>();
         serviceCollection.AddScoped<IPlatformService, PlatformService>();
         serviceCollection.AddScoped<IPublisherService, PublisherService>();
         serviceCollection.AddScoped<IOrderService, CoreOrderService>();

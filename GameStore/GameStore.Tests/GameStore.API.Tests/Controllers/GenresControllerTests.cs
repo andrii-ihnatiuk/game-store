@@ -1,4 +1,5 @@
 ﻿using GameStore.API.Controllers;
+using GameStore.Application.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -11,21 +12,22 @@ namespace GameStore.Tests.GameStore.API.Tests.Controllers;
 public class GenresControllerTests
 {
     private readonly GenresController _controller;
-    private readonly Mock<IGenreService> _genreService = new();
+    private readonly Mock<ICoreGenreService> _genreService = new();
+    private readonly Mock<IGenreFacadeService> _genreFacadeService = new();
     private readonly Mock<IValidatorWrapper<GenreCreateDto>> _genreCreateValidator = new();
     private readonly Mock<IValidatorWrapper<GenreUpdateDto>> _genreUpdateValidator = new();
 
     public GenresControllerTests()
     {
-        _controller = new GenresController(_genreService.Object, _genreCreateValidator.Object, _genreUpdateValidator.Object);
+        _controller = new GenresController(_genreService.Object, _genreFacadeService.Object, _genreCreateValidator.Object, _genreUpdateValidator.Object);
     }
 
     [Fact]
     public async Task GetGenre_ReturnsGenreDto()
     {
         // Arrange
-        var genreId = Guid.Empty;
-        _genreService.Setup(s => s.GetGenreByIdAsync(genreId))
+        var genreId = Guid.Empty.ToString();
+        _genreFacadeService.Setup(s => s.GetGenreByIdAsync(genreId))
             .ReturnsAsync(new GenreFullDto { Id = genreId })
             .Verifiable();
 
@@ -33,7 +35,7 @@ public class GenresControllerTests
         var result = await _controller.GetGenreAsync(genreId);
 
         // Assert
-        _genreService.Verify();
+        _genreFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<GenreFullDto>(((OkObjectResult)result).Value);
     }
@@ -42,7 +44,7 @@ public class GenresControllerTests
     public async Task GetAllGenres_ReturnsGenresBriefDtoList()
     {
         // Arrange
-        _genreService.Setup(s => s.GetAllGenresAsync())
+        _genreFacadeService.Setup(s => s.GetAllGenresAsync())
             .ReturnsAsync(new List<GenreBriefDto>())
             .Verifiable();
 
@@ -50,7 +52,7 @@ public class GenresControllerTests
         var result = await _controller.GetAllGenresAsync();
 
         // Assert
-        _genreService.Verify();
+        _genreFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IList<GenreBriefDto>>(((OkObjectResult)result.Result).Value);
     }
@@ -59,8 +61,8 @@ public class GenresControllerTests
     public async Task GetSubgenresAsync_ReturnsSubgenres()
     {
         // Arrange
-        Guid genreId = Guid.Empty;
-        _genreService.Setup(s => s.GetSubgenresByParentAsync(genreId))
+        var genreId = Guid.Empty.ToString();
+        _genreFacadeService.Setup(s => s.GetSubgenresByParentAsync(genreId))
             .ReturnsAsync(new List<GenreBriefDto>())
             .Verifiable();
 
@@ -68,7 +70,7 @@ public class GenresControllerTests
         var result = await _controller.GetSubgenresAsync(genreId);
 
         // Assert
-        _genreService.Verify();
+        _genreFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IList<GenreBriefDto>>(((OkObjectResult)result.Result).Value);
     }
@@ -77,8 +79,8 @@ public class GenresControllerTests
     public async Task GetGamesByGenreAsync_ReturnsGames()
     {
         // Arrange
-        Guid genreId = Guid.Empty;
-        _genreService.Setup(s => s.GetGamesByGenreId(genreId))
+        var genreId = Guid.Empty.ToString();
+        _genreFacadeService.Setup(s => s.GetGamesByGenreId(genreId))
             .ReturnsAsync(new List<GameBriefDto>())
             .Verifiable();
 
@@ -86,7 +88,7 @@ public class GenresControllerTests
         var result = await _controller.GetGamesByGenreAsync(genreId);
 
         // Assert
-        _genreService.Verify();
+        _genreFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IList<GameBriefDto>>(((OkObjectResult)result.Result).Value);
     }
@@ -96,7 +98,7 @@ public class GenresControllerTests
     {
         // Arrange
         var genreCreateDto = new GenreCreateDto();
-        var genreBriefDto = new GenreBriefDto() { Id = Guid.Empty };
+        var genreBriefDto = new GenreBriefDto() { Id = Guid.Empty.ToString() };
         _genreService.Setup(s => s.AddGenreAsync(genreCreateDto))
             .ReturnsAsync(genreBriefDto)
             .Verifiable();
@@ -131,7 +133,7 @@ public class GenresControllerTests
     public async Task DeleteGenre_ReturnsNoContent()
     {
         // Arrange
-        var genreId = Guid.Empty;
+        var genreId = Guid.Empty.ToString();
         _genreService.Setup(s => s.DeleteGenreAsync(genreId))
             .Returns(Task.CompletedTask)
             .Verifiable();

@@ -10,5 +10,7 @@ public interface IMongoUnitOfWork
 
     IGenericRepository<Product> Products { get; }
 
+    ICategoryRepository Categories { get; }
+
     Task<bool> SaveChangesAsync();
 }

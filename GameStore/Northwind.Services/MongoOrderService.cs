@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Interfaces.Services;
 using Northwind.Data.Interfaces;
 
 namespace Northwind.Services;
 
-public class MongoOrderService : IOrderService
+public class MongoOrderService : MongoServiceBase, IOrderService
 {
     private readonly IMongoUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -16,8 +15,6 @@ public class MongoOrderService : IOrderService
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
-
-    public EntityStorage EntityStorage => EntityStorage.MongoDb;
 
     public async Task<IList<OrderBriefDto>> GetPaidOrdersByCustomerAsync(string customerId, DateTime lowerDate, DateTime upperDate)
     {
