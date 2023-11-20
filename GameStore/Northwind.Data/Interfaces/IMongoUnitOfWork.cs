@@ -6,7 +6,9 @@ public interface IMongoUnitOfWork
 {
     IGenericRepository<Order> Orders { get; }
 
-    IGenericRepository<OrderDetail> OrderDetails { get; }
+    IOrderDetailRepository OrderDetails { get; }
+
+    IGenericRepository<Product> Products { get; }
 
     Task<bool> SaveChangesAsync();
 }

@@ -3,13 +3,13 @@ using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
 
-namespace GameStore.Services.Interfaces;
+namespace GameStore.Shared.Interfaces.Services;
 
-public interface IGameService
+public interface IGameService : IResolvableByEntityStorage
 {
     Task<GameFullDto> GetGameByAliasAsync(string alias);
 
-    Task<GameFullDto> GetGameByIdAsync(Guid id);
+    Task<GameFullDto> GetGameByIdAsync(string id);
 
     Task<IList<GenreBriefDto>> GetGenresByGameAliasAsync(string alias);
 
@@ -18,12 +18,6 @@ public interface IGameService
     Task<PublisherBriefDto> GetPublisherByGameAliasAsync(string alias);
 
     Task<FilteredGamesDto> GetAllGamesAsync(GamesFilterDto filterDto);
-
-    Task<GameBriefDto> AddGameAsync(GameCreateDto dto);
-
-    Task UpdateGameAsync(GameUpdateDto dto);
-
-    Task DeleteGameAsync(string alias);
 
     Task<Tuple<byte[], string>> DownloadAsync(string gameAlias);
 }

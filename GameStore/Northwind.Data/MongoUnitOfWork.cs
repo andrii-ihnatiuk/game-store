@@ -10,16 +10,20 @@ public class MongoUnitOfWork : IMongoUnitOfWork
     public MongoUnitOfWork(
         IMongoContext context,
         IGenericRepository<Order> ordersRepository,
-        IGenericRepository<OrderDetail> orderDetailsRepository)
+        IOrderDetailRepository orderDetailRepository,
+        IGenericRepository<Product> productsRepository)
     {
         _context = context;
         Orders = ordersRepository;
-        OrderDetails = orderDetailsRepository;
+        OrderDetails = orderDetailRepository;
+        Products = productsRepository;
     }
 
     public IGenericRepository<Order> Orders { get; }
 
-    public IGenericRepository<OrderDetail> OrderDetails { get; }
+    public IOrderDetailRepository OrderDetails { get; }
+
+    public IGenericRepository<Product> Products { get; }
 
     public Task<bool> SaveChangesAsync()
     {

@@ -1,4 +1,5 @@
 ﻿using GameStore.API.Controllers;
+using GameStore.Application.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -13,14 +14,20 @@ namespace GameStore.Tests.GameStore.API.Tests.Controllers;
 public class GamesControllerTests
 {
     private readonly GamesController _controller;
-    private readonly Mock<IGameService> _gameService = new();
+    private readonly Mock<ICoreGameService> _gameService = new();
+    private readonly Mock<IGameFacadeService> _gameFacadeService = new();
     private readonly Mock<IValidatorWrapper<GameCreateDto>> _gameCreateValidator = new();
     private readonly Mock<IValidatorWrapper<GameUpdateDto>> _gameUpdateValidator = new();
     private readonly Mock<IValidatorWrapper<GamesFilterDto>> _gamesFilterValidator = new();
 
     public GamesControllerTests()
     {
-        _controller = new GamesController(_gameService.Object, _gameCreateValidator.Object, _gameUpdateValidator.Object, _gamesFilterValidator.Object);
+        _controller = new GamesController(
+            _gameService.Object,
+            _gameFacadeService.Object,
+            _gameCreateValidator.Object,
+            _gameUpdateValidator.Object,
+            _gamesFilterValidator.Object);
     }
 
     [Fact]
@@ -28,7 +35,7 @@ public class GamesControllerTests
     {
         // Arrange
         const string gameAlias = "game-alias";
-        _gameService.Setup(s => s.GetGameByAliasAsync(gameAlias))
+        _gameFacadeService.Setup(s => s.GetGameByAliasAsync(gameAlias))
             .ReturnsAsync(new GameFullDto { Key = gameAlias })
             .Verifiable();
 
@@ -36,7 +43,7 @@ public class GamesControllerTests
         var result = await _controller.GetGameByAliasAsync(gameAlias);
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<GameFullDto>(((OkObjectResult)result).Value);
     }
@@ -45,12 +52,12 @@ public class GamesControllerTests
     public async Task GetGameByIdAsync_ReturnsGameFullDto()
     {
         // Arrange
-        _gameService.Setup(s => s.GetGameByIdAsync(Guid.Empty))
+        _gameFacadeService.Setup(s => s.GetGameByIdAsync(Guid.Empty.ToString()))
             .ReturnsAsync(new GameFullDto())
             .Verifiable();
 
         // Act
-        var result = await _controller.GetGameByIdAsync(Guid.Empty);
+        var result = await _controller.GetGameByIdAsync(Guid.Empty.ToString());
 
         // Assert
         _gameService.Verify();

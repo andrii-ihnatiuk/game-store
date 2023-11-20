@@ -2,7 +2,7 @@
 
 namespace GameStore.Shared.Interfaces.Services;
 
-public interface IOrderService
+public interface IOrderService : IResolvableByEntityStorage
 {
     Task<IList<OrderBriefDto>> GetPaidOrdersByCustomerAsync(string customerId, DateTime lowerDate, DateTime upperDate);
 

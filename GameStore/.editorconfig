@@ -129,6 +129,10 @@ dotnet_diagnostic.IDE0037.severity = none
 
 dotnet_diagnostic.CS0542.severity = none
 
+dotnet_diagnostic.IDE0045.severity = suggestion
+
+dotnet_diagnostic.IDE0072.severity = none
+
 [*.{cs,vb}]
 #### Naming styles ####
 

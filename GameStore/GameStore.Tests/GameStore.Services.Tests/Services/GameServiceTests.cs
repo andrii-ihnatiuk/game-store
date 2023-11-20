@@ -20,11 +20,11 @@ public class GameServiceTests
     private const string GameAlias = "test";
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IMapper> _mapper = new();
-    private readonly GameService _service;
+    private readonly CoreGameService _service;
 
     public GameServiceTests()
     {
-        _service = new GameService(_unitOfWork.Object, _mapper.Object);
+        _service = new CoreGameService(_unitOfWork.Object, _mapper.Object);
     }
 
     [Fact]

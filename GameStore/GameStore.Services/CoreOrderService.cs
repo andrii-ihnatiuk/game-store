@@ -2,6 +2,7 @@
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,8 @@ public class CoreOrderService : ICoreOrderService
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+
+    public EntityStorage EntityStorage => EntityStorage.SqlServer;
 
     public async Task AddGameToCartAsync(string customerId, string gameAlias)
     {
