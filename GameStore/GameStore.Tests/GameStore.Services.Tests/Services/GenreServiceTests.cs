@@ -16,11 +16,11 @@ public class GenreServiceTests
     private const string GenreName = "test";
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IMapper> _mapper = new();
-    private readonly GenreService _service;
+    private readonly CoreGenreService _service;
 
     public GenreServiceTests()
     {
-        _service = new GenreService(_unitOfWork.Object, _mapper.Object);
+        _service = new CoreGenreService(_unitOfWork.Object, _mapper.Object);
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class GenreServiceTests
             .Returns(new GenreFullDto());
 
         // Act
-        await _service.GetGenreByIdAsync(id);
+        await _service.GetGenreByIdAsync(id.ToString());
 
         // Assert
         _unitOfWork.Verify(
@@ -67,7 +67,7 @@ public class GenreServiceTests
             .Returns(new List<GenreBriefDto> { new(), new() });
 
         // Act
-        var subGenres = await _service.GetSubgenresByParentAsync(parentId);
+        var subGenres = await _service.GetSubgenresByParentAsync(parentId.ToString());
 
         // Assert
         Assert.NotNull(subGenres);
@@ -92,7 +92,7 @@ public class GenreServiceTests
             .Returns(games.Select(game => new GameBriefDto()).ToList());
 
         // Act
-        var gamesDto = await _service.GetGamesByGenreId(genreId);
+        var gamesDto = await _service.GetGamesByGenreId(genreId.ToString());
 
         // Assert
         Assert.NotNull(gamesDto);
@@ -264,15 +264,14 @@ public class GenreServiceTests
     public async Task DeleteGenreAsync_CallsRepository_WithValidArguments()
     {
         // Arrange
-        var genreId = Guid.Empty;
-        _unitOfWork.Setup(uow => uow.Genres.DeleteAsync(genreId)).Returns(Task.CompletedTask);
+        _unitOfWork.Setup(uow => uow.Genres.DeleteAsync(It.IsAny<object>())).Returns(Task.CompletedTask);
         _unitOfWork.Setup(uow => uow.SaveAsync()).ReturnsAsync(1);
 
         // Act
-        await _service.DeleteGenreAsync(genreId);
+        await _service.DeleteGenreAsync(Guid.Empty.ToString());
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Genres.DeleteAsync(genreId), Times.Once);
+        _unitOfWork.Verify(uow => uow.Genres.DeleteAsync(It.IsAny<object>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 }

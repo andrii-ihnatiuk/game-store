@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
@@ -9,7 +8,7 @@ using Northwind.Data.Interfaces;
 
 namespace Northwind.Services;
 
-public class MongoProductService : IGameService
+public class MongoProductService : MongoServiceBase, IGameService
 {
     private readonly IMongoUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -19,8 +18,6 @@ public class MongoProductService : IGameService
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
-
-    public EntityStorage EntityStorage => EntityStorage.MongoDb;
 
     public Task<GameFullDto> GetGameByAliasAsync(string alias)
     {

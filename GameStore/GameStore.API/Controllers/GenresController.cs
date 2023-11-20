@@ -1,3 +1,4 @@
+using GameStore.Application.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -11,45 +12,48 @@ namespace GameStore.API.Controllers;
 [ResponseCache(CacheProfileName = "OneMinuteCache")]
 public class GenresController : ControllerBase
 {
-    private readonly IGenreService _genreService;
+    private readonly ICoreGenreService _genreService;
+    private readonly IGenreFacadeService _genreFacadeService;
     private readonly IValidatorWrapper<GenreCreateDto> _genreCreateValidator;
     private readonly IValidatorWrapper<GenreUpdateDto> _genreUpdateValidator;
 
     public GenresController(
-        IGenreService genreService,
+        ICoreGenreService genreService,
+        IGenreFacadeService genreFacadeService,
         IValidatorWrapper<GenreCreateDto> genreCreateValidator,
         IValidatorWrapper<GenreUpdateDto> genreUpdateValidator)
     {
         _genreService = genreService;
+        _genreFacadeService = genreFacadeService;
         _genreCreateValidator = genreCreateValidator;
         _genreUpdateValidator = genreUpdateValidator;
     }
 
-    [HttpGet("{genreId:guid}", Name = "GetGenreById")]
-    public async Task<IActionResult> GetGenreAsync([FromRoute] Guid genreId)
+    [HttpGet("{genreId}", Name = "GetGenreById")]
+    public async Task<IActionResult> GetGenreAsync([FromRoute] string genreId)
     {
-        var genreFullDto = await _genreService.GetGenreByIdAsync(genreId);
+        var genreFullDto = await _genreFacadeService.GetGenreByIdAsync(genreId);
         return Ok(genreFullDto);
     }
 
     [HttpGet("")]
     public async Task<ActionResult<IList<GenreBriefDto>>> GetAllGenresAsync()
     {
-        var genresDto = await _genreService.GetAllGenresAsync();
+        var genresDto = await _genreFacadeService.GetAllGenresAsync();
         return Ok(genresDto);
     }
 
-    [HttpGet("{id:guid}/subgenres")]
-    public async Task<ActionResult<IList<GenreBriefDto>>> GetSubgenresAsync(Guid id)
+    [HttpGet("{id}/subgenres")]
+    public async Task<ActionResult<IList<GenreBriefDto>>> GetSubgenresAsync(string id)
     {
-        var subgenres = await _genreService.GetSubgenresByParentAsync(id);
+        var subgenres = await _genreFacadeService.GetSubgenresByParentAsync(id);
         return Ok(subgenres);
     }
 
-    [HttpGet("{id:guid}/games")]
-    public async Task<ActionResult<IList<GameBriefDto>>> GetGamesByGenreAsync(Guid id)
+    [HttpGet("{id}/games")]
+    public async Task<ActionResult<IList<GameBriefDto>>> GetGamesByGenreAsync(string id)
     {
-        var games = await _genreService.GetGamesByGenreId(id);
+        var games = await _genreFacadeService.GetGamesByGenreId(id);
         return Ok(games);
     }
 
@@ -69,8 +73,8 @@ public class GenresController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("remove/{id:guid}")]
-    public async Task<IActionResult> DeleteGenreAsync([FromRoute] Guid id)
+    [HttpDelete("remove/{id}")]
+    public async Task<IActionResult> DeleteGenreAsync([FromRoute] string id)
     {
         await _genreService.DeleteGenreAsync(id);
         return NoContent();

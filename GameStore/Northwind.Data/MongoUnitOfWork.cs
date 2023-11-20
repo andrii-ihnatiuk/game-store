@@ -11,12 +11,14 @@ public class MongoUnitOfWork : IMongoUnitOfWork
         IMongoContext context,
         IGenericRepository<Order> ordersRepository,
         IOrderDetailRepository orderDetailRepository,
-        IGenericRepository<Product> productsRepository)
+        IGenericRepository<Product> productsRepository,
+        ICategoryRepository categoriesRepository)
     {
         _context = context;
         Orders = ordersRepository;
         OrderDetails = orderDetailRepository;
         Products = productsRepository;
+        Categories = categoriesRepository;
     }
 
     public IGenericRepository<Order> Orders { get; }
@@ -24,6 +26,8 @@ public class MongoUnitOfWork : IMongoUnitOfWork
     public IOrderDetailRepository OrderDetails { get; }
 
     public IGenericRepository<Product> Products { get; }
+
+    public ICategoryRepository Categories { get; }
 
     public Task<bool> SaveChangesAsync()
     {

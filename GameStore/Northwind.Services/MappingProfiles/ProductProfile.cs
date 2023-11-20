@@ -23,5 +23,13 @@ public class ProductProfile : Profile
             .ForMember(
                 dest => dest.UnitInStock,
                 opts => opts.MapFrom(src => src.UnitsInStock));
+
+        CreateMap<Product, GameBriefDto>()
+            .ForMember(
+                dest => dest.Key,
+                opts => opts.MapFrom(src => src.Alias))
+            .ForMember(
+                dest => dest.Name,
+                opts => opts.MapFrom(src => src.ProductName));
     }
 }
