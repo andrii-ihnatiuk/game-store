@@ -36,7 +36,8 @@ public static class ApplicationConfiguration
         serviceCollection.AddSingleton<ILogger, NLogLogger>();
 
         serviceCollection.AddScoped<IOrderFacadeService, OrderFacadeService>();
-        serviceCollection.AddScoped<IOrderServiceProvider, OrderServiceProvider>();
+        serviceCollection.AddScoped<IGameFacadeService, GameFacadeService>();
+        serviceCollection.AddScoped<IServiceResolver, ServiceResolver>();
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
         serviceCollection.AddScoped<IValidator<GameUpdateDto>, GameUpdateValidator>();

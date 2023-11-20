@@ -42,4 +42,8 @@
       <ProjectReference Include="..\Northwind.Data\Northwind.Data.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Northwind.Data.Tests\" />
+    </ItemGroup>
+
 </Project>

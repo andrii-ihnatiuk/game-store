@@ -4,6 +4,7 @@ using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Data.Models;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.Constants.Filter;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -14,16 +15,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
 
-public class GameService : IGameService
+public class CoreGameService : ICoreGameService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public GameService(IUnitOfWork unitOfWork, IMapper mapper)
+    public CoreGameService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
     }
+
+    public EntityStorage EntityStorage => EntityStorage.SqlServer;
 
     public async Task<GameFullDto> GetGameByAliasAsync(string alias)
     {
@@ -33,9 +36,10 @@ public class GameService : IGameService
         return _mapper.Map<Game, GameFullDto>(game);
     }
 
-    public async Task<GameFullDto> GetGameByIdAsync(Guid id)
+    public async Task<GameFullDto> GetGameByIdAsync(string id)
     {
-        var game = await _unitOfWork.Games.GetOneAsync(g => g.Id == id);
+        var gameId = Guid.Parse(id);
+        var game = await _unitOfWork.Games.GetOneAsync(g => g.Id == gameId);
         return _mapper.Map<Game, GameFullDto>(game);
     }
 
