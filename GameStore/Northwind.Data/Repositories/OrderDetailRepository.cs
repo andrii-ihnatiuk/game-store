@@ -1,10 +1,12 @@
-﻿using MongoDB.Driver;
+﻿using System.Diagnostics.CodeAnalysis;
+using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using Northwind.Data.Entities;
 using Northwind.Data.Interfaces;
 
 namespace Northwind.Data.Repositories;
 
+[ExcludeFromCodeCoverage]
 public class OrderDetailRepository : GenericRepository<OrderDetail>, IOrderDetailRepository
 {
     public OrderDetailRepository(IMongoContext context)
@@ -12,7 +14,7 @@ public class OrderDetailRepository : GenericRepository<OrderDetail>, IOrderDetai
     {
     }
 
-    public async Task<IList<OrderDetail>> GetAllByOrderObjectId(string id)
+    public async Task<IList<OrderDetail>> GetAllByOrderObjectIdAsync(string id)
     {
         var orders = Context.GetCollection<Order>().AsQueryable();
         var details = DbSet.AsQueryable();

@@ -4,5 +4,5 @@ namespace Northwind.Data.Interfaces;
 
 public interface ICategoryRepository : IGenericRepository<Category>
 {
-    Task<IList<Product>> GetProductsByCategoryId(string id);
+    Task<IList<Product>> GetProductsByCategoryIdAsync(string id);
 }

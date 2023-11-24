@@ -1,4 +1,5 @@
 ﻿using GameStore.API.Controllers;
+using GameStore.Application.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
@@ -11,13 +12,18 @@ namespace GameStore.Tests.GameStore.API.Tests.Controllers;
 public class PublishersControllerTests
 {
     private readonly PublishersController _controller;
-    private readonly Mock<IPublisherService> _publisherService = new();
+    private readonly Mock<ICorePublisherService> _publisherService = new();
+    private readonly Mock<IPublisherFacadeService> _publisherFacadeService = new();
     private readonly Mock<IValidatorWrapper<PublisherCreateDto>> _publisherCreateValidator = new();
     private readonly Mock<IValidatorWrapper<PublisherUpdateDto>> _publisherUpdateValidator = new();
 
     public PublishersControllerTests()
     {
-        _controller = new PublishersController(_publisherService.Object, _publisherCreateValidator.Object, _publisherUpdateValidator.Object);
+        _controller = new PublishersController(
+            _publisherService.Object,
+            _publisherFacadeService.Object,
+            _publisherCreateValidator.Object,
+            _publisherUpdateValidator.Object);
     }
 
     [Fact]
@@ -25,14 +31,14 @@ public class PublishersControllerTests
     {
         // Arrange
         const string companyName = "company-name";
-        _publisherService.Setup(s => s.GetPublisherByNameAsync(companyName))
+        _publisherFacadeService.Setup(s => s.GetPublisherByNameAsync(companyName))
             .ReturnsAsync(new PublisherFullDto { CompanyName = companyName }).Verifiable();
 
         // Act
         var result = await _controller.GetPublisherAsync(companyName);
 
         // Assert
-        _publisherService.Verify();
+        _publisherFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsType<PublisherFullDto>((result.Result as OkObjectResult).Value);
     }
@@ -41,14 +47,14 @@ public class PublishersControllerTests
     public async Task GetAllPublishersAsync_ReturnsPublishers()
     {
         // Arrange
-        _publisherService.Setup(s => s.GetAllPublishersAsync())
+        _publisherFacadeService.Setup(s => s.GetAllPublishersAsync())
             .ReturnsAsync(new List<PublisherBriefDto>()).Verifiable();
 
         // Act
         var result = await _controller.GetAllPublishersAsync();
 
         // Assert
-        _publisherService.Verify();
+        _publisherFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IEnumerable<PublisherBriefDto>>((result.Result as OkObjectResult).Value);
     }
@@ -58,14 +64,14 @@ public class PublishersControllerTests
     {
         // Arrange
         const string publisherName = "publisher-name";
-        _publisherService.Setup(s => s.GetGamesByPublisherNameAsync(publisherName))
+        _publisherFacadeService.Setup(s => s.GetGamesByPublisherNameAsync(publisherName))
             .ReturnsAsync(new List<GameBriefDto>()).Verifiable();
 
         // Act
         var result = await _controller.GetGamesByPublisherAsync(publisherName);
 
         // Assert
-        _publisherService.Verify();
+        _publisherFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IEnumerable<GameBriefDto>>((result.Result as OkObjectResult).Value);
     }
@@ -110,13 +116,12 @@ public class PublishersControllerTests
     public async Task DeletePublisherAsync_ReturnsNoContentResult()
     {
         // Arrange
-        var publisherId = Guid.NewGuid();
-        _publisherService.Setup(s => s.DeletePublisherAsync(publisherId))
+        _publisherService.Setup(s => s.DeletePublisherAsync(It.IsAny<string>()))
             .Returns(Task.CompletedTask)
             .Verifiable();
 
         // Act
-        var result = await _controller.DeletePublisherAsync(publisherId);
+        var result = await _controller.DeletePublisherAsync(Guid.Empty.ToString());
 
         // Assert
         _publisherService.Verify();

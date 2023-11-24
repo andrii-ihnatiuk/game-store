@@ -16,11 +16,11 @@ public class PublisherServiceTests
     private const string CompanyName = "test";
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IMapper> _mapper = new();
-    private readonly PublisherService _service;
+    private readonly CorePublisherService _service;
 
     public PublisherServiceTests()
     {
-        _service = new PublisherService(_unitOfWork.Object, _mapper.Object);
+        _service = new CorePublisherService(_unitOfWork.Object, _mapper.Object);
     }
 
     [Fact]
@@ -181,18 +181,17 @@ public class PublisherServiceTests
     public async Task DeletePublisherAsync_DoesNotThrow()
     {
         // Arrange
-        var publisherId = Guid.Empty;
-        _unitOfWork.Setup(uow => uow.Publishers.DeleteAsync(publisherId))
+        _unitOfWork.Setup(uow => uow.Publishers.DeleteAsync(It.IsAny<Guid>()))
             .Returns(Task.CompletedTask);
 
         _unitOfWork.Setup(uow => uow.SaveAsync())
             .ReturnsAsync(1);
 
         // Act
-        await _service.DeletePublisherAsync(publisherId);
+        await _service.DeletePublisherAsync(Guid.Empty.ToString());
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Publishers.DeleteAsync(publisherId), Times.Once);
+        _unitOfWork.Verify(uow => uow.Publishers.DeleteAsync(It.IsAny<Guid>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 }

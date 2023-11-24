@@ -38,7 +38,9 @@ public static class ApplicationConfiguration
         serviceCollection.AddScoped<IOrderFacadeService, OrderFacadeService>();
         serviceCollection.AddScoped<IGameFacadeService, GameFacadeService>();
         serviceCollection.AddScoped<IGenreFacadeService, GenreFacadeService>();
+        serviceCollection.AddScoped<IPublisherFacadeService, PublisherFacadeService>();
         serviceCollection.AddScoped<IServiceResolver, ServiceResolver>();
+        serviceCollection.AddScoped<IServiceProviderWrapper, ServiceProviderWrapper>();
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
         serviceCollection.AddScoped<IValidator<GameUpdateDto>, GameUpdateValidator>();

@@ -37,7 +37,7 @@ public class MongoCategoryService : MongoServiceBase, IGenreService
 
     public async Task<IList<GameBriefDto>> GetGamesByGenreId(string id)
     {
-        var games = await _unitOfWork.Categories.GetProductsByCategoryId(id);
+        var games = await _unitOfWork.Categories.GetProductsByCategoryIdAsync(id);
         return _mapper.Map<IList<GameBriefDto>>(games);
     }
 

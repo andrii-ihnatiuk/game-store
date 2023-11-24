@@ -12,5 +12,7 @@ public interface IMongoUnitOfWork
 
     ICategoryRepository Categories { get; }
 
+    ISupplierRepository Suppliers { get; }
+
     Task<bool> SaveChangesAsync();
 }

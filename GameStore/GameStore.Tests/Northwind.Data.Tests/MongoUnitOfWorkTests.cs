@@ -12,6 +12,7 @@ public class MongoUnitOfWorkTests
     private readonly Mock<IOrderDetailRepository> _orderDetailsRepoMock = new();
     private readonly Mock<IGenericRepository<Product>> _productRepoMock = new();
     private readonly Mock<ICategoryRepository> _categoryRepoMock = new();
+    private readonly Mock<ISupplierRepository> _supplierRepoMock = new();
     private readonly MongoUnitOfWork _mongoUnitOfWork;
 
     public MongoUnitOfWorkTests()
@@ -21,7 +22,8 @@ public class MongoUnitOfWorkTests
             _orderRepoMock.Object,
             _orderDetailsRepoMock.Object,
             _productRepoMock.Object,
-            _categoryRepoMock.Object);
+            _categoryRepoMock.Object,
+            _supplierRepoMock.Object);
     }
 
     [Fact]

@@ -1,9 +1,9 @@
 ﻿using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 
-namespace GameStore.Services.Interfaces;
+namespace GameStore.Shared.Interfaces.Services;
 
-public interface IPublisherService
+public interface IPublisherService : IResolvableByEntityStorage
 {
     Task<PublisherFullDto> GetPublisherByNameAsync(string companyName);
 
@@ -11,9 +11,7 @@ public interface IPublisherService
 
     Task<IList<GameBriefDto>> GetGamesByPublisherNameAsync(string companyName);
 
-    Task<PublisherBriefDto> AddPublisherAsync(PublisherCreateDto dto);
-
     Task UpdatePublisherAsync(PublisherUpdateDto dto);
 
-    Task DeletePublisherAsync(Guid id);
+    Task DeletePublisherAsync(string id);
 }

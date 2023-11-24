@@ -1,4 +1,5 @@
-﻿using GameStore.Shared.Settings;
+﻿using System.Diagnostics.CodeAnalysis;
+using GameStore.Shared.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Northwind.Data.Attributes;
@@ -6,6 +7,7 @@ using Northwind.Data.Interfaces;
 
 namespace Northwind.Data;
 
+[ExcludeFromCodeCoverage]
 public class MongoContext : IMongoContext
 {
     private readonly IList<Func<Task>> _commands;

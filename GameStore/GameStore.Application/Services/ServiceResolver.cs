@@ -2,16 +2,15 @@
 using GameStore.Application.Interfaces;
 using GameStore.Shared.Constants;
 using GameStore.Shared.Interfaces.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Northwind.Data.Serializers;
+using Northwind.Services.Util;
 
 namespace GameStore.Application.Services;
 
 public class ServiceResolver : IServiceResolver
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceProviderWrapper _serviceProvider;
 
-    public ServiceResolver(IServiceProvider serviceProvider)
+    public ServiceResolver(IServiceProviderWrapper serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
@@ -28,7 +27,7 @@ public class ServiceResolver : IServiceResolver
         where T : IResolvableByEntityStorage
     {
         var services = _serviceProvider.GetServices<T>();
-        return Regex.IsMatch(alias, $".*{EntityAliasSerializer.AliasSuffix}$")
+        return Regex.IsMatch(alias, $".*{EntityAliasUtil.AliasSuffix}$")
             ? services.Single(s => s.EntityStorage == EntityStorage.MongoDb)
             : services.Single(s => s.EntityStorage == EntityStorage.SqlServer);
     }

@@ -4,7 +4,7 @@ namespace GameStore.Shared.DTOs.Publisher;
 
 public class PublisherFullDto
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
 
     public string CompanyName { get; set; }
 
