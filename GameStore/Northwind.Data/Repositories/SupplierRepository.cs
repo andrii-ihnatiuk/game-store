@@ -7,22 +7,22 @@ using Northwind.Data.Interfaces;
 namespace Northwind.Data.Repositories;
 
 [ExcludeFromCodeCoverage]
-public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
+public class SupplierRepository : GenericRepository<Supplier>, ISupplierRepository
 {
-    public CategoryRepository(IMongoContext context)
+    public SupplierRepository(IMongoContext context)
         : base(context)
     {
     }
 
-    public async Task<IList<Product>> GetProductsByCategoryIdAsync(string id)
+    public async Task<IList<Product>> GetProductsBySupplierNameAsync(string companyName)
     {
         var products = Context.GetCollection<Product>().AsQueryable();
         var queryResult = await DbSet.AsQueryable()
-            .Where(c => c.Id == id)
+            .Where(c => c.CompanyName == companyName)
             .GroupJoin(
                 products,
-                c => c.CategoryId,
-                p => p.CategoryId,
+                c => c.SupplierId,
+                p => p.SupplierId,
                 (c, p) => p.ToList())
             .SingleAsync();
         return queryResult;

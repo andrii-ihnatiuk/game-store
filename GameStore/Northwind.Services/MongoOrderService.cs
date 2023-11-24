@@ -33,7 +33,7 @@ public class MongoOrderService : MongoServiceBase, IOrderService
 
     public async Task<IList<OrderDetailDto>> GetOrderDetailsAsync(string orderId)
     {
-        var details = await _unitOfWork.OrderDetails.GetAllByOrderObjectId(orderId);
+        var details = await _unitOfWork.OrderDetails.GetAllByOrderObjectIdAsync(orderId);
         return _mapper.Map<IList<OrderDetailDto>>(details);
     }
 }

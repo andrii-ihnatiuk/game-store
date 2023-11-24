@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using Northwind.Data.Attributes;
-using Northwind.Data.Serializers;
 
 namespace Northwind.Data.Entities;
 
@@ -12,7 +11,6 @@ public class Product : BaseEntity
 
     public string ProductName { get; set; }
 
-    [BsonSerializer(typeof(EntityAliasSerializer))]
     public string Alias { get; set; }
 
     [BsonElement("SupplierID")]

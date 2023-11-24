@@ -2,6 +2,7 @@
 using AutoMapper;
 using GameStore.Shared.DTOs.Game;
 using Northwind.Data.Entities;
+using Northwind.Services.Util;
 
 namespace Northwind.Services.MappingProfiles;
 
@@ -13,7 +14,7 @@ public class ProductProfile : Profile
         CreateMap<Product, GameFullDto>()
             .ForMember(
                 dest => dest.Key,
-                opts => opts.MapFrom(src => src.Alias))
+                opts => opts.MapFrom(src => EntityAliasUtil.AddSuffix(src.Alias)))
             .ForMember(
                 dest => dest.Name,
                 opts => opts.MapFrom(src => src.ProductName))
@@ -27,7 +28,7 @@ public class ProductProfile : Profile
         CreateMap<Product, GameBriefDto>()
             .ForMember(
                 dest => dest.Key,
-                opts => opts.MapFrom(src => src.Alias))
+                opts => opts.MapFrom(src => EntityAliasUtil.AddSuffix(src.Alias)))
             .ForMember(
                 dest => dest.Name,
                 opts => opts.MapFrom(src => src.ProductName));

@@ -1,9 +1,12 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+using GameStore.Shared.Exceptions;
 using MongoDB.Driver;
 using Northwind.Data.Interfaces;
 
 namespace Northwind.Data.Repositories;
 
+[ExcludeFromCodeCoverage]
 public class GenericRepository<T> : IGenericRepository<T>
     where T : class
 {
@@ -20,8 +23,9 @@ public class GenericRepository<T> : IGenericRepository<T>
     public async Task<T> GetOneAsync(Expression<Func<T, bool>> predicate)
     {
         var filter = GetFilterDefinition(predicate);
-        var entity = await DbSet.FindAsync(filter);
-        return entity.FirstOrDefault();
+        var query = await DbSet.FindAsync(filter);
+        var entity = query.FirstOrDefault();
+        return entity ?? throw new EntityNotFoundException();
     }
 
     public async Task<IList<T>> GetAllAsync(Expression<Func<T, bool>>? predicate)

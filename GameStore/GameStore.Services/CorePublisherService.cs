@@ -8,12 +8,12 @@ using GameStore.Shared.Exceptions;
 
 namespace GameStore.Services;
 
-public class PublisherService : IPublisherService
+public class CorePublisherService : CoreServiceBase, ICorePublisherService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public PublisherService(IUnitOfWork unitOfWork, IMapper mapper)
+    public CorePublisherService(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
@@ -60,9 +60,9 @@ public class PublisherService : IPublisherService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task DeletePublisherAsync(Guid id)
+    public async Task DeletePublisherAsync(string id)
     {
-        await _unitOfWork.Publishers.DeleteAsync(id);
+        await _unitOfWork.Publishers.DeleteAsync(Guid.Parse(id));
         await _unitOfWork.SaveAsync();
     }
 

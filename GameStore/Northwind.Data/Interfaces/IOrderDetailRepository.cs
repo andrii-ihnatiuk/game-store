@@ -4,5 +4,5 @@ namespace Northwind.Data.Interfaces;
 
 public interface IOrderDetailRepository : IGenericRepository<OrderDetail>
 {
-    Task<IList<OrderDetail>> GetAllByOrderObjectId(string id);
+    Task<IList<OrderDetail>> GetAllByOrderObjectIdAsync(string id);
 }

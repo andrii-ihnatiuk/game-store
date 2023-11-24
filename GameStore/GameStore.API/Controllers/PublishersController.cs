@@ -1,4 +1,5 @@
-﻿using GameStore.Data.Entities;
+﻿using GameStore.Application.Interfaces;
+using GameStore.Data.Entities;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
@@ -11,16 +12,19 @@ namespace GameStore.API.Controllers;
 [Route("[controller]")]
 public class PublishersController : ControllerBase
 {
-    private readonly IPublisherService _publisherService;
+    private readonly ICorePublisherService _publisherService;
+    private readonly IPublisherFacadeService _publisherFacadeService;
     private readonly IValidatorWrapper<PublisherCreateDto> _publisherCreateValidator;
     private readonly IValidatorWrapper<PublisherUpdateDto> _publisherUpdateValidator;
 
     public PublishersController(
-        IPublisherService publisherService,
+        ICorePublisherService publisherService,
+        IPublisherFacadeService publisherFacadeService,
         IValidatorWrapper<PublisherCreateDto> publisherCreateValidator,
         IValidatorWrapper<PublisherUpdateDto> publisherUpdateValidator)
     {
         _publisherService = publisherService;
+        _publisherFacadeService = publisherFacadeService;
         _publisherCreateValidator = publisherCreateValidator;
         _publisherUpdateValidator = publisherUpdateValidator;
     }
@@ -28,21 +32,21 @@ public class PublishersController : ControllerBase
     [HttpGet("{companyName}", Name = "GetPublisherByName")]
     public async Task<ActionResult<PublisherFullDto>> GetPublisherAsync([FromRoute] string companyName)
     {
-        var gameFullDto = await _publisherService.GetPublisherByNameAsync(companyName);
+        var gameFullDto = await _publisherFacadeService.GetPublisherByNameAsync(companyName);
         return Ok(gameFullDto);
     }
 
     [HttpGet]
     public async Task<ActionResult<IList<Publisher>>> GetAllPublishersAsync()
     {
-        var publishersDto = await _publisherService.GetAllPublishersAsync();
+        var publishersDto = await _publisherFacadeService.GetAllPublishersAsync();
         return Ok(publishersDto);
     }
 
     [HttpGet("{companyName}/games")]
     public async Task<ActionResult<IList<GameBriefDto>>> GetGamesByPublisherAsync([FromRoute] string companyName)
     {
-        var games = await _publisherService.GetGamesByPublisherNameAsync(companyName);
+        var games = await _publisherFacadeService.GetGamesByPublisherNameAsync(companyName);
         return Ok(games);
     }
 
@@ -62,8 +66,8 @@ public class PublishersController : ControllerBase
         return Ok();
     }
 
-    [HttpDelete("remove/{id:guid}")]
-    public async Task<IActionResult> DeletePublisherAsync([FromRoute] Guid id)
+    [HttpDelete("remove/{id}")]
+    public async Task<IActionResult> DeletePublisherAsync([FromRoute] string id)
     {
         await _publisherService.DeletePublisherAsync(id);
         return NoContent();
