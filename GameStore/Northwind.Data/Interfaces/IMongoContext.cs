@@ -6,7 +6,7 @@ public interface IMongoContext
 {
     IMongoCollection<T> GetCollection<T>(string? name = null);
 
-    void AddCommand(Func<Task> command);
+    void AddCommand(Func<IClientSessionHandle, Task> command);
 
     Task<bool> SaveChangesAsync();
 }

@@ -35,6 +35,11 @@ public class GenericRepository<T> : IGenericRepository<T>
         return entities.ToList();
     }
 
+    public void Add(T entity)
+    {
+        Context.AddCommand(session => DbSet.InsertOneAsync(session, entity));
+    }
+
     private static FilterDefinition<T> GetFilterDefinition(Expression<Func<T, bool>>? predicate)
     {
         return predicate ?? FilterDefinition<T>.Empty;

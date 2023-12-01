@@ -181,9 +181,14 @@ public class PublisherServiceTests
     public async Task DeletePublisherAsync_DoesNotThrow()
     {
         // Arrange
+        _unitOfWork.Setup(uow => uow.Publishers.GetOneAsync(
+                It.IsAny<Expression<Func<Publisher, bool>>>(),
+                It.IsAny<Func<IQueryable<Publisher>, IIncludableQueryable<Publisher, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new Publisher { Id = Guid.Empty });
+
         _unitOfWork.Setup(uow => uow.Publishers.DeleteAsync(It.IsAny<Guid>()))
             .Returns(Task.CompletedTask);
-
         _unitOfWork.Setup(uow => uow.SaveAsync())
             .ReturnsAsync(1);
 

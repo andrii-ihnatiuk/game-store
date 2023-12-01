@@ -62,7 +62,8 @@ public class CorePublisherService : CoreServiceBase, ICorePublisherService
 
     public async Task DeletePublisherAsync(string id)
     {
-        await _unitOfWork.Publishers.DeleteAsync(Guid.Parse(id));
+        var publisherToRemove = await _unitOfWork.Publishers.GetOneAsync(g => g.Id == Guid.Parse(id));
+        await _unitOfWork.Publishers.DeleteAsync(publisherToRemove.Id);
         await _unitOfWork.SaveAsync();
     }
 

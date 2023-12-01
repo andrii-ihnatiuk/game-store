@@ -59,6 +59,12 @@ public class UnitOfWork : IUnitOfWork
         return await _context.SaveChangesAsync();
     }
 
+    public Task<int> SaveAsync(bool logChanges)
+    {
+        _context.LogChanges = logChanges;
+        return SaveAsync();
+    }
+
     public void Dispose()
     {
         Dispose(true);

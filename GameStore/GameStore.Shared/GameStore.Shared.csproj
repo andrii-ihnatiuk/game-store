@@ -20,6 +20,7 @@
 
     <ItemGroup>
       <PackageReference Include="FluentValidation" Version="11.8.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
       <PackageReference Include="NLog" Version="5.2.4" />
       <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.4" />
     </ItemGroup>

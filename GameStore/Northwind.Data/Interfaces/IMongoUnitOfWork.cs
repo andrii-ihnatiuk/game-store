@@ -14,5 +14,7 @@ public interface IMongoUnitOfWork
 
     ISupplierRepository Suppliers { get; }
 
+    IGenericRepository<EntityLog> Logs { get; }
+
     Task<bool> SaveChangesAsync();
 }

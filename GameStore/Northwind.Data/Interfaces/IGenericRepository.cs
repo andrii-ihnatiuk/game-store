@@ -8,4 +8,6 @@ public interface IGenericRepository<T>
     Task<T> GetOneAsync(Expression<Func<T, bool>> predicate);
 
     Task<IList<T>> GetAllAsync(Expression<Func<T, bool>>? predicate = null);
+
+    void Add(T entity);
 }

@@ -1,4 +1,5 @@
 ﻿using GameStore.Data;
+using GameStore.Data.Interceptors;
 using GameStore.Data.Interfaces;
 using GameStore.Data.Repositories;
 using GameStore.Services.Interfaces;
@@ -16,8 +17,12 @@ public static class ServicesConfiguration
 {
     public static void AddCoreServices(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        serviceCollection.AddDbContext<GameStoreDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        serviceCollection.AddScoped<MongoLoggingInterceptor>();
+        serviceCollection.AddDbContext<GameStoreDbContext>((sp, options) =>
+        {
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            options.AddInterceptors(sp.GetRequiredService<MongoLoggingInterceptor>());
+        });
         serviceCollection.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         serviceCollection.AddScoped<IUnitOfWork, UnitOfWork>();
         serviceCollection.AddScoped<IGameRepository, GameRepository>();
