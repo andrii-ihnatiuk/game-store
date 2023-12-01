@@ -13,6 +13,8 @@ public sealed class GameStoreDbContext : DbContext
     {
     }
 
+    public bool LogChanges { get; set; } = true;
+
     public DbSet<Game> Games { get; set; }
 
     public DbSet<Genre> Genres { get; set; }

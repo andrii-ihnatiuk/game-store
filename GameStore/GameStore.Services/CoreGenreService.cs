@@ -72,13 +72,15 @@ public class CoreGenreService : CoreServiceBase, ICoreGenreService
         }
 
         var updatedGenre = _mapper.Map(dto, existingGenre);
+
         await ThrowIfForeignKeyConstraintViolationFor(updatedGenre);
         await _unitOfWork.SaveAsync();
     }
 
     public async Task DeleteGenreAsync(string genreId)
     {
-        await _unitOfWork.Genres.DeleteAsync(genreId);
+        var genreToRemove = await _unitOfWork.Genres.GetOneAsync(g => g.Id == Guid.Parse(genreId));
+        await _unitOfWork.Genres.DeleteAsync(genreToRemove.Id);
         await _unitOfWork.SaveAsync();
     }
 

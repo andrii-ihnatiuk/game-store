@@ -264,6 +264,12 @@ public class GenreServiceTests
     public async Task DeleteGenreAsync_CallsRepository_WithValidArguments()
     {
         // Arrange
+        _unitOfWork.Setup(uow => uow.Genres.GetOneAsync(
+                It.IsAny<Expression<Func<Genre, bool>>>(),
+                It.IsAny<Func<IQueryable<Genre>, IIncludableQueryable<Genre, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new Genre { Id = Guid.Empty });
+
         _unitOfWork.Setup(uow => uow.Genres.DeleteAsync(It.IsAny<object>())).Returns(Task.CompletedTask);
         _unitOfWork.Setup(uow => uow.SaveAsync()).ReturnsAsync(1);
 

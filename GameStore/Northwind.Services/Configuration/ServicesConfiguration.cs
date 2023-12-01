@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.Serialization.Conventions;
 using Northwind.Data;
 using Northwind.Data.Interfaces;
+using Northwind.Data.Logger;
 using Northwind.Data.Repositories;
 
 namespace Northwind.Services.Configuration;
@@ -27,5 +28,7 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IGameService, MongoProductService>();
         serviceCollection.AddScoped<IGenreService, MongoCategoryService>();
         serviceCollection.AddScoped<IPublisherService, MongoSupplierService>();
+
+        serviceCollection.AddScoped<IEntityLogger, EntityLogger>();
     }
 }

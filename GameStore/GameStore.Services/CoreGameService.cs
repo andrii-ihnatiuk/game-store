@@ -29,7 +29,7 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
     {
         var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == alias, noTracking: false);
         game.PageViews += 1;
-        await _unitOfWork.SaveAsync();
+        await _unitOfWork.SaveAsync(logChanges: false);
         return _mapper.Map<Game, GameFullDto>(game);
     }
 
@@ -112,6 +112,7 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
         }
 
         var updatedGame = _mapper.Map(dto, existingGame);
+
         await ThrowIfForeignKeyConstraintViolationFor(updatedGame);
         await _unitOfWork.SaveAsync();
     }

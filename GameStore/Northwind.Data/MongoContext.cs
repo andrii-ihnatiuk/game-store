@@ -10,14 +10,14 @@ namespace Northwind.Data;
 [ExcludeFromCodeCoverage]
 public class MongoContext : IMongoContext
 {
-    private readonly IList<Func<Task>> _commands;
+    private readonly IList<Func<IClientSessionHandle, Task>> _commands;
 
     public MongoContext(IOptions<MongoDbSettings> dbOptions)
     {
         var dbSettings = dbOptions.Value;
         Client = new MongoClient(dbSettings.ConnectionString);
         Database = Client.GetDatabase(dbSettings.DatabaseName);
-        _commands = new List<Func<Task>>();
+        _commands = new List<Func<IClientSessionHandle, Task>>();
     }
 
     private IMongoDatabase Database { get; }
@@ -30,7 +30,7 @@ public class MongoContext : IMongoContext
         return Database.GetCollection<T>(collectionName);
     }
 
-    public void AddCommand(Func<Task> command)
+    public void AddCommand(Func<IClientSessionHandle, Task> command)
     {
         _commands.Add(command);
     }
@@ -38,18 +38,21 @@ public class MongoContext : IMongoContext
     public async Task<bool> SaveChangesAsync()
     {
         using var session = await Client.StartSessionAsync();
-        session.StartTransaction();
+
+        // standalone instances do not support transactions
+        // session.StartTransaction();
         try
         {
-            var tasks = _commands.Select(c => c.Invoke());
+            var tasks = _commands.Select(c => c.Invoke(session));
             await Task.WhenAll(tasks);
-            await session.CommitTransactionAsync();
+
+            // await session.CommitTransactionAsync();
             _commands.Clear();
             return true;
         }
         catch (Exception)
         {
-            await session.AbortTransactionAsync();
+            // await session.AbortTransactionAsync();
             return false;
         }
     }
