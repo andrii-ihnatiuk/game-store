@@ -28,4 +28,13 @@ public static class GenericRepositoryExtensions
             throw new EntityAlreadyExistsException(nameof(Genre.Name), name);
         }
     }
+
+    public static async Task ThrowIfCompanyNameIsNotUnique(this IGenericRepository<Publisher> repository, string companyName)
+    {
+        bool nameIsNotUnique = await repository.ExistsAsync(p => p.CompanyName == companyName);
+        if (nameIsNotUnique)
+        {
+            throw new EntityAlreadyExistsException(nameof(Publisher.CompanyName), companyName);
+        }
+    }
 }

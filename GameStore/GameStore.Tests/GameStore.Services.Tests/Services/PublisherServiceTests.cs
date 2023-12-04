@@ -141,10 +141,10 @@ public class PublisherServiceTests
     public async Task UpdatePublisherAsync_DoesNotThrow()
     {
         // Arrange
-        var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty, CompanyName = CompanyName } };
+        var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty.ToString(), CompanyName = CompanyName } };
         var existingPublisher = new Publisher { CompanyName = "another-company" };
 
-        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(dto.Publisher.Id)).ReturnsAsync(existingPublisher);
+        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(existingPublisher);
 
         _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(p => p.CompanyName == existingPublisher.CompanyName))
             .ReturnsAsync(false);
@@ -155,7 +155,7 @@ public class PublisherServiceTests
         await _service.UpdatePublisherAsync(dto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(dto.Publisher.Id), Times.Once);
+        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 
@@ -163,17 +163,17 @@ public class PublisherServiceTests
     public async Task UpdatePublisherAsync_WhenCompanyNameExists_ThrowsException()
     {
         // Arrange
-        var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty, CompanyName = "different-company" } };
-        var existingPublisher = new Publisher { Id = dto.Publisher.Id, CompanyName = CompanyName };
+        var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty.ToString(), CompanyName = "different-company" } };
+        var existingPublisher = new Publisher { Id = Guid.Empty, CompanyName = CompanyName };
 
-        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(dto.Publisher.Id)).ReturnsAsync(existingPublisher);
+        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(existingPublisher);
 
         _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(p => p.CompanyName == "different-company"))
             .ReturnsAsync(true);
 
         // Act & Assert
         await Assert.ThrowsAsync<EntityAlreadyExistsException>(() => _service.UpdatePublisherAsync(dto));
-        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(dto.Publisher.Id), Times.Once);
+        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Never);
     }
 

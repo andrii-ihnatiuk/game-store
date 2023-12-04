@@ -2,13 +2,15 @@
 using System.Linq.Expressions;
 using GameStore.Shared.Exceptions;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
+using Northwind.Data.Entities;
 using Northwind.Data.Interfaces;
 
 namespace Northwind.Data.Repositories;
 
 [ExcludeFromCodeCoverage]
 public class GenericRepository<T> : IGenericRepository<T>
-    where T : class
+    where T : BaseEntity
 {
     public GenericRepository(IMongoContext context)
     {
@@ -38,6 +40,16 @@ public class GenericRepository<T> : IGenericRepository<T>
     public void Add(T entity)
     {
         Context.AddCommand(session => DbSet.InsertOneAsync(session, entity));
+    }
+
+    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await DbSet.AsQueryable().AnyAsync(predicate);
+    }
+
+    public Task DeleteAsync(string id)
+    {
+        return DbSet.DeleteOneAsync(e => e.Id == id);
     }
 
     private static FilterDefinition<T> GetFilterDefinition(Expression<Func<T, bool>>? predicate)

@@ -6,4 +6,6 @@ namespace GameStore.Services.Interfaces;
 public interface ICorePublisherService : IPublisherService
 {
     Task<PublisherBriefDto> AddPublisherAsync(PublisherCreateDto dto);
+
+    Task UpdatePublisherAsync(PublisherUpdateDto dto);
 }

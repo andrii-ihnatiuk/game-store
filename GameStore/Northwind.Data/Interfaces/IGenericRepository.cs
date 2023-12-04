@@ -10,4 +10,8 @@ public interface IGenericRepository<T>
     Task<IList<T>> GetAllAsync(Expression<Func<T, bool>>? predicate = null);
 
     void Add(T entity);
+
+    Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate = null);
+
+    Task DeleteAsync(string id);
 }

@@ -11,7 +11,5 @@ public interface IPublisherService : IResolvableByEntityStorage
 
     Task<IList<GameBriefDto>> GetGamesByPublisherNameAsync(string companyName);
 
-    Task UpdatePublisherAsync(PublisherUpdateDto dto);
-
     Task DeletePublisherAsync(string id);
 }

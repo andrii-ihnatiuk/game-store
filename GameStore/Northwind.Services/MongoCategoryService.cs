@@ -41,13 +41,9 @@ public class MongoCategoryService : MongoServiceBase, IGenreService
         return _mapper.Map<IList<GameBriefDto>>(games);
     }
 
-    public Task UpdateGenreAsync(GenreUpdateDto dto)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task DeleteGenreAsync(string genreId)
     {
-        throw new NotImplementedException();
+        _unitOfWork.Categories.DeleteAsync(genreId);
+        return _unitOfWork.SaveChangesAsync();
     }
 }

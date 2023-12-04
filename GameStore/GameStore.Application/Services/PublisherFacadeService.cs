@@ -1,6 +1,9 @@
 ﻿using GameStore.Application.Interfaces;
+using GameStore.Application.Interfaces.Migration;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
+using GameStore.Shared.Extensions;
 using GameStore.Shared.Interfaces.Services;
 
 namespace GameStore.Application.Services;
@@ -8,16 +11,20 @@ namespace GameStore.Application.Services;
 public class PublisherFacadeService : IPublisherFacadeService
 {
     private readonly IServiceResolver _serviceResolver;
+    private readonly IPublisherMigrationService _migrationService;
 
-    public PublisherFacadeService(IServiceResolver serviceResolver)
+    public PublisherFacadeService(
+        IServiceResolver serviceResolver,
+        IPublisherMigrationService migrationService)
     {
         _serviceResolver = serviceResolver;
+        _migrationService = migrationService;
     }
 
-    public async Task<PublisherFullDto> GetPublisherByNameAsync(string companyName)
+    public Task<PublisherFullDto> GetPublisherByNameAsync(string companyName)
     {
         var service = _serviceResolver.ResolveForEntityAlias<IPublisherService>(companyName);
-        return await service.GetPublisherByNameAsync(companyName);
+        return service.GetPublisherByNameAsync(companyName);
     }
 
     public async Task<IList<PublisherBriefDto>> GetAllPublishersAsync()
@@ -27,22 +34,31 @@ public class PublisherFacadeService : IPublisherFacadeService
         await Task.WhenAll(tasks);
 
         var publishers = tasks.SelectMany(t => t.Result).ToList();
-        return publishers;
+        return publishers.FilterLegacyEntities();
     }
 
-    public async Task<IList<GameBriefDto>> GetGamesByPublisherNameAsync(string companyName)
+    public Task<IList<GameBriefDto>> GetGamesByPublisherNameAsync(string companyName)
     {
         var service = _serviceResolver.ResolveForEntityAlias<IPublisherService>(companyName);
-        return await service.GetGamesByPublisherNameAsync(companyName);
+        return service.GetGamesByPublisherNameAsync(companyName);
     }
 
-    public Task UpdatePublisherAsync(PublisherUpdateDto dto)
+    public async Task<PublisherBriefDto> AddPublisherAsync(PublisherCreateDto dto)
     {
-        throw new NotImplementedException();
+        var service = _serviceResolver.ResolveAll<ICorePublisherService>().Single();
+        return await service.AddPublisherAsync(dto);
+    }
+
+    public async Task UpdatePublisherAsync(PublisherUpdateDto dto)
+    {
+        await _migrationService.MigrateOnUpdateAsync(dto);
+        var service = _serviceResolver.ResolveAll<ICorePublisherService>().Single();
+        await service.UpdatePublisherAsync(dto);
     }
 
     public Task DeletePublisherAsync(string id)
     {
-        throw new NotImplementedException();
+        var service = _serviceResolver.ResolveForEntityId<IPublisherService>(id);
+        return service.DeletePublisherAsync(id);
     }
 }

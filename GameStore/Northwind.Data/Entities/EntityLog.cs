@@ -5,7 +5,7 @@ using Northwind.Data.Attributes;
 namespace Northwind.Data.Entities;
 
 [BsonCollection("entity-log")]
-public class EntityLog
+public class EntityLog : BaseEntity
 {
     public DateTime Date { get; set; }
 

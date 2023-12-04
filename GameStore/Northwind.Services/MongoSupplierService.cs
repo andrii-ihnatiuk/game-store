@@ -39,13 +39,9 @@ public class MongoSupplierService : MongoServiceBase, IPublisherService
         return _mapper.Map<IList<GameBriefDto>>(products);
     }
 
-    public Task UpdatePublisherAsync(PublisherUpdateDto dto)
-    {
-        throw new NotImplementedException();
-    }
-
     public Task DeletePublisherAsync(string id)
     {
-        throw new NotImplementedException();
+        _unitOfWork.Suppliers.DeleteAsync(id);
+        return _unitOfWork.SaveChangesAsync();
     }
 }

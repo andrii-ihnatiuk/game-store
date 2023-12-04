@@ -1,6 +1,5 @@
 ﻿using GameStore.API.Controllers;
 using GameStore.Application.Interfaces;
-using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
@@ -12,7 +11,6 @@ namespace GameStore.Tests.GameStore.API.Tests.Controllers;
 public class PublishersControllerTests
 {
     private readonly PublishersController _controller;
-    private readonly Mock<ICorePublisherService> _publisherService = new();
     private readonly Mock<IPublisherFacadeService> _publisherFacadeService = new();
     private readonly Mock<IValidatorWrapper<PublisherCreateDto>> _publisherCreateValidator = new();
     private readonly Mock<IValidatorWrapper<PublisherUpdateDto>> _publisherUpdateValidator = new();
@@ -20,7 +18,6 @@ public class PublishersControllerTests
     public PublishersControllerTests()
     {
         _controller = new PublishersController(
-            _publisherService.Object,
             _publisherFacadeService.Object,
             _publisherCreateValidator.Object,
             _publisherUpdateValidator.Object);
@@ -82,14 +79,14 @@ public class PublishersControllerTests
         // Arrange
         var publisherCreateDto = new PublisherCreateDto();
         var publisherBriefDto = new PublisherBriefDto() { CompanyName = "company-name" };
-        _publisherService.Setup(s => s.AddPublisherAsync(publisherCreateDto))
+        _publisherFacadeService.Setup(s => s.AddPublisherAsync(publisherCreateDto))
             .ReturnsAsync(publisherBriefDto).Verifiable();
 
         // Act
         var actionResult = await _controller.PostPublisherAsync(publisherCreateDto);
 
         // Assert
-        _publisherService.Verify();
+        _publisherFacadeService.Verify();
         Assert.IsType<CreatedAtRouteResult>(actionResult.Result);
         var routeResult = actionResult.Result as CreatedAtRouteResult;
         Assert.Equal(routeResult.Value, publisherBriefDto);
@@ -100,7 +97,7 @@ public class PublishersControllerTests
     {
         // Arrange
         var dto = new PublisherUpdateDto();
-        _publisherService.Setup(s => s.UpdatePublisherAsync(dto))
+        _publisherFacadeService.Setup(s => s.UpdatePublisherAsync(dto))
             .Returns(Task.CompletedTask)
             .Verifiable();
 
@@ -108,7 +105,7 @@ public class PublishersControllerTests
         var result = await _controller.UpdatePublisherAsync(dto);
 
         // Assert
-        _publisherService.Verify();
+        _publisherFacadeService.Verify();
         Assert.IsType<OkResult>(result);
     }
 
@@ -116,7 +113,7 @@ public class PublishersControllerTests
     public async Task DeletePublisherAsync_ReturnsNoContentResult()
     {
         // Arrange
-        _publisherService.Setup(s => s.DeletePublisherAsync(It.IsAny<string>()))
+        _publisherFacadeService.Setup(s => s.DeletePublisherAsync(It.IsAny<string>()))
             .Returns(Task.CompletedTask)
             .Verifiable();
 
@@ -124,7 +121,7 @@ public class PublishersControllerTests
         var result = await _controller.DeletePublisherAsync(Guid.Empty.ToString());
 
         // Assert
-        _publisherService.Verify();
+        _publisherFacadeService.Verify();
         Assert.IsType<NoContentResult>(result);
     }
 }

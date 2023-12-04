@@ -11,6 +11,8 @@ public interface IPublisherFacadeService
 
     Task<IList<GameBriefDto>> GetGamesByPublisherNameAsync(string companyName);
 
+    Task<PublisherBriefDto> AddPublisherAsync(PublisherCreateDto dto);
+
     Task UpdatePublisherAsync(PublisherUpdateDto dto);
 
     Task DeletePublisherAsync(string id);
