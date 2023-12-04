@@ -11,11 +11,11 @@ namespace GameStore.Application.Services;
 public class GenreFacadeService : IGenreFacadeService
 {
     private readonly IServiceResolver _serviceResolver;
-    private readonly IEntityMigrationService<GenreUpdateDto, GenreCreateDto> _migrationService;
+    private readonly IGenreMigrationService _migrationService;
 
     public GenreFacadeService(
         IServiceResolver serviceResolver,
-        IEntityMigrationService<GenreUpdateDto, GenreCreateDto> migrationService)
+        IGenreMigrationService migrationService)
     {
         _serviceResolver = serviceResolver;
         _migrationService = migrationService;

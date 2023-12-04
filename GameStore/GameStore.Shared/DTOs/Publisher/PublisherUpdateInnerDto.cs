@@ -2,7 +2,7 @@
 
 public class PublisherUpdateInnerDto
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
 
     public string CompanyName { get; set; }
 

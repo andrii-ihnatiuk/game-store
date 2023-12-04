@@ -1,6 +1,5 @@
 ﻿using GameStore.Application.Interfaces;
 using GameStore.Data.Entities;
-using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
@@ -12,18 +11,15 @@ namespace GameStore.API.Controllers;
 [Route("[controller]")]
 public class PublishersController : ControllerBase
 {
-    private readonly ICorePublisherService _publisherService;
     private readonly IPublisherFacadeService _publisherFacadeService;
     private readonly IValidatorWrapper<PublisherCreateDto> _publisherCreateValidator;
     private readonly IValidatorWrapper<PublisherUpdateDto> _publisherUpdateValidator;
 
     public PublishersController(
-        ICorePublisherService publisherService,
         IPublisherFacadeService publisherFacadeService,
         IValidatorWrapper<PublisherCreateDto> publisherCreateValidator,
         IValidatorWrapper<PublisherUpdateDto> publisherUpdateValidator)
     {
-        _publisherService = publisherService;
         _publisherFacadeService = publisherFacadeService;
         _publisherCreateValidator = publisherCreateValidator;
         _publisherUpdateValidator = publisherUpdateValidator;
@@ -54,7 +50,7 @@ public class PublishersController : ControllerBase
     public async Task<ActionResult<PublisherBriefDto>> PostPublisherAsync([FromBody] PublisherCreateDto dto)
     {
         _publisherCreateValidator.ValidateAndThrow(dto);
-        var publisherBriefDto = await _publisherService.AddPublisherAsync(dto);
+        var publisherBriefDto = await _publisherFacadeService.AddPublisherAsync(dto);
         return CreatedAtRoute("GetPublisherByName", new { CompanyName = publisherBriefDto.CompanyName }, publisherBriefDto);
     }
 
@@ -62,14 +58,14 @@ public class PublishersController : ControllerBase
     public async Task<IActionResult> UpdatePublisherAsync([FromBody] PublisherUpdateDto dto)
     {
         _publisherUpdateValidator.ValidateAndThrow(dto);
-        await _publisherService.UpdatePublisherAsync(dto);
+        await _publisherFacadeService.UpdatePublisherAsync(dto);
         return Ok();
     }
 
     [HttpDelete("remove/{id}")]
     public async Task<IActionResult> DeletePublisherAsync([FromRoute] string id)
     {
-        await _publisherService.DeletePublisherAsync(id);
+        await _publisherFacadeService.DeletePublisherAsync(id);
         return NoContent();
     }
 }

@@ -11,13 +11,13 @@ namespace GameStore.Tests.GameStore.Application.Tests.Services;
 public class GenreFacadeServiceTests
 {
     private readonly Mock<IServiceResolver> _mockServiceResolver;
-    private readonly Mock<IEntityMigrationService<GenreUpdateDto, GenreCreateDto>> _migrationService;
+    private readonly Mock<IGenreMigrationService> _migrationService;
     private readonly GenreFacadeService _service;
 
     public GenreFacadeServiceTests()
     {
         _mockServiceResolver = new Mock<IServiceResolver>();
-        _migrationService = new Mock<IEntityMigrationService<GenreUpdateDto, GenreCreateDto>>();
+        _migrationService = new Mock<IGenreMigrationService>();
         _service = new GenreFacadeService(_mockServiceResolver.Object, _migrationService.Object);
     }
 

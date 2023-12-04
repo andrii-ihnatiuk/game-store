@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using GameStore.Data.Entities;
+using GameStore.Data.Extensions;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
-using GameStore.Shared.Exceptions;
 
 namespace GameStore.Services;
 
@@ -41,7 +41,7 @@ public class CorePublisherService : CoreServiceBase, ICorePublisherService
 
     public async Task<PublisherBriefDto> AddPublisherAsync(PublisherCreateDto dto)
     {
-        await ThrowIfCompanyNameIsNotUnique(dto.Publisher.CompanyName);
+        await _unitOfWork.Publishers.ThrowIfCompanyNameIsNotUnique(dto.Publisher.CompanyName);
         var publisher = _mapper.Map<Publisher>(dto);
         await _unitOfWork.Publishers.AddAsync(publisher);
         await _unitOfWork.SaveAsync();
@@ -50,10 +50,10 @@ public class CorePublisherService : CoreServiceBase, ICorePublisherService
 
     public async Task UpdatePublisherAsync(PublisherUpdateDto dto)
     {
-        var existingPublisher = await _unitOfWork.Publishers.GetByIdAsync(dto.Publisher.Id);
+        var existingPublisher = await _unitOfWork.Publishers.GetByIdAsync(Guid.Parse(dto.Publisher.Id));
         if (existingPublisher.CompanyName != dto.Publisher.CompanyName)
         {
-            await ThrowIfCompanyNameIsNotUnique(dto.Publisher.CompanyName);
+            await _unitOfWork.Publishers.ThrowIfCompanyNameIsNotUnique(dto.Publisher.CompanyName);
         }
 
         _mapper.Map(dto, existingPublisher);
@@ -65,14 +65,5 @@ public class CorePublisherService : CoreServiceBase, ICorePublisherService
         var publisherToRemove = await _unitOfWork.Publishers.GetOneAsync(g => g.Id == Guid.Parse(id));
         await _unitOfWork.Publishers.DeleteAsync(publisherToRemove.Id);
         await _unitOfWork.SaveAsync();
-    }
-
-    private async Task ThrowIfCompanyNameIsNotUnique(string companyName)
-    {
-        bool nameIsNotUnique = await _unitOfWork.Publishers.ExistsAsync(p => p.CompanyName == companyName);
-        if (nameIsNotUnique)
-        {
-            throw new EntityAlreadyExistsException(nameof(Publisher.CompanyName), companyName);
-        }
     }
 }

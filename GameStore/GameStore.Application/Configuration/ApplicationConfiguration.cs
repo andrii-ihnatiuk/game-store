@@ -44,7 +44,8 @@ public static class ApplicationConfiguration
         serviceCollection.AddScoped<IServiceResolver, ServiceResolver>();
         serviceCollection.AddScoped<IServiceProviderWrapper, ServiceProviderWrapper>();
 
-        serviceCollection.AddScoped<IEntityMigrationService<GenreUpdateDto, GenreCreateDto>, GenreMigrationService>();
+        serviceCollection.AddScoped<IGenreMigrationService, GenreMigrationService>();
+        serviceCollection.AddScoped<IPublisherMigrationService, PublisherMigrationService>();
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
         serviceCollection.AddScoped<IValidator<GameUpdateDto>, GameUpdateValidator>();

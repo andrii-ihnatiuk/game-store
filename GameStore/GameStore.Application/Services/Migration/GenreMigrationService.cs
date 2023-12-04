@@ -4,11 +4,12 @@ using GameStore.Data.Extensions;
 using GameStore.Data.Interfaces;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.Extensions;
+using Northwind.Data.Extensions;
 using Northwind.Data.Interfaces;
 
 namespace GameStore.Application.Services.Migration;
 
-public class GenreMigrationService : IEntityMigrationService<GenreUpdateDto, GenreCreateDto>
+public class GenreMigrationService : IGenreMigrationService
 {
     private readonly IUnitOfWork _coreUnitOfWork;
     private readonly IMongoUnitOfWork _mongoUnitOfWork;
@@ -26,7 +27,10 @@ public class GenreMigrationService : IEntityMigrationService<GenreUpdateDto, Gen
 
         if (genre.Id.IsNotGuidFormat())
         {
-            await _coreUnitOfWork.Genres.ThrowIfGenreNameIsNotUnique(genre.Name);
+            await Task.WhenAll(
+                _mongoUnitOfWork.Categories.ThrowIfDoesNotExistWithId(genre.Id),
+                _coreUnitOfWork.Genres.ThrowIfGenreNameIsNotUnique(genre.Name));
+
             var migratedGenre = new Genre
             {
                 LegacyId = genre.Id,
