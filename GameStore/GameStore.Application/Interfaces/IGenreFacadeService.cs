@@ -11,5 +11,11 @@ public interface IGenreFacadeService
 
     Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId);
 
-    Task<IList<GameBriefDto>> GetGamesByGenreId(string id);
+    Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id);
+
+    Task<GenreBriefDto> AddGenreAsync(GenreCreateDto dto);
+
+    Task UpdateGenreAsync(GenreUpdateDto dto);
+
+    Task DeleteGenreAsync(string genreId);
 }

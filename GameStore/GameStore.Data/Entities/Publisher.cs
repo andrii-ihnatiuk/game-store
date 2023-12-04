@@ -1,8 +1,12 @@
-﻿namespace GameStore.Data.Entities;
+﻿using GameStore.Data.Interfaces;
 
-public class Publisher
+namespace GameStore.Data.Entities;
+
+public class Publisher : IMigrationTrackable
 {
     public Guid Id { get; set; }
+
+    public string? LegacyId { get; set; }
 
     public string CompanyName { get; set; }
 

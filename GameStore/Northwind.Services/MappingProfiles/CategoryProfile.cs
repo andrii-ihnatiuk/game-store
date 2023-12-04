@@ -13,17 +13,11 @@ public class CategoryProfile : Profile
         CreateMap<Category, GenreFullDto>()
             .ForMember(
                 dest => dest.Name,
-                opts => opts.MapFrom(src => src.CategoryName))
-            .ForMember(
-                dest => dest.ParentGenreId,
-                opts => opts.MapFrom(src => src.ParentId));
+                opts => opts.MapFrom(src => src.CategoryName));
 
         CreateMap<Category, GenreBriefDto>()
             .ForMember(
                 dest => dest.Name,
-                opts => opts.MapFrom(src => src.CategoryName))
-            .ForMember(
-                dest => dest.ParentGenreId,
-                opts => opts.MapFrom(src => src.ParentId));
+                opts => opts.MapFrom(src => src.CategoryName));
     }
 }

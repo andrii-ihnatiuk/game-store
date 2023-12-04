@@ -2,7 +2,9 @@
 using System.Globalization;
 using FluentValidation;
 using GameStore.Application.Interfaces;
+using GameStore.Application.Interfaces.Migration;
 using GameStore.Application.Services;
+using GameStore.Application.Services.Migration;
 using GameStore.Services.Configuration;
 using GameStore.Shared.DTOs.Comment;
 using GameStore.Shared.DTOs.Game;
@@ -41,6 +43,8 @@ public static class ApplicationConfiguration
         serviceCollection.AddScoped<IPublisherFacadeService, PublisherFacadeService>();
         serviceCollection.AddScoped<IServiceResolver, ServiceResolver>();
         serviceCollection.AddScoped<IServiceProviderWrapper, ServiceProviderWrapper>();
+
+        serviceCollection.AddScoped<IEntityMigrationService<GenreUpdateDto, GenreCreateDto>, GenreMigrationService>();
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
         serviceCollection.AddScoped<IValidator<GameUpdateDto>, GameUpdateValidator>();

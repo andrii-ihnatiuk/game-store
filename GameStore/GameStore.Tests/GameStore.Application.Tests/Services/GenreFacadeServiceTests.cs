@@ -1,4 +1,5 @@
 ﻿using GameStore.Application.Interfaces;
+using GameStore.Application.Interfaces.Migration;
 using GameStore.Application.Services;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -10,12 +11,14 @@ namespace GameStore.Tests.GameStore.Application.Tests.Services;
 public class GenreFacadeServiceTests
 {
     private readonly Mock<IServiceResolver> _mockServiceResolver;
+    private readonly Mock<IEntityMigrationService<GenreUpdateDto, GenreCreateDto>> _migrationService;
     private readonly GenreFacadeService _service;
 
     public GenreFacadeServiceTests()
     {
         _mockServiceResolver = new Mock<IServiceResolver>();
-        _service = new GenreFacadeService(_mockServiceResolver.Object);
+        _migrationService = new Mock<IEntityMigrationService<GenreUpdateDto, GenreCreateDto>>();
+        _service = new GenreFacadeService(_mockServiceResolver.Object, _migrationService.Object);
     }
 
     [Fact]
@@ -85,7 +88,7 @@ public class GenreFacadeServiceTests
         _mockServiceResolver.Setup(sr => sr.ResolveForEntityId<IGenreService>(genreId)).Returns(mockGenreService.Object);
 
         // Act
-        var result = await _service.GetGamesByGenreId(genreId);
+        var result = await _service.GetGamesByGenreIdAsync(genreId);
 
         // Assert
         Assert.Equal(games.Count, result.Count);
