@@ -194,10 +194,10 @@ public class GenreServiceTests
     public async Task UpdateGenreAsync_AllOk_CallsRepository()
     {
         // Arrange
-        var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty } };
+        var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty.ToString() } };
         var existingGenre = new Genre() { Id = Guid.Empty };
 
-        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(genreUpdateDto.Genre.Id))
+        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(existingGenre);
 
         var updatedGenre = new Genre() { Id = Guid.Empty, Name = GenreName };
@@ -214,7 +214,7 @@ public class GenreServiceTests
         await _service.UpdateGenreAsync(genreUpdateDto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Genres.GetByIdAsync(genreUpdateDto.Genre.Id), Times.Once);
+        _unitOfWork.Verify(uow => uow.Genres.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 
@@ -223,10 +223,10 @@ public class GenreServiceTests
     {
         // Arrange
         const string updatedName = "updated-but-already-exists";
-        var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty, Name = updatedName } };
+        var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty.ToString(), Name = updatedName } };
 
         var existingGenre = new Genre() { Id = Guid.Empty, Name = GenreName };
-        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(genreUpdateDto.Genre.Id))
+        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(existingGenre);
 
         _mapper.Setup(m => m.Map(genreUpdateDto, existingGenre))
@@ -243,10 +243,10 @@ public class GenreServiceTests
     public async Task UpdateGenreAsync_ParentGenreDoesNotExist_ThrowsForeignKeyException()
     {
         // Arrange
-        var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty, ParentGenreId = null } };
+        var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty.ToString(), ParentGenreId = null } };
 
         var existingGenre = new Genre() { Id = Guid.Empty };
-        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(genreUpdateDto.Genre.Id))
+        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(It.IsAny<Guid>()))
             .ReturnsAsync(existingGenre);
 
         var updatedGenre = new Genre() { Id = Guid.Empty, ParentGenreId = Guid.Empty };

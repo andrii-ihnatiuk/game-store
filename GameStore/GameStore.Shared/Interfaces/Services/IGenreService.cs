@@ -12,4 +12,8 @@ public interface IGenreService : IResolvableByEntityStorage
     Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId);
 
     Task<IList<GameBriefDto>> GetGamesByGenreId(string id);
+
+    Task UpdateGenreAsync(GenreUpdateDto dto);
+
+    Task DeleteGenreAsync(string genreId);
 }

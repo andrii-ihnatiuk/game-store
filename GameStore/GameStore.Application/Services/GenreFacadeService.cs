@@ -1,6 +1,9 @@
 ﻿using GameStore.Application.Interfaces;
+using GameStore.Application.Interfaces.Migration;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.Extensions;
 using GameStore.Shared.Interfaces.Services;
 
 namespace GameStore.Application.Services;
@@ -8,10 +11,14 @@ namespace GameStore.Application.Services;
 public class GenreFacadeService : IGenreFacadeService
 {
     private readonly IServiceResolver _serviceResolver;
+    private readonly IEntityMigrationService<GenreUpdateDto, GenreCreateDto> _migrationService;
 
-    public GenreFacadeService(IServiceResolver serviceResolver)
+    public GenreFacadeService(
+        IServiceResolver serviceResolver,
+        IEntityMigrationService<GenreUpdateDto, GenreCreateDto> migrationService)
     {
         _serviceResolver = serviceResolver;
+        _migrationService = migrationService;
     }
 
     public async Task<IList<GenreBriefDto>> GetAllGenresAsync()
@@ -21,24 +28,44 @@ public class GenreFacadeService : IGenreFacadeService
         await Task.WhenAll(tasks);
 
         var genres = tasks.SelectMany(t => t.Result).ToList();
-        return genres;
+        return genres.FilterLegacyEntities();
     }
 
-    public async Task<GenreFullDto> GetGenreByIdAsync(string id)
+    public Task<GenreFullDto> GetGenreByIdAsync(string id)
     {
         var genreService = _serviceResolver.ResolveForEntityId<IGenreService>(id);
-        return await genreService.GetGenreByIdAsync(id);
+        return genreService.GetGenreByIdAsync(id);
     }
 
-    public async Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId)
+    public Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId)
     {
         var genreService = _serviceResolver.ResolveForEntityId<IGenreService>(parentId);
-        return await genreService.GetSubgenresByParentAsync(parentId);
+        return genreService.GetSubgenresByParentAsync(parentId);
     }
 
-    public async Task<IList<GameBriefDto>> GetGamesByGenreId(string id)
+    public Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id)
     {
         var genreService = _serviceResolver.ResolveForEntityId<IGenreService>(id);
-        return await genreService.GetGamesByGenreId(id);
+        return genreService.GetGamesByGenreId(id);
+    }
+
+    public async Task<GenreBriefDto> AddGenreAsync(GenreCreateDto dto)
+    {
+        await _migrationService.MigrateOnCreateAsync(dto);
+        var service = _serviceResolver.ResolveAll<ICoreGenreService>().Single();
+        return await service.AddGenreAsync(dto);
+    }
+
+    public async Task UpdateGenreAsync(GenreUpdateDto dto)
+    {
+        await _migrationService.MigrateOnUpdateAsync(dto);
+        var service = _serviceResolver.ResolveAll<ICoreGenreService>().Single();
+        await service.UpdateGenreAsync(dto);
+    }
+
+    public Task DeleteGenreAsync(string genreId)
+    {
+        var service = _serviceResolver.ResolveForEntityId<IGenreService>(genreId);
+        return service.DeleteGenreAsync(genreId);
     }
 }

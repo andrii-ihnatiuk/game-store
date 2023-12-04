@@ -1,8 +1,12 @@
-﻿namespace GameStore.Shared.DTOs.Genre;
+﻿using GameStore.Shared.Interfaces;
 
-public class GenreBriefDto
+namespace GameStore.Shared.DTOs.Genre;
+
+public class GenreBriefDto : ILegacyFilterable
 {
     public string Id { get; set; }
+
+    public string? LegacyId { get; set; }
 
     public string Name { get; set; }
 
