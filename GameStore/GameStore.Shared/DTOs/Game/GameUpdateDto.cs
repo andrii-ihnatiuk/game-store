@@ -4,7 +4,7 @@ public class GameUpdateDto
 {
     public GameUpdateInnerDto Game { get; set; }
 
-    public IList<Guid>? Genres { get; set; }
+    public IList<string>? Genres { get; set; }
 
     public IList<Guid>? Platforms { get; set; }
 

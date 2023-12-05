@@ -14,4 +14,9 @@ public static class StringExtensions
     {
         return !IsGuidFormat(str);
     }
+
+    public static Guid? ToNullableGuid(this string? str)
+    {
+        return string.IsNullOrEmpty(str) ? null : new Guid(str);
+    }
 }

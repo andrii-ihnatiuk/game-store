@@ -1,46 +1,47 @@
-﻿using GameStore.Application.Interfaces.Migration;
+﻿using AutoMapper;
+using GameStore.Application.Interfaces.Migration;
 using GameStore.Data.Entities;
 using GameStore.Data.Extensions;
 using GameStore.Data.Interfaces;
 using GameStore.Shared.DTOs.Publisher;
-using GameStore.Shared.Extensions;
 using Northwind.Data.Extensions;
 using Northwind.Data.Interfaces;
 
 namespace GameStore.Application.Services.Migration;
 
-public class PublisherMigrationService : IPublisherMigrationService
+public class PublisherMigrationService : MigrationServiceBase, IPublisherMigrationService
 {
     private readonly IUnitOfWork _coreUnitOfWork;
     private readonly IMongoUnitOfWork _mongoUnitOfWork;
+    private readonly IMapper _mapper;
 
-    public PublisherMigrationService(IUnitOfWork coreUnitOfWork, IMongoUnitOfWork mongoUnitOfWork)
+    public PublisherMigrationService(IUnitOfWork coreUnitOfWork, IMongoUnitOfWork mongoUnitOfWork, IMapper mapper)
+    : base(coreUnitOfWork)
     {
         _coreUnitOfWork = coreUnitOfWork;
         _mongoUnitOfWork = mongoUnitOfWork;
+        _mapper = mapper;
     }
 
-    public async Task<PublisherUpdateDto> MigrateOnUpdateAsync(PublisherUpdateDto entity)
+    public async Task<PublisherUpdateDto> MigrateOnUpdateAsync(PublisherUpdateDto entity, bool commitMigration = true)
     {
         var publisher = entity.Publisher;
-        if (publisher.Id.IsNotGuidFormat())
+        if (IsEntityMigrationRequired(publisher.Id))
         {
             await Task.WhenAll(
                 _mongoUnitOfWork.Suppliers.ThrowIfDoesNotExistWithId(publisher.Id),
                 _coreUnitOfWork.Publishers.ThrowIfCompanyNameIsNotUnique(publisher.CompanyName));
 
-            var migratedPublisher = new Publisher
-            {
-                LegacyId = publisher.Id,
-                CompanyName = publisher.CompanyName,
-                Description = publisher.Description,
-                HomePage = publisher.HomePage,
-            };
+            string legacyId = publisher.Id;
+            publisher.Id = Guid.Empty.ToString();
+            var migratedPublisher = _mapper.Map<Publisher>(entity);
+            migratedPublisher.LegacyId = legacyId;
+
             await _coreUnitOfWork.Publishers.AddAsync(migratedPublisher);
             publisher.Id = migratedPublisher.Id.ToString();
         }
 
-        await _coreUnitOfWork.SaveAsync();
+        await FinishMigrationAsync(commitMigration);
         return entity;
     }
 }

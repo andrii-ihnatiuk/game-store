@@ -19,5 +19,17 @@ public class CategoryProfile : Profile
             .ForMember(
                 dest => dest.Name,
                 opts => opts.MapFrom(src => src.CategoryName));
+
+        CreateMap<Category, GenreUpdateDto>()
+            .ForMember(
+                dest => dest.Genre,
+                opts => opts.MapFrom(src => src));
+        CreateMap<Category, GenreUpdateInnerDto>()
+            .ForMember(
+                dest => dest.Name,
+                opts => opts.MapFrom(src => src.CategoryName))
+            .ForMember(
+                dest => dest.ParentGenreId,
+                opts => opts.MapFrom(src => src.ParentId));
     }
 }

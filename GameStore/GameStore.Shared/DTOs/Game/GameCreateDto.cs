@@ -6,7 +6,7 @@ public class GameCreateDto
 
     public string? Publisher { get; set; }
 
-    public IList<Guid>? Genres { get; set; }
+    public IList<string>? Genres { get; set; }
 
     public IList<Guid>? Platforms { get; set; }
 }

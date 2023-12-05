@@ -2,6 +2,7 @@
 using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.Extensions;
 
 namespace GameStore.Services.MappingProfiles;
 
@@ -24,13 +25,13 @@ public class GameProfile : Profile
                 opts => opts.MapFrom(src => src.Game.Discontinued != 0))
             .ForMember(
                 dest => dest.GameGenres,
-                opts => opts.MapFrom(src => ConstructGameGenresFromIds(src.Genres, Guid.Empty)))
+                opts => opts.MapFrom(src => ConstructGameGenresFromIds(src.Genres, Guid.Empty.ToString())))
             .ForMember(
                 dest => dest.GamePlatforms,
-                opts => opts.MapFrom(src => ConstructGamePlatformsFromIds(src.Platforms, Guid.Empty)))
+                opts => opts.MapFrom(src => ConstructGamePlatformsFromIds(src.Platforms, Guid.Empty.ToString())))
             .ForMember(
                 dest => dest.PublisherId,
-                opts => opts.MapFrom(src => ConstructNullableGuidFromString(src.Publisher)));
+                opts => opts.MapFrom(src => src.Publisher.ToNullableGuid()));
 
         CreateMap<GameUpdateInnerDto, Game>();
         CreateMap<GameUpdateDto, Game>()
@@ -52,7 +53,7 @@ public class GameProfile : Profile
                 opts => opts.MapFrom(src => ConstructGamePlatformsFromIds(src.Platforms, src.Game.Id)))
             .ForMember(
                 dest => dest.PublisherId,
-                opts => opts.MapFrom(src => ConstructNullableGuidFromString(src.Publisher)));
+                opts => opts.MapFrom(src => src.Publisher.ToNullableGuid()));
 
         CreateMap<Game, GameBriefDto>()
             .ForMember(
@@ -72,22 +73,17 @@ public class GameProfile : Profile
             : alias;
     }
 
-    private static IList<GameGenre> ConstructGameGenresFromIds(IEnumerable<Guid>? genres, Guid gameId)
+    private static IList<GameGenre> ConstructGameGenresFromIds(IEnumerable<string>? genres, string gameId)
     {
         return genres is null
             ? new List<GameGenre>()
-            : genres.Select(id => new GameGenre { GenreId = id, GameId = gameId }).ToList();
+            : genres.Select(id => new GameGenre { GenreId = Guid.Parse(id), GameId = Guid.Parse(gameId) }).ToList();
     }
 
-    private static IList<GamePlatform> ConstructGamePlatformsFromIds(IEnumerable<Guid>? platforms, Guid gameId)
+    private static IList<GamePlatform> ConstructGamePlatformsFromIds(IEnumerable<Guid>? platforms, string gameId)
     {
         return platforms is null
             ? new List<GamePlatform>()
-            : platforms.Select(id => new GamePlatform { PlatformId = id, GameId = gameId }).ToList();
-    }
-
-    private static Guid? ConstructNullableGuidFromString(string? str)
-    {
-        return string.IsNullOrEmpty(str) ? null : new Guid(str);
+            : platforms.Select(id => new GamePlatform { PlatformId = id, GameId = Guid.Parse(gameId) }).ToList();
     }
 }

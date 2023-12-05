@@ -57,7 +57,7 @@ public class CoreGenreService : CoreServiceBase, ICoreGenreService
     {
         var genre = _mapper.Map<Genre>(dto);
         await _unitOfWork.Genres.ThrowIfGenreNameIsNotUnique(genre.Name);
-        await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolationFor(genre);
+        await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolation(genre);
         await _unitOfWork.Genres.AddAsync(genre);
         await _unitOfWork.SaveAsync();
         return _mapper.Map<GenreBriefDto>(genre);
@@ -73,7 +73,7 @@ public class CoreGenreService : CoreServiceBase, ICoreGenreService
 
         var updatedGenre = _mapper.Map(dto, existingGenre);
 
-        await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolationFor(updatedGenre);
+        await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolation(updatedGenre);
         await _unitOfWork.SaveAsync();
     }
 
@@ -83,25 +83,4 @@ public class CoreGenreService : CoreServiceBase, ICoreGenreService
         await _unitOfWork.Genres.DeleteAsync(genreToRemove.Id);
         await _unitOfWork.SaveAsync();
     }
-
-    // private async Task ThrowIfForeignKeyConstraintViolationFor(Genre genre)
-    // {
-    //     if (genre.ParentGenreId != null)
-    //     {
-    //         bool parentExists = await _unitOfWork.Genres.ExistsAsync(g => g.Id == genre.ParentGenreId);
-    //         if (!parentExists || genre.Id == genre.ParentGenreId)
-    //         {
-    //             throw new ForeignKeyException(onColumn: nameof(genre.ParentGenreId));
-    //         }
-    //     }
-    // }
-    //
-    // private async Task ThrowIfGenreNameIsNotUnique(string name)
-    // {
-    //     bool nameIsNotUnique = await _unitOfWork.Genres.ExistsAsync(g => g.Name == name);
-    //     if (nameIsNotUnique)
-    //     {
-    //         throw new EntityAlreadyExistsException(nameof(Genre.Name), name);
-    //     }
-    // }
 }
