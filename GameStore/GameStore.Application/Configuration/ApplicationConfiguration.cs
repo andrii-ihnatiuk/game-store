@@ -46,6 +46,7 @@ public static class ApplicationConfiguration
 
         serviceCollection.AddScoped<IGenreMigrationService, GenreMigrationService>();
         serviceCollection.AddScoped<IPublisherMigrationService, PublisherMigrationService>();
+        serviceCollection.AddScoped<IGameMigrationService, GameMigrationService>();
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
         serviceCollection.AddScoped<IValidator<GameUpdateDto>, GameUpdateValidator>();

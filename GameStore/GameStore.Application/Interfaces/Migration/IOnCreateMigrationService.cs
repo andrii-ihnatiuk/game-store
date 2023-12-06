@@ -3,5 +3,5 @@
 public interface IOnCreateMigrationService<TEntity>
     where TEntity : class
 {
-    Task<TEntity> MigrateOnCreateAsync(TEntity entity);
+    Task<TEntity> MigrateOnCreateAsync(TEntity entity, bool commitMigration = true);
 }

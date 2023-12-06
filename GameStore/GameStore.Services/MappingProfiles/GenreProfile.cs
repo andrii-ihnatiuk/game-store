@@ -2,6 +2,7 @@
 using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.Extensions;
 
 namespace GameStore.Services.MappingProfiles;
 
@@ -15,7 +16,7 @@ public class GenreProfile : Profile
             .IncludeMembers(g => g.Genre)
             .ForMember(
                 dest => dest.ParentGenreId,
-                opts => opts.MapFrom(src => ConstructNullableGuidFromString(src.Genre.ParentGenreId)));
+                opts => opts.MapFrom(src => src.Genre.ParentGenreId.ToNullableGuid()));
 
         CreateMap<Genre, GenreFullDto>();
 
@@ -26,11 +27,6 @@ public class GenreProfile : Profile
             .IncludeMembers(g => g.Genre)
             .ForMember(
                 dest => dest.ParentGenreId,
-                opts => opts.MapFrom(src => ConstructNullableGuidFromString(src.Genre.ParentGenreId)));
-    }
-
-    private static Guid? ConstructNullableGuidFromString(string? str)
-    {
-        return string.IsNullOrEmpty(str) ? null : new Guid(str);
+                opts => opts.MapFrom(src => src.Genre.ParentGenreId.ToNullableGuid()));
     }
 }

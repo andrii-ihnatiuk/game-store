@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using AutoMapper;
 using GameStore.Data.Entities;
+using GameStore.Data.Extensions;
 using GameStore.Data.Interfaces;
 using GameStore.Data.Models;
 using GameStore.Services.Interfaces;
@@ -9,7 +10,6 @@ using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
-using GameStore.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
@@ -87,8 +87,8 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
     public async Task<GameBriefDto> AddGameAsync(GameCreateDto dto)
     {
         var game = _mapper.Map<Game>(dto);
-        await ThrowIfGameAliasIsNotUnique(game.Alias);
-        await ThrowIfForeignKeyConstraintViolationFor(game);
+        await _unitOfWork.Games.ThrowIfGameAliasIsNotUnique(game.Alias);
+        await ThrowIfForeignKeyConstraintViolation(game);
         await _unitOfWork.Games.AddAsync(game);
         await _unitOfWork.SaveAsync();
         return _mapper.Map<GameBriefDto>(game);
@@ -97,7 +97,7 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
     public async Task UpdateGameAsync(GameUpdateDto dto)
     {
         var existingGame = await _unitOfWork.Games.GetOneAsync(
-            predicate: g => g.Id == dto.Game.Id,
+            predicate: g => g.Id == Guid.Parse(dto.Game.Id),
             include: q =>
             {
                 return q
@@ -108,12 +108,12 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
 
         if (existingGame.Alias != dto.Game.Key)
         {
-            await ThrowIfGameAliasIsNotUnique(dto.Game.Key);
+            await _unitOfWork.Games.ThrowIfGameAliasIsNotUnique(dto.Game.Key);
         }
 
         var updatedGame = _mapper.Map(dto, existingGame);
 
-        await ThrowIfForeignKeyConstraintViolationFor(updatedGame);
+        await ThrowIfForeignKeyConstraintViolation(updatedGame);
         await _unitOfWork.SaveAsync();
     }
 
@@ -134,42 +134,10 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
         return new Tuple<byte[], string>(bytes, fileName);
     }
 
-    private async Task ThrowIfForeignKeyConstraintViolationFor(Game game)
+    private async Task ThrowIfForeignKeyConstraintViolation(Game game)
     {
-        foreach (var gameGenre in game.GameGenres)
-        {
-            bool genreExists = await _unitOfWork.Genres.ExistsAsync(g => g.Id == gameGenre.GenreId);
-            if (!genreExists)
-            {
-                throw new ForeignKeyException(onColumn: nameof(gameGenre.GenreId));
-            }
-        }
-
-        foreach (var gamePlatform in game.GamePlatforms)
-        {
-            bool platformExists = await _unitOfWork.Platforms.ExistsAsync(p => p.Id == gamePlatform.PlatformId);
-            if (!platformExists)
-            {
-                throw new ForeignKeyException(onColumn: nameof(gamePlatform.PlatformId));
-            }
-        }
-
-        if (game.PublisherId is not null)
-        {
-            bool publisherExists = await _unitOfWork.Publishers.ExistsAsync(p => p.Id == game.PublisherId);
-            if (!publisherExists)
-            {
-                throw new ForeignKeyException(onColumn: nameof(game.PublisherId));
-            }
-        }
-    }
-
-    private async Task ThrowIfGameAliasIsNotUnique(string alias)
-    {
-        bool aliasIsNotUnique = await _unitOfWork.Games.ExistsAsync(g => g.Alias == alias);
-        if (aliasIsNotUnique)
-        {
-            throw new EntityAlreadyExistsException(nameof(Game.Alias), alias);
-        }
+        await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolation(game.GameGenres);
+        await _unitOfWork.Platforms.ThrowIfForeignKeyConstraintViolation(game.GamePlatforms);
+        await _unitOfWork.Publishers.ThrowIfForeignKeyConstraintViolation(game);
     }
 }

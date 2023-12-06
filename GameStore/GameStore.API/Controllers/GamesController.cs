@@ -91,7 +91,7 @@ public class GamesController : ControllerBase
     public async Task<IActionResult> PostGameAsync([FromBody] GameCreateDto dto)
     {
         _gameCreateValidator.ValidateAndThrow(dto);
-        var gameBriefDto = await _coreGameService.AddGameAsync(dto);
+        var gameBriefDto = await _gameFacadeService.AddGameAsync(dto);
         return CreatedAtRoute("GetGameByAlias", new { gameAlias = gameBriefDto.Key }, gameBriefDto);
     }
 
@@ -99,14 +99,14 @@ public class GamesController : ControllerBase
     public async Task<IActionResult> UpdateGameAsync([FromBody] GameUpdateDto dto)
     {
         _gameUpdateValidator.ValidateAndThrow(dto);
-        await _coreGameService.UpdateGameAsync(dto);
+        await _gameFacadeService.UpdateGameAsync(dto);
         return Ok();
     }
 
     [HttpDelete("remove/{alias}")]
     public async Task<IActionResult> DeleteGameAsync([FromRoute] string alias)
     {
-        await _coreGameService.DeleteGameAsync(alias);
+        await _gameFacadeService.DeleteGameAsync(alias);
         return NoContent();
     }
 }

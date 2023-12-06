@@ -160,7 +160,7 @@ public class GamesControllerTests
         // Arrange
         var gameCreateDto = new GameCreateDto();
         var gameBriefDto = new GameBriefDto() { Key = "game-alias" };
-        _gameService.Setup(s => s.AddGameAsync(gameCreateDto))
+        _gameFacadeService.Setup(s => s.AddGameAsync(gameCreateDto))
             .ReturnsAsync(gameBriefDto)
             .Verifiable();
 
@@ -168,7 +168,7 @@ public class GamesControllerTests
         var result = await _controller.PostGameAsync(gameCreateDto);
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<CreatedAtRouteResult>(result);
         var routeResult = (CreatedAtRouteResult)result;
         Assert.Equal(routeResult.Value, gameBriefDto);
@@ -179,7 +179,7 @@ public class GamesControllerTests
     {
         // Arrange
         var dto = new GameUpdateDto();
-        _gameService.Setup(s => s.UpdateGameAsync(dto))
+        _gameFacadeService.Setup(s => s.UpdateGameAsync(dto))
             .Returns(Task.CompletedTask)
             .Verifiable();
 
@@ -187,7 +187,7 @@ public class GamesControllerTests
         var result = await _controller.UpdateGameAsync(dto);
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<OkResult>(result);
     }
 
@@ -196,7 +196,7 @@ public class GamesControllerTests
     {
         // Arrange
         var gameAlias = "game-alias";
-        _gameService.Setup(s => s.DeleteGameAsync(gameAlias))
+        _gameFacadeService.Setup(s => s.DeleteGameAsync(gameAlias))
             .Returns(Task.CompletedTask)
             .Verifiable();
 
@@ -204,7 +204,7 @@ public class GamesControllerTests
         var result = await _controller.DeleteGameAsync(gameAlias);
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<NoContentResult>(result);
     }
 }

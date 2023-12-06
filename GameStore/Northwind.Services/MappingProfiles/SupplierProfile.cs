@@ -26,5 +26,17 @@ public class SupplierProfile : Profile
             .ForMember(
                 dest => dest.Description,
                 opts => opts.MapFrom(src => string.Empty));
+
+        CreateMap<Supplier, PublisherUpdateDto>()
+            .ForMember(
+                dest => dest.Publisher,
+                opts => opts.MapFrom(src => src));
+        CreateMap<Supplier, PublisherUpdateInnerDto>()
+            .ForMember(
+                dest => dest.Description,
+                opts => opts.MapFrom(src => string.Empty))
+            .ForMember(
+                dest => dest.HomePage,
+                opts => opts.MapFrom(src => src.HomePage ?? string.Empty));
     }
 }

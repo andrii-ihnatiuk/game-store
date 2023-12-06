@@ -253,7 +253,7 @@ public class GameServiceTests
     public async Task UpdateGameAsync_AllOk_CallsRepository()
     {
         // Arrange
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = GameAlias } };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias } };
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
 
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
@@ -282,7 +282,7 @@ public class GameServiceTests
     {
         // Arrange
         const string updatedAlias = "updated-but-already-exists";
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = updatedAlias } };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = updatedAlias } };
 
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
                 It.IsAny<Expression<Func<Game, bool>>>(),
@@ -302,7 +302,7 @@ public class GameServiceTests
     {
         // Arrange
         var gameGenres = new List<GameGenre>() { new() };
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = GameAlias } };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias } };
 
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
@@ -328,7 +328,7 @@ public class GameServiceTests
     {
         // Arrange
         var gamePlatforms = new List<GamePlatform> { new() };
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = GameAlias } };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias } };
 
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
@@ -352,7 +352,7 @@ public class GameServiceTests
     public async Task UpdateGameAsync_WhenPublisherDoesNotExist_ThrowsForeignKeyException()
     {
         // Arrange
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty, Key = GameAlias } };
+        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias } };
 
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
