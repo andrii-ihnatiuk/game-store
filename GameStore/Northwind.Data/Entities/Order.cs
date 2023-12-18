@@ -1,12 +1,19 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Northwind.Data.Attributes;
 
 namespace Northwind.Data.Entities;
 
-public class Order
+[BsonCollection("orders")]
+public class Order : BaseEntity
 {
-    public ObjectId Id { get; set; }
+    [BsonElement("OrderID")]
+    public long OrderId { get; set; }
 
     [BsonElement("CustomerID")]
     public string CustomerId { get; set; }
+
+    public DateTime OrderDate { get; set; }
+
+    [BsonIgnore]
+    public IList<OrderDetail> OrderDetails { get; set; }
 }

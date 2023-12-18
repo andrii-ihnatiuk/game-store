@@ -3,13 +3,13 @@ using System.Text;
 using System.Text.Json;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
-using GameStore.Services.Configuration.Payment;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.DTOs.Payment.Terminal;
 using GameStore.Shared.Exceptions;
+using GameStore.Shared.Settings;
 using Microsoft.Extensions.Options;
 
 namespace GameStore.Services.Payment.Strategies;
@@ -29,7 +29,7 @@ public class TerminalPaymentStrategy : IPaymentStrategy
 
     public string Name => PaymentStrategyName.Terminal;
 
-    public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, Guid customerId)
+    public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId)
     {
         var order = await GetOrderForPaymentAsync(customerId);
         var terminalPaymentResult = await SendPaymentRequestAsync(order);
@@ -37,7 +37,7 @@ public class TerminalPaymentStrategy : IPaymentStrategy
         return terminalPaymentResult;
     }
 
-    private async Task<Order> GetOrderForPaymentAsync(Guid customerId)
+    private async Task<Order> GetOrderForPaymentAsync(string customerId)
     {
         return await _unitOfWork.Orders.GetOneAsync(
             predicate: o => o.CustomerId == customerId && o.PaidDate == null,

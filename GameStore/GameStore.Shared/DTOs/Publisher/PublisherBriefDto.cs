@@ -1,8 +1,12 @@
-﻿namespace GameStore.Shared.DTOs.Publisher;
+﻿using GameStore.Shared.Interfaces;
 
-public class PublisherBriefDto
+namespace GameStore.Shared.DTOs.Publisher;
+
+public class PublisherBriefDto : ILegacyFilterable
 {
-    public Guid Id { get; set; }
+    public string Id { get; set; }
+
+    public string? LegacyId { get; set; }
 
     public string CompanyName { get; set; }
 

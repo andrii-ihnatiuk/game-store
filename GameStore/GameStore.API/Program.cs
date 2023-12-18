@@ -1,6 +1,6 @@
 using GameStore.API.Middlewares;
 using GameStore.Application.Configuration;
-using GameStore.Services.Configuration.Payment;
+using GameStore.Shared.Settings;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 
@@ -46,6 +46,7 @@ builder.Services.Configure<RouteOptions>(options =>
 });
 builder.Services.Configure<VisaSettings>(builder.Configuration.GetSection("Payment:VisaSettings"));
 builder.Services.Configure<TerminalSettings>(builder.Configuration.GetSection("Payment:IBoxSettings"));
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection(nameof(MongoDbSettings)));
 
 var app = builder.Build();
 

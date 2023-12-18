@@ -54,12 +54,12 @@ public class PaymentServiceTests
         var strategy = new Mock<IPaymentStrategy>();
         _strategyResolver.Setup(s => s.Resolve(payment.Method)).Returns(strategy.Object);
         var paymentResult = new Mock<IPaymentResult>();
-        strategy.Setup(s => s.ProcessPayment(payment, It.IsAny<Guid>())).ReturnsAsync(paymentResult.Object);
+        strategy.Setup(s => s.ProcessPayment(payment, It.IsAny<string>())).ReturnsAsync(paymentResult.Object);
 
         // Act
-        var result = _service.RequestPaymentAsync(payment, Guid.NewGuid());
+        var result = _service.RequestPaymentAsync(payment, "customer-id");
 
         // Assert
-        strategy.Verify(s => s.ProcessPayment(payment, It.IsAny<Guid>()), Times.Once);
+        strategy.Verify(s => s.ProcessPayment(payment, It.IsAny<string>()), Times.Once);
     }
 }

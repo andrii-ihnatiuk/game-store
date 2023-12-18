@@ -2,9 +2,11 @@
 
 namespace GameStore.Data.Entities;
 
-public class Game : ICreationTrackable
+public class Game : ICreationTrackable, IMigrationTrackable
 {
     public Guid Id { get; set; }
+
+    public string? LegacyId { get; set; }
 
     public string Alias { get; set; }
 

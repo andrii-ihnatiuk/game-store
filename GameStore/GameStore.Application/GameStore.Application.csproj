@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameStore.Services\GameStore.Services.csproj" />
-    <ProjectReference Include="..\GameStore.Shared\GameStore.Shared.csproj" />
+    <ProjectReference Include="..\Northwind.Services\Northwind.Services.csproj" />
   </ItemGroup>
 
 </Project>

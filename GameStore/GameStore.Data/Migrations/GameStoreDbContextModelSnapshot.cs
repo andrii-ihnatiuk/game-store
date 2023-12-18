@@ -78,6 +78,9 @@ namespace GameStore.Data.Migrations
                     b.Property<bool>("Discontinued")
                         .HasColumnType("bit");
 
+                    b.Property<string>("LegacyId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -319,12 +322,18 @@ namespace GameStore.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("LegacyId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid?>("ParentGenreId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Picture")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -432,8 +441,9 @@ namespace GameStore.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -601,6 +611,9 @@ namespace GameStore.Data.Migrations
                     b.Property<string>("HomePage")
                         .IsRequired()
                         .HasColumnType("ntext");
+
+                    b.Property<string>("LegacyId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

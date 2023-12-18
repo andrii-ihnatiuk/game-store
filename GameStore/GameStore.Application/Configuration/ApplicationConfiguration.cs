@@ -1,6 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using FluentValidation;
+using GameStore.Application.Interfaces;
+using GameStore.Application.Interfaces.Migration;
+using GameStore.Application.Services;
+using GameStore.Application.Services.Migration;
 using GameStore.Services.Configuration;
 using GameStore.Shared.DTOs.Comment;
 using GameStore.Shared.DTOs.Game;
@@ -18,6 +22,7 @@ using GameStore.Shared.Validators.PlatformValidators;
 using GameStore.Shared.Validators.PublisherValidators;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Northwind.Services.Configuration;
 
 namespace GameStore.Application.Configuration;
 
@@ -26,9 +31,22 @@ public static class ApplicationConfiguration
 {
     public static void AddApplicationServices(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
-        serviceCollection.AddAutoMapper(typeof(Services.MappingProfiles.GameProfile).Assembly);
+        serviceCollection.AddAutoMapper(
+            typeof(GameStore.Services.MappingProfiles.GameProfile).Assembly,
+            typeof(Northwind.Services.MappingProfiles.OrderProfile).Assembly);
 
         serviceCollection.AddSingleton<ILogger, NLogLogger>();
+
+        serviceCollection.AddScoped<IOrderFacadeService, OrderFacadeService>();
+        serviceCollection.AddScoped<IGameFacadeService, GameFacadeService>();
+        serviceCollection.AddScoped<IGenreFacadeService, GenreFacadeService>();
+        serviceCollection.AddScoped<IPublisherFacadeService, PublisherFacadeService>();
+        serviceCollection.AddScoped<IServiceResolver, ServiceResolver>();
+        serviceCollection.AddScoped<IServiceProviderWrapper, ServiceProviderWrapper>();
+
+        serviceCollection.AddScoped<IGenreMigrationService, GenreMigrationService>();
+        serviceCollection.AddScoped<IPublisherMigrationService, PublisherMigrationService>();
+        serviceCollection.AddScoped<IGameMigrationService, GameMigrationService>();
 
         serviceCollection.AddScoped<IValidator<GameCreateDto>, GameCreateValidator>();
         serviceCollection.AddScoped<IValidator<GameUpdateDto>, GameUpdateValidator>();
@@ -45,5 +63,6 @@ public static class ApplicationConfiguration
         ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
 
         serviceCollection.AddCoreServices(configuration);
+        serviceCollection.AddNorthwindServices();
     }
 }

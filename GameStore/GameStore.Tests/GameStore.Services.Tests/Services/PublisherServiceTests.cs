@@ -16,11 +16,11 @@ public class PublisherServiceTests
     private const string CompanyName = "test";
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IMapper> _mapper = new();
-    private readonly PublisherService _service;
+    private readonly CorePublisherService _service;
 
     public PublisherServiceTests()
     {
-        _service = new PublisherService(_unitOfWork.Object, _mapper.Object);
+        _service = new CorePublisherService(_unitOfWork.Object, _mapper.Object);
     }
 
     [Fact]
@@ -141,10 +141,10 @@ public class PublisherServiceTests
     public async Task UpdatePublisherAsync_DoesNotThrow()
     {
         // Arrange
-        var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty, CompanyName = CompanyName } };
+        var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty.ToString(), CompanyName = CompanyName } };
         var existingPublisher = new Publisher { CompanyName = "another-company" };
 
-        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(dto.Publisher.Id)).ReturnsAsync(existingPublisher);
+        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(existingPublisher);
 
         _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(p => p.CompanyName == existingPublisher.CompanyName))
             .ReturnsAsync(false);
@@ -155,7 +155,7 @@ public class PublisherServiceTests
         await _service.UpdatePublisherAsync(dto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(dto.Publisher.Id), Times.Once);
+        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 
@@ -163,17 +163,17 @@ public class PublisherServiceTests
     public async Task UpdatePublisherAsync_WhenCompanyNameExists_ThrowsException()
     {
         // Arrange
-        var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty, CompanyName = "different-company" } };
-        var existingPublisher = new Publisher { Id = dto.Publisher.Id, CompanyName = CompanyName };
+        var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty.ToString(), CompanyName = "different-company" } };
+        var existingPublisher = new Publisher { Id = Guid.Empty, CompanyName = CompanyName };
 
-        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(dto.Publisher.Id)).ReturnsAsync(existingPublisher);
+        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(existingPublisher);
 
         _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(p => p.CompanyName == "different-company"))
             .ReturnsAsync(true);
 
         // Act & Assert
         await Assert.ThrowsAsync<EntityAlreadyExistsException>(() => _service.UpdatePublisherAsync(dto));
-        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(dto.Publisher.Id), Times.Once);
+        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Never);
     }
 
@@ -181,18 +181,22 @@ public class PublisherServiceTests
     public async Task DeletePublisherAsync_DoesNotThrow()
     {
         // Arrange
-        var publisherId = Guid.Empty;
-        _unitOfWork.Setup(uow => uow.Publishers.DeleteAsync(publisherId))
-            .Returns(Task.CompletedTask);
+        _unitOfWork.Setup(uow => uow.Publishers.GetOneAsync(
+                It.IsAny<Expression<Func<Publisher, bool>>>(),
+                It.IsAny<Func<IQueryable<Publisher>, IIncludableQueryable<Publisher, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new Publisher { Id = Guid.Empty });
 
+        _unitOfWork.Setup(uow => uow.Publishers.DeleteAsync(It.IsAny<Guid>()))
+            .Returns(Task.CompletedTask);
         _unitOfWork.Setup(uow => uow.SaveAsync())
             .ReturnsAsync(1);
 
         // Act
-        await _service.DeletePublisherAsync(publisherId);
+        await _service.DeletePublisherAsync(Guid.Empty.ToString());
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Publishers.DeleteAsync(publisherId), Times.Once);
+        _unitOfWork.Verify(uow => uow.Publishers.DeleteAsync(It.IsAny<Guid>()), Times.Once);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 }
