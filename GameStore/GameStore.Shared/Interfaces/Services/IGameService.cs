@@ -2,6 +2,7 @@
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
+using GameStore.Shared.Models;
 
 namespace GameStore.Shared.Interfaces.Services;
 
@@ -17,7 +18,7 @@ public interface IGameService : IResolvableByEntityStorage
 
     Task<PublisherBriefDto> GetPublisherByGameAliasAsync(string alias);
 
-    Task<FilteredGamesDto> GetAllGamesAsync(GamesFilterDto filterDto);
+    Task<EntityFilteringResult<GameFullDto>> GetAllGamesAsync(GamesFilter filter);
 
     Task<Tuple<byte[], string>> DownloadAsync(string gameAlias);
 }

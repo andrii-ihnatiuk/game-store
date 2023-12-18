@@ -1,8 +1,8 @@
 ﻿using GameStore.Data;
 using GameStore.Data.Entities;
-using GameStore.Data.Models;
 using GameStore.Data.Repositories;
 using GameStore.Shared.Constants.Filter;
+using GameStore.Shared.Models;
 using GameStore.Tests.Util;
 
 namespace GameStore.Tests.GameStore.Data.Tests.Repositories;
@@ -66,10 +66,10 @@ public class GameRepositoryTests
         _filter.MaxPrice = maxPrice;
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
-        Assert.All(games, game => Assert.True(game.Price <= maxPrice));
+        Assert.All(filteringResult.Records, game => Assert.True(game.Price <= maxPrice));
     }
 
     [Fact]
@@ -80,10 +80,10 @@ public class GameRepositoryTests
         _filter.MinPrice = minPrice;
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
-        Assert.All(games, game => Assert.True(game.Price >= minPrice));
+        Assert.All(filteringResult.Records, game => Assert.True(game.Price >= minPrice));
     }
 
     [Theory]
@@ -94,10 +94,10 @@ public class GameRepositoryTests
         _filter.DatePublishing = datePublishing;
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
-        Assert.All(games, game => Assert.True(game.PublishDate.HasValue && game.PublishDate >= expectedDate));
+        Assert.All(filteringResult.Records, game => Assert.True(game.PublishDate.HasValue && game.PublishDate >= expectedDate));
     }
 
     [Fact]
@@ -117,11 +117,11 @@ public class GameRepositoryTests
         _filter.Name = "fir";
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
-        Assert.All(games, game => Assert.Contains(_filter.Name, game.Name));
-        Assert.NotEmpty(games);
+        Assert.NotEmpty(filteringResult.Records);
+        Assert.All(filteringResult.Records, game => Assert.Contains(_filter.Name, game.Name));
     }
 
     [Fact]
@@ -132,10 +132,10 @@ public class GameRepositoryTests
         _filter.Genres = new List<Guid> { genreId };
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
-        Assert.All(games, game => Assert.Contains(game.GameGenres, gg => gg.GenreId == genreId));
+        Assert.All(filteringResult.Records, game => Assert.Contains(game.GameGenres, gg => gg.GenreId == genreId));
     }
 
     [Fact]
@@ -146,10 +146,10 @@ public class GameRepositoryTests
         _filter.Publishers = new List<Guid> { publisherId, };
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
-        Assert.All(games, game => Assert.Equal(publisherId, game.PublisherId));
+        Assert.All(filteringResult.Records, game => Assert.Equal(publisherId, game.PublisherId));
     }
 
     [Fact]
@@ -160,10 +160,10 @@ public class GameRepositoryTests
         _filter.Platforms = new List<Guid> { platformId };
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
-        Assert.All(games, game => Assert.Contains(game.GamePlatforms, gp => gp.PlatformId == platformId));
+        Assert.All(filteringResult.Records, game => Assert.Contains(game.GamePlatforms, gp => gp.PlatformId == platformId));
     }
 
     [Fact]
@@ -173,11 +173,11 @@ public class GameRepositoryTests
         _filter.Sort = SortingOption.MostCommented;
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
         Assert.Collection(
-            games,
+            filteringResult.Records,
             game1 => Assert.Equal("second game", game1.Name),
             game2 => Assert.Equal("third game", game2.Name),
             game3 => Assert.Equal("first game", game3.Name));
@@ -190,11 +190,11 @@ public class GameRepositoryTests
         _filter.Sort = SortingOption.Newest;
 
         // Act
-        var (games, _) = await _repository.GetFilteredGamesAsync(_filter);
+        var filteringResult = await _repository.GetFilteredGamesAsync(_filter);
 
         // Assert
         Assert.Collection(
-            games,
+            filteringResult.Records,
             game1 => Assert.Equal("third game", game1.Name),
             game2 => Assert.Equal("second game", game2.Name),
             game3 => Assert.Equal("first game", game3.Name));

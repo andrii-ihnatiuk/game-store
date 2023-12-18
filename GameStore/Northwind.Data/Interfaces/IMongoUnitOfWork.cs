@@ -8,7 +8,7 @@ public interface IMongoUnitOfWork
 
     IOrderDetailRepository OrderDetails { get; }
 
-    IGenericRepository<Product> Products { get; }
+    IProductRepository Products { get; }
 
     ICategoryRepository Categories { get; }
 

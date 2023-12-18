@@ -4,6 +4,7 @@ using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Exceptions;
+using GameStore.Shared.Util;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
@@ -21,6 +22,7 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
 
     public async Task AddGameToCartAsync(string customerId, string gameAlias)
     {
+        ThrowIfGameIsFromNorthwind(gameAlias);
         var order = await GetExistingOrderOrCreateNewAsync(customerId);
         await AddGameToOrderOrIncrementQuantityAsync(order, gameAlias);
         RecalculateTotalSumFor(order);
@@ -69,6 +71,14 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
         DeleteGameFromOrderOrDecrementQuantity(order, gameAlias);
         RecalculateTotalSumFor(order);
         await _unitOfWork.SaveAsync();
+    }
+
+    private static void ThrowIfGameIsFromNorthwind(string alias)
+    {
+        if (EntityAliasUtil.ContainsSuffix(alias))
+        {
+            throw new OrderFromNorthwindException();
+        }
     }
 
     private async Task<Order> GetExistingOrderOrCreateNewAsync(string customerId, bool noTracking = false)

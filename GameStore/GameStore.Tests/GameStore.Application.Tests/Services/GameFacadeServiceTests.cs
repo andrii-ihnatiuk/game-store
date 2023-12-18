@@ -1,4 +1,5 @@
-﻿using GameStore.Application.Interfaces;
+﻿using AutoMapper;
+using GameStore.Application.Interfaces;
 using GameStore.Application.Interfaces.Migration;
 using GameStore.Application.Services;
 using GameStore.Shared.DTOs.Game;
@@ -9,15 +10,14 @@ namespace GameStore.Tests.GameStore.Application.Tests.Services;
 
 public class GameFacadeServiceTests
 {
-    private readonly Mock<IServiceResolver> _mockServiceResolver;
-    private readonly Mock<IGameMigrationService> _mockMigrationService;
+    private readonly Mock<IServiceResolver> _mockServiceResolver = new();
+    private readonly Mock<IGameMigrationService> _mockMigrationService = new();
+    private readonly Mock<IMapper> _mockMapper = new();
     private readonly GameFacadeService _service;
 
     public GameFacadeServiceTests()
     {
-        _mockServiceResolver = new Mock<IServiceResolver>();
-        _mockMigrationService = new Mock<IGameMigrationService>();
-        _service = new GameFacadeService(_mockServiceResolver.Object, _mockMigrationService.Object);
+        _service = new GameFacadeService(_mockServiceResolver.Object, _mockMigrationService.Object, _mockMapper.Object);
     }
 
     [Fact]

@@ -3,13 +3,12 @@ using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Extensions;
 using GameStore.Data.Interfaces;
-using GameStore.Data.Models;
 using GameStore.Services.Interfaces;
-using GameStore.Shared.Constants.Filter;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
+using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
@@ -66,21 +65,14 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
         return _mapper.Map<PublisherBriefDto>(game.Publisher);
     }
 
-    public async Task<FilteredGamesDto> GetAllGamesAsync(GamesFilterDto filterDto)
+    public async Task<EntityFilteringResult<GameFullDto>> GetAllGamesAsync(GamesFilter filter)
     {
-        var filter = _mapper.Map<GamesFilter>(filterDto);
-
-        if (filter.Trigger != FilterTrigger.PageChange)
+        var filteringResult = await _unitOfWork.Games.GetFilteredGamesAsync(filter);
+        return new EntityFilteringResult<GameFullDto>
         {
-            filter.Page = 1;
-        }
-
-        (var filteredGames, int totalPages) = await _unitOfWork.Games.GetFilteredGamesAsync(filter);
-        return new FilteredGamesDto()
-        {
-            Games = _mapper.Map<IList<GameBriefDto>>(filteredGames),
-            CurrentPage = filter.Page,
-            TotalPages = totalPages,
+            Records = _mapper.Map<IList<GameFullDto>>(filteringResult.Records),
+            TotalNoLimit = filteringResult.TotalNoLimit,
+            MongoBlacklist = filteringResult.MongoBlacklist,
         };
     }
 

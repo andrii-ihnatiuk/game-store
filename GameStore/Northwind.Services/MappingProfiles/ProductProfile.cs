@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.Util;
 using Northwind.Data.Entities;
-using Northwind.Services.Util;
 
 namespace Northwind.Services.MappingProfiles;
 

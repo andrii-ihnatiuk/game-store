@@ -1,8 +1,8 @@
 ﻿using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
-using GameStore.Data.Models;
 using GameStore.Shared.Constants.Filter;
 using GameStore.Shared.DTOs.Game;
+using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Data.Repositories;
@@ -17,7 +17,7 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
 
     private GameStoreDbContext Context { get; }
 
-    public async Task<Tuple<IList<Game>, int>> GetFilteredGamesAsync(GamesFilter filter)
+    public async Task<EntityFilteringResult<Game>> GetFilteredGamesAsync(GamesFilter filter)
     {
         var query = Context.Games.AsQueryable();
 
@@ -35,16 +35,22 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
             query = query.Where(g => EF.Functions.Like(g.Name, $"%{filter.Name}%"));
         }
 
-        FilterByGenres(ref query, filter.Genres);
-        FilterByPlatforms(ref query, filter.Platforms);
-        FilterByPublishers(ref query, filter.Publishers);
+        FilterByGenres(ref query, filter);
+        FilterByPlatforms(ref query, filter);
+        FilterByPublishers(ref query, filter);
 
         query = query.Distinct();
         ApplySorting(ref query, filter.Sort);
-        (query, int totalPages) = await ApplyPagination(query, filter);
 
-        var games = await query.ToListAsync();
-        return new Tuple<IList<Game>, int>(games, totalPages);
+        var allData = await query.Select(i => i.LegacyId).ToListAsync();
+        int total = allData.Count;
+        IList<string> blacklist = allData.Where(i => i is not null).ToList()!;
+
+        var games = await query.Take(filter.Limit).ToListAsync();
+        return new EntityFilteringResult<Game>(games, total)
+        {
+            MongoBlacklist = blacklist,
+        };
     }
 
     private static bool IsFilterSet(string? filterBy)
@@ -52,39 +58,39 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
         return !string.IsNullOrEmpty(filterBy);
     }
 
-    private void FilterByGenres(ref IQueryable<Game> query, ICollection<Guid> genres)
+    private void FilterByGenres(ref IQueryable<Game> query, GamesFilter filter)
     {
-        if (genres.Count > 0)
+        if (filter.Genres.Any() || filter.MongoCategories.Any())
         {
             query = query.Join(
                     Context.Set<GameGenre>(),
                     game => game.Id,
                     gg => gg.GameId,
                     (game, gameGenre) => new { game, gameGenre })
-                .Where(q => genres.Contains(q.gameGenre.GenreId))
+                .Where(q => filter.Genres.Contains(q.gameGenre.GenreId))
                 .Select(q => q.game);
         }
     }
 
-    private void FilterByPlatforms(ref IQueryable<Game> query, ICollection<Guid> platforms)
+    private void FilterByPlatforms(ref IQueryable<Game> query, GamesFilter filter)
     {
-        if (platforms.Count > 0)
+        if (filter.Platforms.Any())
         {
             query = query.Join(
                     Context.Set<GamePlatform>(),
                     g => g.Id,
                     gp => gp.GameId,
                     (game, gamePlatform) => new { game, gamePlatform })
-                .Where(q => platforms.Contains(q.gamePlatform.PlatformId))
+                .Where(q => filter.Platforms.Contains(q.gamePlatform.PlatformId))
                 .Select(q => q.game);
         }
     }
 
-    private static void FilterByPublishers(ref IQueryable<Game> query, ICollection<Guid> publishers)
+    private static void FilterByPublishers(ref IQueryable<Game> query, GamesFilter filter)
     {
-        if (publishers.Count > 0)
+        if (filter.Publishers.Any() || filter.MongoSuppliers.Any())
         {
-            query = query.Where(g => publishers.Contains((Guid)g.PublisherId!));
+            query = query.Where(g => filter.Publishers.Contains((Guid)g.PublisherId!));
         }
     }
 
@@ -118,15 +124,5 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
             SortingOption.Newest => query.OrderByDescending(g => g.CreationDate),
             _ => throw new ArgumentOutOfRangeException(nameof(GamesFilterDto.Sort)),
         };
-    }
-
-    private static async Task<Tuple<IQueryable<Game>, int>> ApplyPagination(IQueryable<Game> query, GamesFilter filter)
-    {
-        int resultsCount = await query.CountAsync();
-        int totalPages = (int)Math.Ceiling((double)resultsCount / filter.PageCount);
-        int skipCount = filter.PageCount == int.MaxValue ? 0 : (filter.Page - 1) * filter.PageCount;
-
-        query = query.Skip(skipCount).Take(filter.PageCount);
-        return new Tuple<IQueryable<Game>, int>(query, totalPages);
     }
 }

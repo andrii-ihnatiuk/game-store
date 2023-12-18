@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Northwind.Data.Attributes;
 
 namespace Northwind.Data.Entities;
@@ -21,6 +22,7 @@ public class Product : BaseEntity
 
     public string QuantityPerUnit { get; set; }
 
+    [BsonRepresentation(BsonType.Decimal128)]
     public decimal UnitPrice { get; set; }
 
     public short UnitsInStock { get; set; }

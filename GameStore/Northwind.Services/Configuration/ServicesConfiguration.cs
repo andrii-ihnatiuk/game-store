@@ -23,6 +23,7 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
         serviceCollection.AddScoped<ICategoryRepository, CategoryRepository>();
         serviceCollection.AddScoped<ISupplierRepository, SupplierRepository>();
+        serviceCollection.AddScoped<IProductRepository, ProductRepository>();
 
         serviceCollection.AddScoped<IOrderService, MongoOrderService>();
         serviceCollection.AddScoped<IGameService, MongoProductService>();

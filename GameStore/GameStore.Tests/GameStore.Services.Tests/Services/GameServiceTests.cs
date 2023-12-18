@@ -3,13 +3,13 @@ using System.Text;
 using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
-using GameStore.Data.Models;
 using GameStore.Services;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Exceptions;
+using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 
@@ -124,20 +124,20 @@ public class GameServiceTests
         // Arrange
         var gamesData = new List<Game> { new(), new() };
         _unitOfWork.Setup(uow => uow.Games.GetFilteredGamesAsync(It.IsAny<GamesFilter>()))
-            .ReturnsAsync(new Tuple<IList<Game>, int>(gamesData, 1))
+            .ReturnsAsync(new EntityFilteringResult<Game>(gamesData, 2))
             .Verifiable();
 
-        _mapper.Setup(m => m.Map<IEnumerable<GameBriefDto>>(It.IsAny<IEnumerable<Game>>()))
-            .Returns(new List<GameBriefDto> { new(), new() });
+        _mapper.Setup(m => m.Map<IEnumerable<GameFullDto>>(It.IsAny<IEnumerable<Game>>()))
+            .Returns(new List<GameFullDto> { new(), new() });
         _mapper.Setup(m => m.Map<GamesFilter>(It.IsAny<GamesFilterDto>()))
             .Returns(new GamesFilter());
 
         // Act
-        var games = await _service.GetAllGamesAsync(new GamesFilterDto());
+        var filteringResult = await _service.GetAllGamesAsync(new GamesFilter());
 
         // Assert
         _unitOfWork.Verify();
-        Assert.Equal(gamesData.Count, games.Games.Count);
+        Assert.Equal(gamesData.Count, filteringResult.Records.Count);
     }
 
     [Fact]
