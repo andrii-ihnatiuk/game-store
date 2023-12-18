@@ -89,6 +89,20 @@ public class ServiceResolverTests
     }
 
     [Fact]
+    public void ResolveForEntityStorage_WhenMongoStorage_ReturnsMongoService()
+    {
+        // Arrange
+        _mockServiceProvider.Setup(p => p.GetServices<IGameService>())
+            .Returns(_serviceCollection.BuildServiceProvider().GetServices<IGameService>());
+
+        // Act
+        var resolved = _serviceResolver.ResolveForEntityStorage<IGameService>(EntityStorage.MongoDb);
+
+        // Assert
+        Assert.Equal(_mongoServiceMock.Object, resolved);
+    }
+
+    [Fact]
     public void ResolveAll_ReturnAllResolvedServices()
     {
         // Arrange

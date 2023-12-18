@@ -69,7 +69,7 @@ public class MongoCategoryServiceTests
     }
 
     [Fact]
-    public async Task GetGamesByGenreId_ReturnsGameBriefDtoList()
+    public async Task GetGamesByGenreIdAsync_ReturnsGameBriefDtoList()
     {
         const string genreId = "genreId";
         var games = new List<Product> { new() { CategoryId = 123 } };
@@ -78,8 +78,23 @@ public class MongoCategoryServiceTests
         var expected = new List<GameBriefDto> { new() };
         _mockMapper.Setup(m => m.Map<IList<GameBriefDto>>(games)).Returns(expected);
 
-        var result = await _service.GetGamesByGenreId(genreId);
+        var result = await _service.GetGamesByGenreIdAsync(genreId);
 
         Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public async Task DeleteGenreAsync_DeletesGenre()
+    {
+        const string genreId = "genreId";
+        _mockUnitOfWork.Setup(u => u.Categories.DeleteAsync(genreId))
+            .Verifiable();
+        _mockUnitOfWork.Setup(u => u.SaveChangesAsync())
+            .Verifiable();
+
+        await _service.DeleteGenreAsync(genreId);
+
+        _mockUnitOfWork.Verify(u => u.Categories.DeleteAsync(genreId), Times.Once);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 }

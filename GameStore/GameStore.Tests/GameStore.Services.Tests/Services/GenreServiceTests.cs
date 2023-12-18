@@ -92,7 +92,7 @@ public class GenreServiceTests
             .Returns(games.Select(game => new GameBriefDto()).ToList());
 
         // Act
-        var gamesDto = await _service.GetGamesByGenreId(genreId.ToString());
+        var gamesDto = await _service.GetGamesByGenreIdAsync(genreId.ToString());
 
         // Assert
         Assert.NotNull(gamesDto);

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Text.Json;
+using System.Net.Mime;
 using FluentValidation;
-using GameStore.Application.Models;
 using GameStore.Shared.Exceptions;
 using ILogger = GameStore.Shared.Loggers.ILogger;
 
@@ -11,6 +10,12 @@ public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger _logger;
+
+    private static readonly Type[] VisibleMessageExceptions =
+    {
+        typeof(EntityNotFoundException), typeof(EntityAlreadyExistsException), typeof(ForeignKeyException),
+        typeof(PaymentException), typeof(OrderFromNorthwindException), typeof(UserBannedException),
+    };
 
     public ExceptionHandlingMiddleware(RequestDelegate next, ILogger logger)
     {
@@ -35,51 +40,23 @@ public class ExceptionHandlingMiddleware
 
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        ErrorDetails errorDetails = new()
+        context.Response.StatusCode = exception switch
         {
-            Message = "An error occured during request processing.",
-            Errors = new List<string> { exception.Message },
-            Status = StatusCodes.Status500InternalServerError,
-        };
-        object response = errorDetails;
-
-        switch (exception)
-        {
-            case EntityNotFoundException:
-                errorDetails.Status = StatusCodes.Status404NotFound;
-                break;
-            case EntityAlreadyExistsException:
-                errorDetails.Status = StatusCodes.Status409Conflict;
-                break;
-            case ForeignKeyException:
-                errorDetails.Status = StatusCodes.Status400BadRequest;
-                break;
-            case ValidationException ex:
-                errorDetails.Status = StatusCodes.Status400BadRequest;
-                response = string.Join("\n", ex.Errors.Select(s => s.ErrorMessage));
-                break;
-            case PaymentException ex:
-                response = ex.Message;
-                break;
-            case OrderFromNorthwindException ex:
-                errorDetails.Status = StatusCodes.Status400BadRequest;
-                response = ex.Message;
-                break;
-            case UserBannedException ex:
-                response = ex.Message;
-                break;
-            default:
-                errorDetails.Message = "Internal server error, please retry later.";
-                break;
-        }
-
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = errorDetails.Status;
-        var serializerOptions = new JsonSerializerOptions()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            ForeignKeyException or ValidationException or OrderFromNorthwindException => StatusCodes.Status400BadRequest,
+            UserBannedException => StatusCodes.Status403Forbidden,
+            EntityNotFoundException => StatusCodes.Status404NotFound,
+            EntityAlreadyExistsException => StatusCodes.Status409Conflict,
+            _ => StatusCodes.Status500InternalServerError,
         };
 
-        await context.Response.WriteAsync(JsonSerializer.Serialize(response, serializerOptions));
+        string responseMessage = exception switch
+        {
+            ValidationException ex => string.Join("\n", ex.Errors.Select(s => s.ErrorMessage)),
+            _ when VisibleMessageExceptions.Contains(exception.GetType()) => exception.Message,
+            _ => "Internal server error, please retry later.",
+        };
+
+        context.Response.ContentType = MediaTypeNames.Application.Json;
+        await context.Response.WriteAsync(responseMessage);
     }
 }

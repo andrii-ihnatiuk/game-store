@@ -43,7 +43,7 @@ public class CoreGenreService : CoreServiceBase, ICoreGenreService
         return _mapper.Map<IList<GenreBriefDto>>(subgenres);
     }
 
-    public async Task<IList<GameBriefDto>> GetGamesByGenreId(string id)
+    public async Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id)
     {
         var genreId = Guid.Parse(id);
         var games = (await _unitOfWork.GamesGenres.GetAsync(

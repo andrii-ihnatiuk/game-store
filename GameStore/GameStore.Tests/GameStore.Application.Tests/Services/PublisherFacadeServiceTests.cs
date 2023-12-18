@@ -1,6 +1,7 @@
 ﻿using GameStore.Application.Interfaces;
 using GameStore.Application.Interfaces.Migration;
 using GameStore.Application.Services;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Interfaces.Services;
@@ -79,5 +80,73 @@ public class PublisherFacadeServiceTests
         // Assert
         Assert.Equal(games.Count, result.Count);
         _mockServiceResolver.Verify(x => x.ResolveForEntityAlias<IPublisherService>(name), Times.Once);
+    }
+
+    [Fact]
+    public async Task AddPublisherAsync_CallsCoreService()
+    {
+        // Arrange
+        var dto = new PublisherCreateDto();
+
+        var mockCoreService = new Mock<ICorePublisherService>();
+        mockCoreService.Setup(s => s.AddPublisherAsync(dto))
+            .ReturnsAsync(new PublisherBriefDto())
+            .Verifiable();
+
+        _mockServiceResolver.Setup(sr => sr.ResolveAll<ICorePublisherService>())
+            .Returns(new List<ICorePublisherService> { mockCoreService.Object })
+            .Verifiable();
+
+        // Act
+        var result = await _service.AddPublisherAsync(dto);
+
+        // Assert
+        _mockServiceResolver.Verify(sr => sr.ResolveAll<ICorePublisherService>(), Times.Once);
+        mockCoreService.Verify(s => s.AddPublisherAsync(dto), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdatePublisherAsync_CallsMigrationAndUpdate()
+    {
+        // Arrange
+        var dto = new PublisherUpdateDto();
+        _mockMigrationService.Setup(s => s.MigrateOnUpdateAsync(dto, true))
+            .Verifiable();
+
+        var mockCoreService = new Mock<ICorePublisherService>();
+        mockCoreService.Setup(s => s.UpdatePublisherAsync(dto))
+            .Verifiable();
+
+        _mockServiceResolver.Setup(sr => sr.ResolveAll<ICorePublisherService>())
+            .Returns(new List<ICorePublisherService> { mockCoreService.Object })
+            .Verifiable();
+
+        // Act
+        await _service.UpdatePublisherAsync(dto);
+
+        // Assert
+        _mockMigrationService.Verify(s => s.MigrateOnUpdateAsync(dto, true), Times.Once);
+        _mockServiceResolver.Verify(sr => sr.ResolveAll<ICorePublisherService>(), Times.Once);
+        mockCoreService.Verify(s => s.UpdatePublisherAsync(dto), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteGenreAsync_CallsResolvedService()
+    {
+        // Arrange
+        var mockCoreService = new Mock<IPublisherService>();
+        mockCoreService.Setup(s => s.DeletePublisherAsync(It.IsAny<string>()))
+            .Verifiable();
+
+        _mockServiceResolver.Setup(sr => sr.ResolveForEntityId<IPublisherService>(It.IsAny<string>()))
+            .Returns(mockCoreService.Object)
+            .Verifiable();
+
+        // Act
+        await _service.DeletePublisherAsync("test-id");
+
+        // Assert
+        _mockServiceResolver.Verify(sr => sr.ResolveForEntityId<IPublisherService>(It.IsAny<string>()), Times.Once);
+        mockCoreService.Verify(s => s.DeletePublisherAsync(It.IsAny<string>()), Times.Once);
     }
 }

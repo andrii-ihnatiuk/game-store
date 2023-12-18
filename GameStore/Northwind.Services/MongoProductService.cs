@@ -51,8 +51,8 @@ public class MongoProductService : MongoServiceBase, IGameService
     public async Task<PublisherBriefDto> GetPublisherByGameAliasAsync(string alias)
     {
         alias = EntityAliasUtil.RemoveSuffix(alias);
-        var categories = await _unitOfWork.Products.GetSupplierByProductAliasAsync(alias);
-        return _mapper.Map<PublisherBriefDto>(categories);
+        var supplier = await _unitOfWork.Products.GetSupplierByProductAliasAsync(alias);
+        return _mapper.Map<PublisherBriefDto>(supplier);
     }
 
     public async Task<EntityFilteringResult<GameFullDto>> GetAllGamesAsync(GamesFilter filter)

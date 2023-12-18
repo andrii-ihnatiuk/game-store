@@ -46,7 +46,7 @@ public class GenreFacadeService : IGenreFacadeService
     public Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id)
     {
         var genreService = _serviceResolver.ResolveForEntityId<IGenreService>(id);
-        return genreService.GetGamesByGenreId(id);
+        return genreService.GetGamesByGenreIdAsync(id);
     }
 
     public async Task<GenreBriefDto> AddGenreAsync(GenreCreateDto dto)
