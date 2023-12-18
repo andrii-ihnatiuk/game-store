@@ -2,8 +2,8 @@
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Interfaces.Services;
+using GameStore.Shared.Util;
 using Northwind.Data.Interfaces;
-using Northwind.Services.Util;
 
 namespace Northwind.Services;
 

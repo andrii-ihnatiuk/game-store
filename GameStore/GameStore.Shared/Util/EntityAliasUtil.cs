@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace Northwind.Services.Util;
+namespace GameStore.Shared.Util;
 
 [ExcludeFromCodeCoverage]
 public static class EntityAliasUtil
@@ -14,6 +14,11 @@ public static class EntityAliasUtil
 
     public static string RemoveSuffix(string alias)
     {
-        return alias.EndsWith(AliasSuffix, StringComparison.InvariantCulture) ? alias[..^AliasSuffix.Length] : alias;
+        return ContainsSuffix(alias) ? alias[..^AliasSuffix.Length] : alias;
+    }
+
+    public static bool ContainsSuffix(string alias)
+    {
+        return alias.EndsWith(AliasSuffix, StringComparison.InvariantCulture);
     }
 }

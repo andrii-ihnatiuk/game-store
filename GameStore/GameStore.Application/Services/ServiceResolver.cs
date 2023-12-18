@@ -2,7 +2,7 @@
 using GameStore.Application.Interfaces;
 using GameStore.Shared.Constants;
 using GameStore.Shared.Interfaces.Services;
-using Northwind.Services.Util;
+using GameStore.Shared.Util;
 
 namespace GameStore.Application.Services;
 
@@ -30,6 +30,13 @@ public class ServiceResolver : IServiceResolver
         return Regex.IsMatch(alias, $".*{EntityAliasUtil.AliasSuffix}$")
             ? services.Single(s => s.EntityStorage == EntityStorage.MongoDb)
             : services.Single(s => s.EntityStorage == EntityStorage.SqlServer);
+    }
+
+    public T ResolveForEntityStorage<T>(EntityStorage storage)
+        where T : IResolvableByEntityStorage
+    {
+        var services = _serviceProvider.GetServices<T>();
+        return services.Single(s => s.EntityStorage == storage);
     }
 
     public IEnumerable<T> ResolveAll<T>()

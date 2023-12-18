@@ -11,7 +11,7 @@ public class MongoUnitOfWork : IMongoUnitOfWork
         IMongoContext context,
         IGenericRepository<Order> ordersRepository,
         IOrderDetailRepository orderDetailRepository,
-        IGenericRepository<Product> productsRepository,
+        IProductRepository productsRepository,
         ICategoryRepository categoriesRepository,
         ISupplierRepository suppliersRepository,
         IGenericRepository<EntityLog> entityLogRepository)
@@ -29,7 +29,7 @@ public class MongoUnitOfWork : IMongoUnitOfWork
 
     public IOrderDetailRepository OrderDetails { get; }
 
-    public IGenericRepository<Product> Products { get; }
+    public IProductRepository Products { get; }
 
     public ICategoryRepository Categories { get; }
 

@@ -2,11 +2,11 @@
 
 public class GamesFilterDto
 {
-    public IList<Guid> Genres { get; set; } = new List<Guid>();
+    public IList<string> Genres { get; set; } = new List<string>();
 
     public IList<Guid> Platforms { get; set; } = new List<Guid>();
 
-    public IList<Guid> Publishers { get; set; } = new List<Guid>();
+    public IList<string> Publishers { get; set; } = new List<string>();
 
     public decimal? MaxPrice { get; set; }
 
@@ -23,4 +23,6 @@ public class GamesFilterDto
     public string? PageCount { get; set; }
 
     public string Trigger { get; set; }
+
+    public IList<string> Blacklist { get; set; } = new List<string>();
 }

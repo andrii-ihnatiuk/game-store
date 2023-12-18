@@ -10,7 +10,7 @@ public class MongoUnitOfWorkTests
     private readonly Mock<IMongoContext> _contextMock = new();
     private readonly Mock<IGenericRepository<Order>> _orderRepoMock = new();
     private readonly Mock<IOrderDetailRepository> _orderDetailsRepoMock = new();
-    private readonly Mock<IGenericRepository<Product>> _productRepoMock = new();
+    private readonly Mock<IProductRepository> _productRepoMock = new();
     private readonly Mock<ICategoryRepository> _categoryRepoMock = new();
     private readonly Mock<ISupplierRepository> _supplierRepoMock = new();
     private readonly Mock<IGenericRepository<EntityLog>> _entityLogsRepoMock = new();

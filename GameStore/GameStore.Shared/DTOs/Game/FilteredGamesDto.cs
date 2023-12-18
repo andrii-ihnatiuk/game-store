@@ -2,7 +2,14 @@
 
 public class FilteredGamesDto
 {
-    public IList<GameBriefDto> Games { get; set; }
+    public FilteredGamesDto(IList<GameFullDto> games, int totalPages, int currentPage)
+    {
+        Games = games;
+        TotalPages = totalPages;
+        CurrentPage = currentPage;
+    }
+
+    public IList<GameFullDto> Games { get; set; }
 
     public int TotalPages { get; set; }
 

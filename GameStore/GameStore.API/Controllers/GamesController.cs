@@ -1,5 +1,4 @@
 ﻿using GameStore.Application.Interfaces;
-using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
@@ -13,20 +12,17 @@ namespace GameStore.API.Controllers;
 [Route("[controller]")]
 public class GamesController : ControllerBase
 {
-    private readonly ICoreGameService _coreGameService;
     private readonly IGameFacadeService _gameFacadeService;
     private readonly IValidatorWrapper<GameCreateDto> _gameCreateValidator;
     private readonly IValidatorWrapper<GameUpdateDto> _gameUpdateValidator;
     private readonly IValidatorWrapper<GamesFilterDto> _gamesFilterValidator;
 
     public GamesController(
-        ICoreGameService coreGameService,
         IGameFacadeService gameFacadeService,
         IValidatorWrapper<GameCreateDto> gameCreateValidator,
         IValidatorWrapper<GameUpdateDto> gameUpdateValidator,
         IValidatorWrapper<GamesFilterDto> gamesFilterValidator)
     {
-        _coreGameService = coreGameService;
         _gameFacadeService = gameFacadeService;
         _gameCreateValidator = gameCreateValidator;
         _gameUpdateValidator = gameUpdateValidator;
@@ -51,7 +47,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<FilteredGamesDto>> GetAllGamesAsync([FromQuery] GamesFilterDto filter)
     {
         _gamesFilterValidator.ValidateAndThrow(filter);
-        var gamesDto = await _coreGameService.GetAllGamesAsync(filter);
+        var gamesDto = await _gameFacadeService.GetAllGamesAsync(filter);
         return Ok(gamesDto);
     }
 
@@ -59,7 +55,7 @@ public class GamesController : ControllerBase
     [ResponseCache(CacheProfileName = "OneMinuteCache")]
     public async Task<ActionResult<IList<GenreBriefDto>>> GetGenresByGameAliasAsync([FromRoute] string gameAlias)
     {
-        var genres = await _coreGameService.GetGenresByGameAliasAsync(gameAlias);
+        var genres = await _gameFacadeService.GetGenresByGameAliasAsync(gameAlias);
         return Ok(genres);
     }
 
@@ -67,7 +63,7 @@ public class GamesController : ControllerBase
     [ResponseCache(CacheProfileName = "OneMinuteCache")]
     public async Task<ActionResult<IList<PlatformBriefDto>>> GetPlatformsByGameAliasAsync([FromRoute] string gameAlias)
     {
-        var platforms = await _coreGameService.GetPlatformsByGameAliasAsync(gameAlias);
+        var platforms = await _gameFacadeService.GetPlatformsByGameAliasAsync(gameAlias);
         return Ok(platforms);
     }
 
@@ -75,7 +71,7 @@ public class GamesController : ControllerBase
     [ResponseCache(CacheProfileName = "OneMinuteCache")]
     public async Task<ActionResult<PublisherBriefDto>> GetPublisherByGameAliasAsync([FromRoute] string gameAlias)
     {
-        var publisher = await _coreGameService.GetPublisherByGameAliasAsync(gameAlias);
+        var publisher = await _gameFacadeService.GetPublisherByGameAliasAsync(gameAlias);
         return Ok(publisher);
     }
 
@@ -83,7 +79,7 @@ public class GamesController : ControllerBase
     [ResponseCache(CacheProfileName = "OneMinuteCache")]
     public async Task<IActionResult> DownloadGameAsync([FromRoute] string gameAlias)
     {
-        (byte[] bytes, string fileName) = await _coreGameService.DownloadAsync(gameAlias);
+        (byte[] bytes, string fileName) = await _gameFacadeService.DownloadAsync(gameAlias);
         return File(bytes, "text/plain", fileDownloadName: fileName);
     }
 

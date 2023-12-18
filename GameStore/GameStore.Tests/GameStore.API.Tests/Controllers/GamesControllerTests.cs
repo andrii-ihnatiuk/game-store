@@ -1,6 +1,5 @@
 ﻿using GameStore.API.Controllers;
 using GameStore.Application.Interfaces;
-using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
@@ -14,7 +13,6 @@ namespace GameStore.Tests.GameStore.API.Tests.Controllers;
 public class GamesControllerTests
 {
     private readonly GamesController _controller;
-    private readonly Mock<ICoreGameService> _gameService = new();
     private readonly Mock<IGameFacadeService> _gameFacadeService = new();
     private readonly Mock<IValidatorWrapper<GameCreateDto>> _gameCreateValidator = new();
     private readonly Mock<IValidatorWrapper<GameUpdateDto>> _gameUpdateValidator = new();
@@ -23,7 +21,6 @@ public class GamesControllerTests
     public GamesControllerTests()
     {
         _controller = new GamesController(
-            _gameService.Object,
             _gameFacadeService.Object,
             _gameCreateValidator.Object,
             _gameUpdateValidator.Object,
@@ -60,7 +57,7 @@ public class GamesControllerTests
         var result = await _controller.GetGameByIdAsync(Guid.Empty.ToString());
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result);
         Assert.IsType<GameFullDto>(((OkObjectResult)result).Value);
     }
@@ -69,15 +66,15 @@ public class GamesControllerTests
     public async Task GetAllGamesAsync_ReturnsGames()
     {
         // Arrange
-        _gameService.Setup(s => s.GetAllGamesAsync(It.IsAny<GamesFilterDto>()))
-            .ReturnsAsync(new FilteredGamesDto())
+        _gameFacadeService.Setup(s => s.GetAllGamesAsync(It.IsAny<GamesFilterDto>()))
+            .ReturnsAsync(new FilteredGamesDto(new List<GameFullDto>(), 1, 1))
             .Verifiable();
 
         // Act
         var result = await _controller.GetAllGamesAsync(new GamesFilterDto());
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsType<FilteredGamesDto>(((OkObjectResult)result.Result).Value);
     }
@@ -87,7 +84,7 @@ public class GamesControllerTests
     {
         // Arrange
         string gameAlias = "game-alias";
-        _gameService.Setup(s => s.GetGenresByGameAliasAsync(gameAlias))
+        _gameFacadeService.Setup(s => s.GetGenresByGameAliasAsync(gameAlias))
             .ReturnsAsync(new List<GenreBriefDto>())
             .Verifiable();
 
@@ -95,7 +92,7 @@ public class GamesControllerTests
         var result = await _controller.GetGenresByGameAliasAsync(gameAlias);
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IEnumerable<GenreBriefDto>>(((OkObjectResult)result.Result).Value);
     }
@@ -105,7 +102,7 @@ public class GamesControllerTests
     {
         // Arrange
         string gameAlias = "game-alias";
-        _gameService.Setup(s => s.GetPlatformsByGameAliasAsync(gameAlias))
+        _gameFacadeService.Setup(s => s.GetPlatformsByGameAliasAsync(gameAlias))
             .ReturnsAsync(new List<PlatformBriefDto>())
             .Verifiable();
 
@@ -113,7 +110,7 @@ public class GamesControllerTests
         var result = await _controller.GetPlatformsByGameAliasAsync(gameAlias);
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.IsAssignableFrom<IEnumerable<PlatformBriefDto>>(((OkObjectResult)result.Result).Value);
     }
@@ -124,7 +121,7 @@ public class GamesControllerTests
         // Arrange
         string gameAlias = "game-alias";
         var publisher = new PublisherBriefDto();
-        _gameService.Setup(s => s.GetPublisherByGameAliasAsync(gameAlias))
+        _gameFacadeService.Setup(s => s.GetPublisherByGameAliasAsync(gameAlias))
             .ReturnsAsync(publisher)
             .Verifiable();
 
@@ -132,7 +129,7 @@ public class GamesControllerTests
         var result = await _controller.GetPublisherByGameAliasAsync(gameAlias);
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<OkObjectResult>(result.Result);
         Assert.Equal(publisher, ((OkObjectResult)result.Result).Value);
     }
@@ -142,7 +139,7 @@ public class GamesControllerTests
     {
         // Arrange
         const string gameAlias = "game-alias";
-        _gameService.Setup(s => s.DownloadAsync(gameAlias))
+        _gameFacadeService.Setup(s => s.DownloadAsync(gameAlias))
             .ReturnsAsync(new Tuple<byte[], string>(Array.Empty<byte>(), string.Empty))
             .Verifiable();
 
@@ -150,7 +147,7 @@ public class GamesControllerTests
         var result = await _controller.DownloadGameAsync(gameAlias);
 
         // Assert
-        _gameService.Verify();
+        _gameFacadeService.Verify();
         Assert.IsType<FileContentResult>(result);
     }
 

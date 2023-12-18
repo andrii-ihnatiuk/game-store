@@ -61,6 +61,10 @@ public class ExceptionHandlingMiddleware
             case PaymentException ex:
                 response = ex.Message;
                 break;
+            case OrderFromNorthwindException ex:
+                errorDetails.Status = StatusCodes.Status400BadRequest;
+                response = ex.Message;
+                break;
             case UserBannedException ex:
                 response = ex.Message;
                 break;
