@@ -1,4 +1,6 @@
+using GameStore.API.Attributes;
 using GameStore.Application.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.Validators;
@@ -53,6 +55,7 @@ public class GenresController : ControllerBase
         return Ok(games);
     }
 
+    [HasAnyPermission(PermissionOptions.GenreCreate, PermissionOptions.GenreFull)]
     [HttpPost("new")]
     public async Task<IActionResult> PostGenreAsync([FromBody] GenreCreateDto dto)
     {
@@ -61,6 +64,7 @@ public class GenresController : ControllerBase
         return CreatedAtRoute("GetGenreById", new { genreId = genreBriefDto.Id }, genreBriefDto);
     }
 
+    [HasAnyPermission(PermissionOptions.GenreUpdate, PermissionOptions.GenreFull)]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateGenreAsync([FromBody] GenreUpdateDto dto)
     {
@@ -69,6 +73,7 @@ public class GenresController : ControllerBase
         return Ok();
     }
 
+    [HasAnyPermission(PermissionOptions.GenreDelete, PermissionOptions.GenreFull)]
     [HttpDelete("remove/{id}")]
     public async Task<IActionResult> DeleteGenreAsync([FromRoute] string id)
     {

@@ -18,7 +18,9 @@ public interface IGameService : IResolvableByEntityStorage
 
     Task<PublisherBriefDto> GetPublisherByGameAliasAsync(string alias);
 
-    Task<EntityFilteringResult<GameFullDto>> GetAllGamesAsync(GamesFilter filter);
+    Task<EntityFilteringResult<GameFullDto>> GetFilteredGamesAsync(GamesFilter filter);
+
+    Task DeleteGameAsync(string alias);
 
     Task<Tuple<byte[], string>> DownloadAsync(string gameAlias);
 }

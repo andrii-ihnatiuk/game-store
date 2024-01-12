@@ -15,7 +15,7 @@ public class EntityLoggerTests
     {
         _mockUnitOfWork = new Mock<IMongoUnitOfWork>();
         _entityLogRepoMock = new Mock<IGenericRepository<EntityLog>>();
-        _entityLogRepoMock.Setup(e => e.Add(It.IsAny<EntityLog>())).Verifiable();
+        _entityLogRepoMock.Setup(e => e.AddAsync(It.IsAny<EntityLog>())).Verifiable();
         _mockUnitOfWork.Setup(u => u.Logs).Returns(_entityLogRepoMock.Object);
         _entityLogger = new EntityLogger(_mockUnitOfWork.Object);
     }
@@ -30,7 +30,7 @@ public class EntityLoggerTests
         await _entityLogger.LogCreateAsync(entity);
 
         // Assert
-        _entityLogRepoMock.Verify(r => r.Add(It.IsAny<EntityLog>()), Times.Once);
+        _entityLogRepoMock.Verify(r => r.AddAsync(It.IsAny<EntityLog>()), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
@@ -45,7 +45,7 @@ public class EntityLoggerTests
         await _entityLogger.LogUpdateAsync(oldEntity, updEntity);
 
         // Assert
-        _entityLogRepoMock.Verify(r => r.Add(It.IsAny<EntityLog>()), Times.Once);
+        _entityLogRepoMock.Verify(r => r.AddAsync(It.IsAny<EntityLog>()), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
@@ -59,7 +59,7 @@ public class EntityLoggerTests
         await _entityLogger.LogDeleteAsync(entity);
 
         // Assert
-        _entityLogRepoMock.Verify(r => r.Add(It.IsAny<EntityLog>()), Times.Once);
+        _entityLogRepoMock.Verify(r => r.AddAsync(It.IsAny<EntityLog>()), Times.Once);
         _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 }

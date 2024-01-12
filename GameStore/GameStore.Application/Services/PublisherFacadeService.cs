@@ -1,5 +1,6 @@
 ﻿using GameStore.Application.Interfaces;
 using GameStore.Application.Interfaces.Migration;
+using GameStore.Application.Interfaces.Util;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
@@ -10,11 +11,11 @@ namespace GameStore.Application.Services;
 
 public class PublisherFacadeService : IPublisherFacadeService
 {
-    private readonly IServiceResolver _serviceResolver;
+    private readonly IEntityServiceResolver _serviceResolver;
     private readonly IPublisherMigrationService _migrationService;
 
     public PublisherFacadeService(
-        IServiceResolver serviceResolver,
+        IEntityServiceResolver serviceResolver,
         IPublisherMigrationService migrationService)
     {
         _serviceResolver = serviceResolver;

@@ -1,5 +1,5 @@
-﻿using GameStore.Application.Interfaces;
-using GameStore.Application.Interfaces.Migration;
+﻿using GameStore.Application.Interfaces.Migration;
+using GameStore.Application.Interfaces.Util;
 using GameStore.Application.Services;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
@@ -11,13 +11,13 @@ namespace GameStore.Tests.GameStore.Application.Tests.Services;
 
 public class GenreFacadeServiceTests
 {
-    private readonly Mock<IServiceResolver> _mockServiceResolver;
+    private readonly Mock<IEntityServiceResolver> _mockServiceResolver;
     private readonly Mock<IGenreMigrationService> _mockMigrationService;
     private readonly GenreFacadeService _service;
 
     public GenreFacadeServiceTests()
     {
-        _mockServiceResolver = new Mock<IServiceResolver>();
+        _mockServiceResolver = new Mock<IEntityServiceResolver>();
         _mockMigrationService = new Mock<IGenreMigrationService>();
         _service = new GenreFacadeService(_mockServiceResolver.Object, _mockMigrationService.Object);
     }

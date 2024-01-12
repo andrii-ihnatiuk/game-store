@@ -9,7 +9,7 @@ using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.DTOs.Payment.Terminal;
 using GameStore.Shared.Exceptions;
-using GameStore.Shared.Settings;
+using GameStore.Shared.Options;
 using Microsoft.Extensions.Options;
 
 namespace GameStore.Services.Payment.Strategies;
@@ -18,16 +18,16 @@ public class TerminalPaymentStrategy : IPaymentStrategy
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly TerminalSettings _apiSettings;
+    private readonly TerminalOptions _apiOptions;
 
-    public TerminalPaymentStrategy(IUnitOfWork unitOfWork, IOptions<TerminalSettings> apiSettings, IHttpClientFactory httpClientFactory)
+    public TerminalPaymentStrategy(IUnitOfWork unitOfWork, IOptions<TerminalOptions> apiSettings, IHttpClientFactory httpClientFactory)
     {
         _unitOfWork = unitOfWork;
         _httpClientFactory = httpClientFactory;
-        _apiSettings = apiSettings.Value;
+        _apiOptions = apiSettings.Value;
     }
 
-    public string Name => PaymentStrategyName.Terminal;
+    public string Name => PaymentStrategyNames.Terminal;
 
     public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId)
     {
@@ -55,7 +55,7 @@ public class TerminalPaymentStrategy : IPaymentStrategy
         };
 
         var content = new StringContent(JsonSerializer.Serialize(paymentData), Encoding.UTF8, "application/json");
-        var response = await client.PostAsync(_apiSettings.ApiUrl, content);
+        var response = await client.PostAsync(_apiOptions.ApiUrl, content);
         ThrowPaymentExceptionIfRequestIsNotSuccessful(response);
         return await ConvertResponseToTerminalPaymentResultAsync(response);
     }

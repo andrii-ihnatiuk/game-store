@@ -14,5 +14,7 @@ public class Publisher : IMigrationTrackable
 
     public string HomePage { get; set; }
 
+    public string? AccountId { get; set; }
+
     public IList<Game> Games { get; set; } = new List<Game>();
 }

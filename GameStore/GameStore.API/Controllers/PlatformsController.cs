@@ -1,4 +1,6 @@
+using GameStore.API.Attributes;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.Validators;
@@ -46,6 +48,7 @@ public class PlatformsController : ControllerBase
         return Ok(games);
     }
 
+    [HasAnyPermission(PermissionOptions.PlatformCreate, PermissionOptions.PlatformFull)]
     [HttpPost("new")]
     public async Task<IActionResult> PostPlatformAsync([FromBody] PlatformCreateDto dto)
     {
@@ -54,6 +57,7 @@ public class PlatformsController : ControllerBase
         return CreatedAtRoute("GetPlatformById", new { platformId = viewDto.Id }, viewDto);
     }
 
+    [HasAnyPermission(PermissionOptions.PlatformUpdate, PermissionOptions.PlatformFull)]
     [HttpPut("update")]
     public async Task<IActionResult> UpdatePlatformAsync([FromBody] PlatformUpdateDto dto)
     {
@@ -62,6 +66,7 @@ public class PlatformsController : ControllerBase
         return Ok();
     }
 
+    [HasAnyPermission(PermissionOptions.PlatformDelete, PermissionOptions.PlatformFull)]
     [HttpDelete("remove/{platformId:guid}")]
     public async Task<IActionResult> DeletePlatformAsync([FromRoute] Guid platformId)
     {

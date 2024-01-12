@@ -1,7 +1,11 @@
-﻿namespace GameStore.Shared.DTOs.Game;
+﻿using GameStore.Shared.Constants.Filter;
+
+namespace GameStore.Shared.DTOs.Game;
 
 public class GamesFilterDto
 {
+    public IList<string> Stores { get; set; } = new List<string> { StoreOption.GameStore, StoreOption.Northwind };
+
     public IList<string> Genres { get; set; } = new List<string>();
 
     public IList<Guid> Platforms { get; set; } = new List<Guid>();
@@ -22,7 +26,11 @@ public class GamesFilterDto
 
     public string? PageCount { get; set; }
 
-    public string Trigger { get; set; }
+    public string Trigger { get; set; } = FilterTrigger.Button;
 
-    public IList<string> Blacklist { get; set; } = new List<string>();
+    public static GamesFilterDto GameStoreDefaultFilter => new()
+    {
+        Stores = new List<string> { StoreOption.GameStore },
+        PageCount = PaginationOption.All,
+    };
 }

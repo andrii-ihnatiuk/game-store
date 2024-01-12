@@ -37,9 +37,10 @@ public class GenericRepository<T> : IGenericRepository<T>
         return entities.ToList();
     }
 
-    public void Add(T entity)
+    public Task AddAsync(T entity)
     {
         Context.AddCommand(session => DbSet.InsertOneAsync(session, entity));
+        return Task.CompletedTask;
     }
 
     public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
@@ -47,9 +48,17 @@ public class GenericRepository<T> : IGenericRepository<T>
         return await DbSet.AsQueryable().AnyAsync(predicate);
     }
 
+    public Task UpdateAsync(T entity)
+    {
+        var filter = Builders<T>.Filter.Eq(e => e.Id, entity.Id);
+        Context.AddCommand(session => DbSet.ReplaceOneAsync(session, filter, entity));
+        return Task.CompletedTask;
+    }
+
     public Task DeleteAsync(string id)
     {
-        return DbSet.DeleteOneAsync(e => e.Id == id);
+        Context.AddCommand(session => DbSet.DeleteOneAsync(session, e => e.Id == id));
+        return Task.CompletedTask;
     }
 
     private static FilterDefinition<T> GetFilterDefinition(Expression<Func<T, bool>>? predicate)

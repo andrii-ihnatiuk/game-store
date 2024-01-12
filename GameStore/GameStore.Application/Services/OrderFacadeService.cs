@@ -1,22 +1,27 @@
 ﻿using GameStore.Application.Interfaces;
+using GameStore.Application.Interfaces.Util;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Order;
+using GameStore.Shared.Exceptions;
+using GameStore.Shared.Extensions;
 using GameStore.Shared.Interfaces.Services;
+using GameStore.Shared.Models;
 
 namespace GameStore.Application.Services;
 
 public class OrderFacadeService : IOrderFacadeService
 {
-    private readonly IServiceResolver _serviceResolver;
+    private readonly IEntityServiceResolver _serviceResolver;
 
-    public OrderFacadeService(IServiceResolver serviceResolver)
+    public OrderFacadeService(IEntityServiceResolver serviceResolver)
     {
         _serviceResolver = serviceResolver;
     }
 
-    public async Task<IList<OrderBriefDto>> GetOrdersHistoryByCustomerAsync(string customerId, DateTime lowerDate, DateTime upperDate)
+    public async Task<IList<OrderBriefDto>> GetFilteredOrdersAsync(OrdersFilter filter)
     {
         var services = _serviceResolver.ResolveAll<IOrderService>();
-        var tasks = services.Select(s => s.GetPaidOrdersByCustomerAsync(customerId, lowerDate, upperDate)).ToList();
+        var tasks = services.Select(s => s.GetFilteredOrdersAsync(filter)).ToList();
         await Task.WhenAll(tasks);
 
         var orders = tasks.SelectMany(t => t.Result).OrderByDescending(o => o.OrderDate).ToList();
@@ -35,5 +40,16 @@ public class OrderFacadeService : IOrderFacadeService
         var orderService = _serviceResolver.ResolveForEntityId<IOrderService>(orderId);
         var dto = await orderService.GetOrderDetailsAsync(orderId);
         return dto;
+    }
+
+    public async Task ShipOrderAsync(string orderId)
+    {
+        if (orderId.IsNotGuidFormat())
+        {
+            throw new GameStoreNotSupportedException();
+        }
+
+        var orderService = _serviceResolver.ResolveAll<ICoreOrderService>().Single();
+        await orderService.ShipOrderAsync(orderId);
     }
 }

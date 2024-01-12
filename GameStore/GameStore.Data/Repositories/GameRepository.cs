@@ -19,7 +19,12 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
 
     public async Task<EntityFilteringResult<Game>> GetFilteredGamesAsync(GamesFilter filter)
     {
-        var query = Context.Games.AsQueryable();
+        if (!filter.Stores.Contains(StoreOption.GameStore))
+        {
+            return new EntityFilteringResult<Game>(new List<Game>(), 0);
+        }
+
+        var query = DbSet.AsQueryable();
 
         query = filter.MaxPrice is null ? query : query.Where(g => g.Price <= filter.MaxPrice);
         query = filter.MinPrice is null ? query : query.Where(g => g.Price >= filter.MinPrice);
@@ -33,6 +38,11 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
         if (IsFilterSet(filter.Name))
         {
             query = query.Where(g => EF.Functions.Like(g.Name, $"%{filter.Name}%"));
+        }
+
+        if (!filter.ShowDeleted)
+        {
+            query = query.Where(g => g.Deleted.Equals(false));
         }
 
         FilterByGenres(ref query, filter);

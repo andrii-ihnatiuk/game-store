@@ -3,8 +3,11 @@ using System.Globalization;
 using FluentValidation;
 using GameStore.Application.Interfaces;
 using GameStore.Application.Interfaces.Migration;
+using GameStore.Application.Interfaces.Util;
 using GameStore.Application.Services;
 using GameStore.Application.Services.Migration;
+using GameStore.Application.Util;
+using GameStore.Data.Configuration;
 using GameStore.Services.Configuration;
 using GameStore.Shared.DTOs.Comment;
 using GameStore.Shared.DTOs.Game;
@@ -22,6 +25,7 @@ using GameStore.Shared.Validators.PlatformValidators;
 using GameStore.Shared.Validators.PublisherValidators;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Northwind.Data.Configuration;
 using Northwind.Services.Configuration;
 
 namespace GameStore.Application.Configuration;
@@ -41,7 +45,9 @@ public static class ApplicationConfiguration
         serviceCollection.AddScoped<IGameFacadeService, GameFacadeService>();
         serviceCollection.AddScoped<IGenreFacadeService, GenreFacadeService>();
         serviceCollection.AddScoped<IPublisherFacadeService, PublisherFacadeService>();
-        serviceCollection.AddScoped<IServiceResolver, ServiceResolver>();
+
+        serviceCollection.AddScoped<IEntityServiceResolver, EntityServiceResolver>();
+        serviceCollection.AddScoped<ILoginServiceResolver, LoginServiceResolver>();
         serviceCollection.AddScoped<IServiceProviderWrapper, ServiceProviderWrapper>();
 
         serviceCollection.AddScoped<IGenreMigrationService, GenreMigrationService>();
@@ -57,12 +63,15 @@ public static class ApplicationConfiguration
         serviceCollection.AddScoped<IValidator<GenreCreateDto>, GenreCreateValidator>();
         serviceCollection.AddScoped<IValidator<GenreUpdateDto>, GenreUpdateValidator>();
         serviceCollection.AddScoped<IValidator<CommentCreateDto>, CommentCreateValidator>();
+        serviceCollection.AddScoped<IValidator<CommentUpdateDto>, CommentUpdateValidator>();
         serviceCollection.AddScoped<IValidator<PaymentDto>, PaymentValidator>();
         serviceCollection.AddScoped<IValidator<GamesFilterDto>, GamesFilterValidator>();
         serviceCollection.AddScoped(typeof(IValidatorWrapper<>), typeof(ValidatorWrapper<>));
         ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
 
-        serviceCollection.AddCoreServices(configuration);
+        serviceCollection.AddGameStoreDataAccess(configuration);
+        serviceCollection.AddNorthwindDataAccess();
+        serviceCollection.AddCoreServices();
         serviceCollection.AddNorthwindServices();
     }
 }

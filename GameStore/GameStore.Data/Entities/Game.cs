@@ -20,6 +20,8 @@ public class Game : ICreationTrackable, IMigrationTrackable
 
     public bool Discontinued { get; set; }
 
+    public bool Deleted { get; set; }
+
     public ulong PageViews { get; set; }
 
     public DateTime? PublishDate { get; set; }

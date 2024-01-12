@@ -1,8 +1,12 @@
 ﻿namespace GameStore.Shared.Models;
 
-public struct EntityFilteringResult<T>
+public class EntityFilteringResult<T>
     where T : class
 {
+    public EntityFilteringResult()
+    {
+    }
+
     public EntityFilteringResult(IList<T> records, int totalNoLimit)
     {
         Records = records;

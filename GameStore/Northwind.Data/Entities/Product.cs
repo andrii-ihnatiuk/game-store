@@ -32,4 +32,6 @@ public class Product : BaseEntity
     public uint ReorderLevel { get; set; }
 
     public bool Discontinued { get; set; }
+
+    public bool Deleted { get; set; }
 }

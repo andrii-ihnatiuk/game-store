@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using GameStore.Application.Interfaces;
+using GameStore.Application.Interfaces.Util;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GameStore.Application.Services;

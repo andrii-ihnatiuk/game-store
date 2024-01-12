@@ -9,5 +9,7 @@ public interface ICoreOrderService : IOrderService
 
     Task<IList<OrderDetailDto>> GetCartByCustomerAsync(string customerId);
 
+    Task ShipOrderAsync(string orderId);
+
     Task DeleteGameFromCartAsync(string customerId, string gameAlias);
 }

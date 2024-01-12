@@ -1,0 +1,45 @@
+{
+  "Game": "games",
+  "UpdateGame": "games/update",
+  "DeleteGame": "games/remove",
+  "AddGame": "games/new",
+  "Games": "games",
+
+  "Genres": "genres",
+  "Genre": "genres",
+  "AddGenre": "genres/new",
+  "DeleteGenre": "genres/remove",
+  "UpdateGenre": "genres/update",
+
+  "UpdatePlatform": "platforms/update",
+  "DeletePlatform": "platforms/remove",
+  "Platform": "platforms",
+  "AddPlatform": "platforms/new",
+  "Platforms": "platforms",
+
+  "Publishers": "publishers",
+  "Publisher": "publishers",
+  "UpdatePublisher": "publishers/update",
+  "DeletePublisher": "publishers/remove",
+  "AddPublisher": "publishers/new",
+
+  "Order": "order",
+  "UpdateOrder": "UpdateOrder",
+  "History": "orders-history",
+  "Orders": "orders",
+  "Basket": "basket",
+  "MakeOrder": "payment",
+
+  "Users": "users",
+  "User": "users",
+  "UpdateUser": "users/update",
+  "DeleteUser": "users/remove",
+  "AddUser": "users/new",
+  "Login": "login",
+
+  "Roles": "roles",
+  "Role": "roles",
+  "UpdateRole": "roles/update",
+  "DeleteRole": "roles/remove",
+  "AddRole": "roles/new"
+}

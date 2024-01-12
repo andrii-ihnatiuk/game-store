@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Interfaces.Services;
+using GameStore.Shared.Models;
 using Northwind.Data.Interfaces;
 
 namespace Northwind.Services;
@@ -16,12 +17,9 @@ public class MongoOrderService : MongoServiceBase, IOrderService
         _mapper = mapper;
     }
 
-    public async Task<IList<OrderBriefDto>> GetPaidOrdersByCustomerAsync(string customerId, DateTime lowerDate, DateTime upperDate)
+    public async Task<IList<OrderBriefDto>> GetFilteredOrdersAsync(OrdersFilter filter)
     {
-        var orders = await _unitOfWork.Orders.GetAllAsync(
-            o => o.CustomerId == customerId
-                 && o.OrderDate >= lowerDate
-                 && o.OrderDate <= upperDate);
+        var orders = await _unitOfWork.Orders.GetFilteredOrdersAsync(filter);
         return _mapper.Map<IList<OrderBriefDto>>(orders);
     }
 

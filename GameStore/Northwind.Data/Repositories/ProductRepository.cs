@@ -20,6 +20,11 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
 
     public async Task<EntityFilteringResult<Product>> GetFilteredProductsAsync(GamesFilter filter)
     {
+        if (!filter.Stores.Contains(StoreOption.Northwind))
+        {
+            return new EntityFilteringResult<Product>(new List<Product>(), 0);
+        }
+
         var query = DbSet.AsQueryable().Where(p => !filter.Blacklist.Contains(p.Id));
 
         query = filter.MaxPrice is null ? query : query.Where(p => p.UnitPrice <= filter.MaxPrice);
@@ -31,6 +36,11 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
                 p => p.ProductName,
                 new BsonRegularExpression($".*{filter.Name}.*", "i"));
             query = query.Where(_ => nameFilter.Inject());
+        }
+
+        if (!filter.ShowDeleted)
+        {
+            query = query.Where(g => g.Deleted.Equals(false));
         }
 
         FilterByCategories(ref query, filter);

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using GameStore.Shared.Settings;
+using GameStore.Shared.Options;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using Northwind.Data.Attributes;
@@ -12,7 +12,7 @@ public class MongoContext : IMongoContext
 {
     private readonly IList<Func<IClientSessionHandle, Task>> _commands;
 
-    public MongoContext(IOptions<MongoDbSettings> dbOptions)
+    public MongoContext(IOptions<MongoDbOptions> dbOptions)
     {
         var dbSettings = dbOptions.Value;
         Client = new MongoClient(dbSettings.ConnectionString);

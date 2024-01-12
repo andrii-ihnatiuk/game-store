@@ -20,19 +20,19 @@ public class EntityLogger : IEntityLogger
 
     public async Task LogCreateAsync(object entity)
     {
-        _unitOfWork.Logs.Add(GetEntityLog(CreateAction, entity));
+        await _unitOfWork.Logs.AddAsync(GetEntityLog(CreateAction, entity));
         await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task LogUpdateAsync(object oldEntity, object updEntity)
     {
-        _unitOfWork.Logs.Add(GetEntityLog(UpdateAction, oldEntity, updEntity));
+        await _unitOfWork.Logs.AddAsync(GetEntityLog(UpdateAction, oldEntity, updEntity));
         await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task LogDeleteAsync(object entity)
     {
-        _unitOfWork.Logs.Add(GetEntityLog(DeleteAction, entity));
+        await _unitOfWork.Logs.AddAsync(GetEntityLog(DeleteAction, entity));
         await _unitOfWork.SaveChangesAsync();
     }
 

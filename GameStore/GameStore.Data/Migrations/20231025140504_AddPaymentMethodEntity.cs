@@ -68,20 +68,6 @@ public partial class AddPaymentMethodEntity : Migration
                 { new Guid("ec62c5de-e415-4e74-bc75-3a7606563c78"), "Rockstar Games", "Rockstar Games, Inc. is an American video game publisher based in New York City.", "https://www.rockstargames.com/" },
             });
 
-        migrationBuilder.UpdateData(
-            table: "Games",
-            keyColumn: "Id",
-            keyValue: new Guid("8e9d1000-50e0-4bd8-8159-42c7431f32b5"),
-            column: "PublisherId",
-            value: new Guid("defd4ed1-a967-48af-83fb-4e5ffee412b0"));
-
-        migrationBuilder.UpdateData(
-            table: "Games",
-            keyColumn: "Id",
-            keyValue: new Guid("95ffb14c-267a-432a-9d7c-22f887290d49"),
-            column: "PublisherId",
-            value: new Guid("ec62c5de-e415-4e74-bc75-3a7606563c78"));
-
         migrationBuilder.InsertData(
             table: "GameGenre",
             columns: new[] { "GameId", "GenreId" },
@@ -127,6 +113,20 @@ public partial class AddPaymentMethodEntity : Migration
             column: "PaymentMethodId",
             principalTable: "PaymentMethod",
             principalColumn: "Id");
+
+        migrationBuilder.UpdateData(
+            table: "Games",
+            keyColumn: "Id",
+            keyValue: new Guid("8e9d1000-50e0-4bd8-8159-42c7431f32b5"),
+            column: "PublisherId",
+            value: new Guid("defd4ed1-a967-48af-83fb-4e5ffee412b0"));
+
+        migrationBuilder.UpdateData(
+            table: "Games",
+            keyColumn: "Id",
+            keyValue: new Guid("95ffb14c-267a-432a-9d7c-22f887290d49"),
+            column: "PublisherId",
+            value: new Guid("ec62c5de-e415-4e74-bc75-3a7606563c78"));
     }
 
     /// <inheritdoc />

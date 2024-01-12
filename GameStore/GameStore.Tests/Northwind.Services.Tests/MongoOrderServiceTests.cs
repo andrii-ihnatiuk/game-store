@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using AutoMapper;
 using GameStore.Shared.DTOs.Order;
+using GameStore.Shared.Models;
 using Moq;
 using Northwind.Data.Entities;
 using Northwind.Data.Interfaces;
@@ -22,19 +23,18 @@ public class MongoOrderServiceTests
     }
 
     [Fact]
-    public async Task GetPaidOrdersByCustomerAsync_ReturnsOrderBriefDtoList()
+    public async Task GetFilteredOrdersAsync_ReturnsOrderBriefDtoList()
     {
         // Arrange
-        const string customerId = "customerId";
-        var orders = new List<Order> { new() { CustomerId = customerId } };
-        _mockUnitOfWork.Setup(u => u.Orders.GetAllAsync(It.IsAny<Expression<Func<Order, bool>>>()))
+        var orders = new List<Order> { new() };
+        _mockUnitOfWork.Setup(u => u.Orders.GetFilteredOrdersAsync(It.IsAny<OrdersFilter>()))
             .ReturnsAsync(orders);
 
-        var expected = new List<OrderBriefDto> { new() { CustomerId = customerId } };
+        var expected = new List<OrderBriefDto> { new() };
         _mockMapper.Setup(m => m.Map<IList<OrderBriefDto>>(orders)).Returns(expected);
 
         // Act
-        var result = await _service.GetPaidOrdersByCustomerAsync(customerId, DateTime.MinValue, DateTime.MaxValue);
+        var result = await _service.GetFilteredOrdersAsync(new OrdersFilter());
 
         // Assert
         Assert.Equal(expected.Count, result.Count);

@@ -1,10 +1,14 @@
-﻿using GameStore.API.Controllers;
+﻿using System.Security.Claims;
+using GameStore.API.Controllers;
 using GameStore.Application.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -17,6 +21,7 @@ public class GamesControllerTests
     private readonly Mock<IValidatorWrapper<GameCreateDto>> _gameCreateValidator = new();
     private readonly Mock<IValidatorWrapper<GameUpdateDto>> _gameUpdateValidator = new();
     private readonly Mock<IValidatorWrapper<GamesFilterDto>> _gamesFilterValidator = new();
+    private readonly Mock<IAuthorizationService> _mockAuthService = new();
 
     public GamesControllerTests()
     {
@@ -24,7 +29,8 @@ public class GamesControllerTests
             _gameFacadeService.Object,
             _gameCreateValidator.Object,
             _gameUpdateValidator.Object,
-            _gamesFilterValidator.Object);
+            _gamesFilterValidator.Object,
+            _mockAuthService.Object);
     }
 
     [Fact]
@@ -63,15 +69,24 @@ public class GamesControllerTests
     }
 
     [Fact]
-    public async Task GetAllGamesAsync_ReturnsGames()
+    public async Task GetFilteredGamesAsync_ReturnsGames()
     {
         // Arrange
-        _gameFacadeService.Setup(s => s.GetAllGamesAsync(It.IsAny<GamesFilterDto>()))
+        _gameFacadeService.Setup(s => s.GetFilteredGamesAsync(It.IsAny<GamesFilterDto>(), It.IsAny<bool>()))
             .ReturnsAsync(new FilteredGamesDto(new List<GameFullDto>(), 1, 1))
             .Verifiable();
 
+        var principal = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+        {
+            new(CustomClaimTypes.Permission, PermissionOptions.CommentFull),
+        }));
+        _controller.ControllerContext = new ControllerContext()
+        {
+            HttpContext = new DefaultHttpContext() { User = principal },
+        };
+
         // Act
-        var result = await _controller.GetAllGamesAsync(new GamesFilterDto());
+        var result = await _controller.GetFilteredGamesAsync(new GamesFilterDto());
 
         // Assert
         _gameFacadeService.Verify();
@@ -179,6 +194,10 @@ public class GamesControllerTests
         _gameFacadeService.Setup(s => s.UpdateGameAsync(dto))
             .Returns(Task.CompletedTask)
             .Verifiable();
+
+        _mockAuthService.Setup(s =>
+                s.AuthorizeAsync(It.IsAny<ClaimsPrincipal>(), It.IsAny<object>(), It.IsAny<string>()))
+            .ReturnsAsync(AuthorizationResult.Success);
 
         // Act
         var result = await _controller.UpdateGameAsync(dto);
