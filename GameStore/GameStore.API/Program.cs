@@ -1,6 +1,12 @@
+using GameStore.API.Authorization;
 using GameStore.API.Middlewares;
+using GameStore.API.OptionsSetup;
 using GameStore.Application.Configuration;
-using GameStore.Shared.Settings;
+using GameStore.Data;
+using GameStore.Data.Extensions;
+using GameStore.Shared.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 
@@ -40,15 +46,26 @@ builder.Services.AddHttpClient();
 
 LogManager.Setup().LoadConfigurationFromFile("nlog.config", false);
 
-builder.Services.Configure<RouteOptions>(options =>
+builder.Services.Configure<RouteOptions>(options => { options.LowercaseUrls = true; });
+builder.Services.Configure<VisaOptions>(builder.Configuration.GetSection("PaymentOptions:Visa"));
+builder.Services.Configure<TerminalOptions>(builder.Configuration.GetSection("PaymentOptions:IBox"));
+builder.Services.Configure<MongoDbOptions>(builder.Configuration.GetSection("MongoDbOptions"));
+builder.Services.Configure<AuthApiOptions>(builder.Configuration.GetSection("AuthApiOptions"));
+builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityOptions"));
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+
+builder.Services.AddAuthentication(opt =>
 {
-    options.LowercaseUrls = true;
-});
-builder.Services.Configure<VisaSettings>(builder.Configuration.GetSection("Payment:VisaSettings"));
-builder.Services.Configure<TerminalSettings>(builder.Configuration.GetSection("Payment:IBoxSettings"));
-builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection(nameof(MongoDbSettings)));
+    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer();
+builder.Services.ConfigureAuthorization();
 
 var app = builder.Build();
+
+app.ApplyDatabaseMigrations();
+IdentityDataInitializer.Initialize(app.Services);
 
 if (app.Environment.IsDevelopment())
 {
@@ -67,6 +84,7 @@ app.UseCors("angular-front");
 
 app.UseResponseCaching();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

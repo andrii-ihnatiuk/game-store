@@ -15,4 +15,8 @@ public class GameFullDto
     public short UnitInStock { get; set; }
 
     public bool Discontinued { get; set; }
+
+    public bool Deleted { get; set; }
+
+    public string? PublisherId { get; set; }
 }

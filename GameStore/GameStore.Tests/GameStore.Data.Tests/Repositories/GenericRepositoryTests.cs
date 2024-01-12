@@ -119,7 +119,7 @@ public class GenericRepositoryTests
             UnitInStock = 10,
             Discontinued = false,
         };
-        _context.Games.Add(game);
+        _context.Set<Game>().Add(game);
         await _context.SaveChangesAsync();
 
         var platform = new Platform
@@ -212,7 +212,7 @@ public class GenericRepositoryTests
             UnitInStock = 10,
             Discontinued = false,
         };
-        _context.Games.Add(game);
+        _context.Set<Game>().Add(game);
         await _context.SaveChangesAsync();
 
         var platform = new Platform

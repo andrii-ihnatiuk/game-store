@@ -5,6 +5,7 @@ using GameStore.Data.Interfaces;
 using GameStore.Services;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Exceptions;
+using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore.Query;
 using Moq;
 
@@ -105,23 +106,19 @@ public class OrderServiceTests
     }
 
     [Fact]
-    public async Task GetPaidOrdersByCustomerAsync_ReturnsCorrectAmountOfOrders()
+    public async Task GetFilteredOrdersAsync_ReturnsCorrectAmountOfOrders()
     {
         // Arrange
         var orders = new List<Order> { new() };
-        _unitOfWork.Setup(u => u.Orders.GetAsync(
-                It.IsAny<Expression<Func<Order, bool>>>(),
-                It.IsAny<Func<IQueryable<Order>, IOrderedQueryable<Order>>>(),
-                It.IsAny<Func<IQueryable<Order>, IIncludableQueryable<Order, object>>>(),
-                It.IsAny<bool>()))
+        _unitOfWork.Setup(u => u.Orders.GetFilteredOrdersAsync(It.IsAny<OrdersFilter>()))
             .ReturnsAsync(orders);
 
         var orderDtos = new List<OrderBriefDto> { new() };
-        _mapper.Setup(m => m.Map<IList<OrderBriefDto>>(It.IsAny<IEnumerable<Order>>()))
+        _mapper.Setup(m => m.Map<IList<OrderBriefDto>>(orders))
             .Returns(orderDtos);
 
         // Act
-        var result = await _service.GetPaidOrdersByCustomerAsync(CustomerId, DateTime.MinValue, DateTime.MaxValue);
+        var result = await _service.GetFilteredOrdersAsync(new OrdersFilter());
 
         // Assert
         Assert.Equal(orderDtos.Count, result.Count);

@@ -1,4 +1,5 @@
-﻿using FluentValidation.Results;
+﻿using System.Net.Mime;
+using FluentValidation.Results;
 using GameStore.API.Middlewares;
 using GameStore.Shared.Exceptions;
 using GameStore.Shared.Loggers;
@@ -30,7 +31,7 @@ public class ExceptionHandlingMiddlewareTests
 
         // Assert
         Assert.Equal(StatusCodes.Status404NotFound, _context.Response.StatusCode);
-        Assert.True(_context.Response.ContentType == "application/json");
+        Assert.True(_context.Response.ContentType == MediaTypeNames.Text.Plain);
     }
 
     [Fact]
@@ -44,7 +45,7 @@ public class ExceptionHandlingMiddlewareTests
 
         // Assert
         Assert.Equal(StatusCodes.Status409Conflict, _context.Response.StatusCode);
-        Assert.True(_context.Response.ContentType == "application/json");
+        Assert.True(_context.Response.ContentType == MediaTypeNames.Text.Plain);
     }
 
     [Fact]
@@ -58,7 +59,7 @@ public class ExceptionHandlingMiddlewareTests
 
         // Assert
         Assert.Equal(StatusCodes.Status400BadRequest, _context.Response.StatusCode);
-        Assert.True(_context.Response.ContentType == "application/json");
+        Assert.True(_context.Response.ContentType == MediaTypeNames.Text.Plain);
     }
 
     [Fact]
@@ -78,7 +79,7 @@ public class ExceptionHandlingMiddlewareTests
         string responseBody = await reader.ReadToEndAsync();
         Assert.Contains("Validation error message", responseBody);
         Assert.Equal(StatusCodes.Status400BadRequest, _context.Response.StatusCode);
-        Assert.True(_context.Response.ContentType == "application/json");
+        Assert.True(_context.Response.ContentType == MediaTypeNames.Text.Plain);
     }
 
     [Fact]
@@ -95,8 +96,8 @@ public class ExceptionHandlingMiddlewareTests
         var reader = new StreamReader(_context.Response.Body);
         string responseBody = await reader.ReadToEndAsync();
         Assert.Contains("Payment failed", responseBody);
-        Assert.Equal(StatusCodes.Status500InternalServerError, _context.Response.StatusCode);
-        Assert.True(_context.Response.ContentType == "application/json");
+        Assert.Equal(StatusCodes.Status402PaymentRequired, _context.Response.StatusCode);
+        Assert.True(_context.Response.ContentType == MediaTypeNames.Text.Plain);
     }
 
     [Fact]
@@ -115,21 +116,21 @@ public class ExceptionHandlingMiddlewareTests
 
         Assert.Contains("User is banned", responseBody);
         Assert.Equal(StatusCodes.Status403Forbidden, _context.Response.StatusCode);
-        Assert.True(_context.Response.ContentType == "application/json");
+        Assert.True(_context.Response.ContentType == MediaTypeNames.Text.Plain);
     }
 
     [Fact]
     public async Task Invoke_Captured_OrderFromNorthwind_HandledCorrectly()
     {
         // Arrange
-        var middleware = new ExceptionHandlingMiddleware(_ => throw new OrderFromNorthwindException(), _logger.Object);
+        var middleware = new ExceptionHandlingMiddleware(_ => throw new GameStoreNotSupportedException(), _logger.Object);
 
         // Act
         await middleware.Invoke(_context);
 
         // Assert
         Assert.Equal(StatusCodes.Status400BadRequest, _context.Response.StatusCode);
-        Assert.True(_context.Response.ContentType == "application/json");
+        Assert.True(_context.Response.ContentType == MediaTypeNames.Text.Plain);
     }
 
     [Fact]
@@ -148,7 +149,7 @@ public class ExceptionHandlingMiddlewareTests
 
         Assert.Equal(StatusCodes.Status500InternalServerError, _context.Response.StatusCode);
         Assert.Equal("Internal server error, please retry later.", responseBody);
-        Assert.True(_context.Response.ContentType == "application/json");
+        Assert.True(_context.Response.ContentType == MediaTypeNames.Text.Plain);
     }
 
     [Fact]

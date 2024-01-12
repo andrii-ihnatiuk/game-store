@@ -1,8 +1,11 @@
-﻿using GameStore.Application.Interfaces;
+﻿using GameStore.API.Attributes;
+using GameStore.Application.Interfaces;
 using GameStore.Data.Entities;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStore.API.Controllers;
@@ -14,15 +17,18 @@ public class PublishersController : ControllerBase
     private readonly IPublisherFacadeService _publisherFacadeService;
     private readonly IValidatorWrapper<PublisherCreateDto> _publisherCreateValidator;
     private readonly IValidatorWrapper<PublisherUpdateDto> _publisherUpdateValidator;
+    private readonly IAuthorizationService _authorizationService;
 
     public PublishersController(
         IPublisherFacadeService publisherFacadeService,
         IValidatorWrapper<PublisherCreateDto> publisherCreateValidator,
-        IValidatorWrapper<PublisherUpdateDto> publisherUpdateValidator)
+        IValidatorWrapper<PublisherUpdateDto> publisherUpdateValidator,
+        IAuthorizationService authorizationService)
     {
         _publisherFacadeService = publisherFacadeService;
         _publisherCreateValidator = publisherCreateValidator;
         _publisherUpdateValidator = publisherUpdateValidator;
+        _authorizationService = authorizationService;
     }
 
     [HttpGet("{companyName}", Name = "GetPublisherByName")]
@@ -46,6 +52,7 @@ public class PublishersController : ControllerBase
         return Ok(games);
     }
 
+    [HasAnyPermission(PermissionOptions.PublisherCreate, PermissionOptions.PublisherFull)]
     [HttpPost("new")]
     public async Task<ActionResult<PublisherBriefDto>> PostPublisherAsync([FromBody] PublisherCreateDto dto)
     {
@@ -54,14 +61,22 @@ public class PublishersController : ControllerBase
         return CreatedAtRoute("GetPublisherByName", new { CompanyName = publisherBriefDto.CompanyName }, publisherBriefDto);
     }
 
+    [HasAnyPermission(PermissionOptions.PublisherUpdate, PermissionOptions.PublisherUpdateSelf, PermissionOptions.PublisherFull)]
     [HttpPut("update")]
     public async Task<IActionResult> UpdatePublisherAsync([FromBody] PublisherUpdateDto dto)
     {
         _publisherUpdateValidator.ValidateAndThrow(dto);
+        var authResult = await _authorizationService.AuthorizeAsync(User, dto, PolicyNames.CanUpdatePublisher);
+        if (!authResult.Succeeded)
+        {
+            return Forbid();
+        }
+
         await _publisherFacadeService.UpdatePublisherAsync(dto);
         return Ok();
     }
 
+    [HasAnyPermission(PermissionOptions.PublisherDelete, PermissionOptions.PublisherFull)]
     [HttpDelete("remove/{id}")]
     public async Task<IActionResult> DeletePublisherAsync([FromRoute] string id)
     {

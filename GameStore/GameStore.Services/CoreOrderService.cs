@@ -2,9 +2,10 @@
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Exceptions;
-using GameStore.Shared.Util;
+using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
@@ -22,7 +23,6 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
 
     public async Task AddGameToCartAsync(string customerId, string gameAlias)
     {
-        ThrowIfGameIsFromNorthwind(gameAlias);
         var order = await GetExistingOrderOrCreateNewAsync(customerId);
         await AddGameToOrderOrIncrementQuantityAsync(order, gameAlias);
         RecalculateTotalSumFor(order);
@@ -35,13 +35,18 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
         return _mapper.Map<IList<OrderDetailDto>>(order.OrderDetails);
     }
 
-    public async Task<IList<OrderBriefDto>> GetPaidOrdersByCustomerAsync(string customerId, DateTime lowerDate, DateTime upperDate)
+    public async Task ShipOrderAsync(string orderId)
     {
-        var paidOrders = await _unitOfWork.Orders.GetAsync(
-            o => o.CustomerId == customerId
-                 && o.PaidDate != null
-                 && o.OrderDate >= lowerDate
-                 && o.OrderDate <= upperDate);
+        var id = Guid.Parse(orderId);
+        var order = await _unitOfWork.Orders.GetByIdAsync(id);
+        order.ShippedDate = DateTime.UtcNow;
+        order.Status = OrderStatus.Shipped;
+        await _unitOfWork.SaveAsync();
+    }
+
+    public async Task<IList<OrderBriefDto>> GetFilteredOrdersAsync(OrdersFilter filter)
+    {
+        var paidOrders = await _unitOfWork.Orders.GetFilteredOrdersAsync(filter);
         return _mapper.Map<IList<OrderBriefDto>>(paidOrders);
     }
 
@@ -71,14 +76,6 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
         DeleteGameFromOrderOrDecrementQuantity(order, gameAlias);
         RecalculateTotalSumFor(order);
         await _unitOfWork.SaveAsync();
-    }
-
-    private static void ThrowIfGameIsFromNorthwind(string alias)
-    {
-        if (EntityAliasUtil.ContainsSuffix(alias))
-        {
-            throw new OrderFromNorthwindException();
-        }
     }
 
     private async Task<Order> GetExistingOrderOrCreateNewAsync(string customerId, bool noTracking = false)
@@ -111,6 +108,11 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
     private async Task AddGameToOrderOrIncrementQuantityAsync(Order order, string gameAlias)
     {
         var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == gameAlias);
+        if (game.Deleted)
+        {
+            throw new GameStoreNotSupportedException("Cannot buy a deleted game!");
+        }
+
         var orderDetail = order.OrderDetails.FirstOrDefault(od => od.ProductId == game.Id);
 
         if (orderDetail is not null)

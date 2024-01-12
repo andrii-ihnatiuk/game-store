@@ -14,7 +14,8 @@ public class ExceptionHandlingMiddleware
     private static readonly Type[] VisibleMessageExceptions =
     {
         typeof(EntityNotFoundException), typeof(EntityAlreadyExistsException), typeof(ForeignKeyException),
-        typeof(PaymentException), typeof(OrderFromNorthwindException), typeof(UserBannedException),
+        typeof(PaymentException), typeof(GameStoreNotSupportedException), typeof(UserBannedException),
+        typeof(IdentityException), typeof(LoginException),
     };
 
     public ExceptionHandlingMiddleware(RequestDelegate next, ILogger logger)
@@ -42,7 +43,12 @@ public class ExceptionHandlingMiddleware
     {
         context.Response.StatusCode = exception switch
         {
-            ForeignKeyException or ValidationException or OrderFromNorthwindException => StatusCodes.Status400BadRequest,
+            ForeignKeyException => StatusCodes.Status400BadRequest,
+            ValidationException => StatusCodes.Status400BadRequest,
+            GameStoreNotSupportedException => StatusCodes.Status400BadRequest,
+            IdentityException => StatusCodes.Status400BadRequest,
+            LoginException => StatusCodes.Status401Unauthorized,
+            PaymentException => StatusCodes.Status402PaymentRequired,
             UserBannedException => StatusCodes.Status403Forbidden,
             EntityNotFoundException => StatusCodes.Status404NotFound,
             EntityAlreadyExistsException => StatusCodes.Status409Conflict,
@@ -56,7 +62,7 @@ public class ExceptionHandlingMiddleware
             _ => "Internal server error, please retry later.",
         };
 
-        context.Response.ContentType = MediaTypeNames.Application.Json;
+        context.Response.ContentType = MediaTypeNames.Text.Plain;
         await context.Response.WriteAsync(responseMessage);
     }
 }

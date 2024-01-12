@@ -124,7 +124,7 @@ public class MongoProductServiceTests
             .Returns(records);
 
         // Act
-        var result = await _service.GetAllGamesAsync(filter);
+        var result = await _service.GetFilteredGamesAsync(filter);
 
         // Assert
         Assert.Equal(2, result.TotalNoLimit);
@@ -142,7 +142,7 @@ public class MongoProductServiceTests
         };
 
         // Act
-        var result = await _service.GetAllGamesAsync(filter);
+        var result = await _service.GetFilteredGamesAsync(filter);
 
         // Assert
         Assert.Equal(0, result.TotalNoLimit);

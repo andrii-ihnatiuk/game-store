@@ -1,8 +1,10 @@
-﻿using GameStore.API.Controllers;
+﻿using System.Security.Claims;
+using GameStore.API.Controllers;
 using GameStore.Application.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -14,13 +16,15 @@ public class PublishersControllerTests
     private readonly Mock<IPublisherFacadeService> _publisherFacadeService = new();
     private readonly Mock<IValidatorWrapper<PublisherCreateDto>> _publisherCreateValidator = new();
     private readonly Mock<IValidatorWrapper<PublisherUpdateDto>> _publisherUpdateValidator = new();
+    private readonly Mock<IAuthorizationService> _authService = new();
 
     public PublishersControllerTests()
     {
         _controller = new PublishersController(
             _publisherFacadeService.Object,
             _publisherCreateValidator.Object,
-            _publisherUpdateValidator.Object);
+            _publisherUpdateValidator.Object,
+            _authService.Object);
     }
 
     [Fact]
@@ -100,6 +104,12 @@ public class PublishersControllerTests
         _publisherFacadeService.Setup(s => s.UpdatePublisherAsync(dto))
             .Returns(Task.CompletedTask)
             .Verifiable();
+
+        _authService.Setup(s => s.AuthorizeAsync(
+                It.IsAny<ClaimsPrincipal>(),
+                It.IsAny<object>(),
+                It.IsAny<string>()))
+            .ReturnsAsync(AuthorizationResult.Success);
 
         // Act
         var result = await _controller.UpdatePublisherAsync(dto);

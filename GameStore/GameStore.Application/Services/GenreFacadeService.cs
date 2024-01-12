@@ -1,5 +1,6 @@
 ﻿using GameStore.Application.Interfaces;
 using GameStore.Application.Interfaces.Migration;
+using GameStore.Application.Interfaces.Util;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -10,11 +11,11 @@ namespace GameStore.Application.Services;
 
 public class GenreFacadeService : IGenreFacadeService
 {
-    private readonly IServiceResolver _serviceResolver;
+    private readonly IEntityServiceResolver _serviceResolver;
     private readonly IGenreMigrationService _migrationService;
 
     public GenreFacadeService(
-        IServiceResolver serviceResolver,
+        IEntityServiceResolver serviceResolver,
         IGenreMigrationService migrationService)
     {
         _serviceResolver = serviceResolver;

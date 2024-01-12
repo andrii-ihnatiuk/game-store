@@ -131,6 +131,8 @@ dotnet_diagnostic.CS0542.severity = none
 
 dotnet_diagnostic.IDE0045.severity = suggestion
 
+dotnet_diagnostic.IDE0046.severity = suggestion
+
 dotnet_diagnostic.IDE0072.severity = none
 
 [*.{cs,vb}]
@@ -211,6 +213,8 @@ csharp_style_expression_bodied_local_functions = false:silent
 dotnet_diagnostic.SA1210.severity = error
 dotnet_diagnostic.SA1512.severity = suggestion
 dotnet_diagnostic.SA1515.severity = suggestion
+dotnet_diagnostic.SA1028.severity = warning
+dotnet_diagnostic.IDE0055.severity = warning
 dotnet_style_namespace_match_folder = true
 dotnet_sort_system_directives_first = true
 dotnet_analyzer_diagnostic.severity = error

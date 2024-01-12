@@ -20,7 +20,7 @@ public class BankPaymentStrategy : IPaymentStrategy
         _unitOfWork = unitOfWork;
     }
 
-    public string Name => PaymentStrategyName.Bank;
+    public string Name => PaymentStrategyNames.Bank;
 
     public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId)
     {

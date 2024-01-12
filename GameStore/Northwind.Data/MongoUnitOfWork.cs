@@ -9,7 +9,7 @@ public class MongoUnitOfWork : IMongoUnitOfWork
 
     public MongoUnitOfWork(
         IMongoContext context,
-        IGenericRepository<Order> ordersRepository,
+        IOrderRepository ordersRepository,
         IOrderDetailRepository orderDetailRepository,
         IProductRepository productsRepository,
         ICategoryRepository categoriesRepository,
@@ -25,7 +25,7 @@ public class MongoUnitOfWork : IMongoUnitOfWork
         Logs = entityLogRepository;
     }
 
-    public IGenericRepository<Order> Orders { get; }
+    public IOrderRepository Orders { get; }
 
     public IOrderDetailRepository OrderDetails { get; }
 

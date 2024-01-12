@@ -14,7 +14,7 @@ public class GenericRepository<T> : IGenericRepository<T>
         DbSet = context.Set<T>();
     }
 
-    private DbSet<T> DbSet { get; }
+    protected DbSet<T> DbSet { get; }
 
     public async Task<T> GetByIdAsync(object id)
     {

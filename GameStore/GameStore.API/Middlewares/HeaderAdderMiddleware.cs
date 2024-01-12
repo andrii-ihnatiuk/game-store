@@ -1,4 +1,5 @@
 ﻿using GameStore.Data;
+using GameStore.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -18,7 +19,7 @@ public class HeaderAdderMiddleware
         string? gamesCount = await memoryCache.GetOrCreateAsync("total-games", async factory =>
         {
             factory.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-            return (await dbContext.Games.CountAsync()).ToString();
+            return (await dbContext.Set<Game>().CountAsync()).ToString();
         });
 
         context.Response.OnStarting(() =>

@@ -4,7 +4,7 @@ namespace Northwind.Data.Interfaces;
 
 public interface IMongoUnitOfWork
 {
-    IGenericRepository<Order> Orders { get; }
+    IOrderRepository Orders { get; }
 
     IOrderDetailRepository OrderDetails { get; }
 

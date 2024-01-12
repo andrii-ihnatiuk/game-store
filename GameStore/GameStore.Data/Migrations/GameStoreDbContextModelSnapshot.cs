@@ -72,6 +72,9 @@ namespace GameStore.Data.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -107,7 +110,7 @@ namespace GameStore.Data.Migrations
 
                     b.HasIndex("PublisherId");
 
-                    b.ToTable("Games");
+                    b.ToTable("Game");
 
                     b.HasData(
                         new
@@ -115,6 +118,7 @@ namespace GameStore.Data.Migrations
                             Id = new Guid("8e9d1000-50e0-4bd8-8159-42c7431f32b5"),
                             Alias = "zelda-breath-of-the-wild",
                             CreationDate = new DateTime(2023, 10, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Deleted = false,
                             Description = "An action-adventure game in an open world.",
                             Discontinued = false,
                             Name = "The Legend of Zelda: Breath of the Wild",
@@ -129,6 +133,7 @@ namespace GameStore.Data.Migrations
                             Id = new Guid("95ffb14c-267a-432a-9d7c-22f887290d49"),
                             Alias = "gta-v",
                             CreationDate = new DateTime(2023, 10, 21, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Deleted = false,
                             Description = "An open-world action-adventure game.",
                             Discontinued = true,
                             Name = "Grand Theft Auto V",
@@ -143,6 +148,7 @@ namespace GameStore.Data.Migrations
                             Id = new Guid("e2e928c4-ab49-4bc0-a904-37c34e1385cc"),
                             Alias = "overwatch-2",
                             CreationDate = new DateTime(2023, 10, 22, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Deleted = false,
                             Description = "Overwatch 2 is a free-to-play, team-based action game.",
                             Discontinued = false,
                             Name = "Overwatch 2",
@@ -157,6 +163,7 @@ namespace GameStore.Data.Migrations
                             Id = new Guid("4b5f1e22-cd59-4523-a4e9-f0c0239ab820"),
                             Alias = "hearthstone",
                             CreationDate = new DateTime(2023, 10, 23, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Deleted = false,
                             Description = "Hearthstone is a fast-paced strategy card game from Blizzard Entertainment.",
                             Discontinued = false,
                             Name = "Hearthstone",
@@ -171,6 +178,7 @@ namespace GameStore.Data.Migrations
                             Id = new Guid("352997f0-9cb6-4951-8b55-10df09d2e168"),
                             Alias = "star-wars-jedi",
                             CreationDate = new DateTime(2023, 10, 24, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Deleted = false,
                             Description = "A 3rd person action-adventure title from Respawn.",
                             Discontinued = false,
                             Name = "Star Wars Jedi: Fallen Order",
@@ -342,7 +350,7 @@ namespace GameStore.Data.Migrations
 
                     b.HasIndex("ParentGenreId");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genre");
 
                     b.HasData(
                         new
@@ -435,6 +443,113 @@ namespace GameStore.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("GameStore.Data.Entities.Identity.ApplicationRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Identity.ApplicationUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Identity.ApplicationUserRole", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -453,6 +568,9 @@ namespace GameStore.Data.Migrations
 
                     b.Property<Guid?>("PaymentMethodId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ShippedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -600,6 +718,9 @@ namespace GameStore.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AccountId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("nvarchar(40)");
@@ -616,6 +737,10 @@ namespace GameStore.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique()
+                        .HasFilter("[AccountId] IS NOT NULL");
 
                     b.HasIndex("CompanyName")
                         .IsUnique();
@@ -658,6 +783,97 @@ namespace GameStore.Data.Migrations
                             Description = "Rockstar Games, Inc. is an American video game publisher based in New York City.",
                             HomePage = "https://www.rockstargames.com/"
                         });
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("GameStore.Data.Entities.Comment", b =>
@@ -730,6 +946,25 @@ namespace GameStore.Data.Migrations
                         .HasForeignKey("ParentGenreId");
                 });
 
+            modelBuilder.Entity("GameStore.Data.Entities.Identity.ApplicationUserRole", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationRole", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationUser", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Order", b =>
                 {
                     b.HasOne("GameStore.Data.Entities.PaymentMethod", "PaymentMethod")
@@ -758,6 +993,50 @@ namespace GameStore.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("GameStore.Data.Entities.Publisher", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("GameStore.Data.Entities.Publisher", "AccountId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationRole", null)
+                        .WithMany("RoleClaims")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Comment", b =>
                 {
                     b.Navigation("Replies");
@@ -777,6 +1056,18 @@ namespace GameStore.Data.Migrations
                     b.Navigation("GenreGames");
 
                     b.Navigation("SubGenres");
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Identity.ApplicationRole", b =>
+                {
+                    b.Navigation("RoleClaims");
+
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Identity.ApplicationUser", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("GameStore.Data.Entities.Order", b =>

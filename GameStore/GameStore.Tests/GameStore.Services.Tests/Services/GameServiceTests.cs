@@ -133,7 +133,7 @@ public class GameServiceTests
             .Returns(new GamesFilter());
 
         // Act
-        var filteringResult = await _service.GetAllGamesAsync(new GamesFilter());
+        var filteringResult = await _service.GetFilteredGamesAsync(new GamesFilter());
 
         // Assert
         _unitOfWork.Verify();
@@ -382,7 +382,7 @@ public class GameServiceTests
                 g => g.Alias == GameAlias,
                 It.IsAny<Func<IQueryable<Game>, IIncludableQueryable<Game, object>>>(),
                 It.IsAny<bool>()))
-            .ReturnsAsync(new Game { Id = Guid.Empty });
+            .ReturnsAsync(new Game { Id = Guid.Empty, Deleted = true });
 
         // Act
         await _service.DeleteGameAsync(GameAlias);

@@ -65,7 +65,7 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
         return _mapper.Map<PublisherBriefDto>(game.Publisher);
     }
 
-    public async Task<EntityFilteringResult<GameFullDto>> GetAllGamesAsync(GamesFilter filter)
+    public async Task<EntityFilteringResult<GameFullDto>> GetFilteredGamesAsync(GamesFilter filter)
     {
         var filteringResult = await _unitOfWork.Games.GetFilteredGamesAsync(filter);
         return new EntityFilteringResult<GameFullDto>
@@ -111,8 +111,13 @@ public class CoreGameService : CoreServiceBase, ICoreGameService
 
     public async Task DeleteGameAsync(string alias)
     {
-        var gameToRemove = await _unitOfWork.Games.GetOneAsync(g => g.Alias == alias);
-        await _unitOfWork.Games.DeleteAsync(gameToRemove.Id);
+        var gameToRemove = await _unitOfWork.Games.GetOneAsync(g => g.Alias == alias, noTracking: false);
+        if (gameToRemove.Deleted)
+        {
+            await _unitOfWork.Games.DeleteAsync(gameToRemove.Id);
+        }
+
+        gameToRemove.Deleted = true;
         await _unitOfWork.SaveAsync();
     }
 

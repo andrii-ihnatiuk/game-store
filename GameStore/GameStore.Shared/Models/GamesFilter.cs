@@ -4,6 +4,8 @@ namespace GameStore.Shared.Models;
 
 public class GamesFilter
 {
+    public IList<string> Stores { get; set; }
+
     public IList<Guid> Genres { get; set; } = new List<Guid>();
 
     public IList<string> MongoCategories { get; set; } = new List<string>();
@@ -30,9 +32,11 @@ public class GamesFilter
 
     public string Trigger { get; set; }
 
-    public IList<string> Blacklist { get; set; }
+    public IList<string> Blacklist { get; set; } = new List<string>();
 
     public int Limit { get; set; } = int.MaxValue;
+
+    public bool ShowDeleted { get; set; }
 
     public void ResetPageIfTriggeredNotByPagination()
     {

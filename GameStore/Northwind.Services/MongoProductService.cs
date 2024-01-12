@@ -55,7 +55,7 @@ public class MongoProductService : MongoServiceBase, IGameService
         return _mapper.Map<PublisherBriefDto>(supplier);
     }
 
-    public async Task<EntityFilteringResult<GameFullDto>> GetAllGamesAsync(GamesFilter filter)
+    public async Task<EntityFilteringResult<GameFullDto>> GetFilteredGamesAsync(GamesFilter filter)
     {
         IList<GameFullDto> records = new List<GameFullDto>();
         var totalNoLimit = 0;
@@ -68,6 +68,23 @@ public class MongoProductService : MongoServiceBase, IGameService
         }
 
         return new EntityFilteringResult<GameFullDto>(records, totalNoLimit);
+    }
+
+    public async Task DeleteGameAsync(string alias)
+    {
+        alias = EntityAliasUtil.RemoveSuffix(alias);
+        var product = await _unitOfWork.Products.GetOneAsync(p => p.Alias == alias);
+        if (product.Deleted)
+        {
+            await _unitOfWork.Products.DeleteAsync(product.Id);
+        }
+        else
+        {
+            product.Deleted = true;
+            await _unitOfWork.Products.UpdateAsync(product);
+        }
+
+        await _unitOfWork.SaveChangesAsync();
     }
 
     public async Task<Tuple<byte[], string>> DownloadAsync(string gameAlias)

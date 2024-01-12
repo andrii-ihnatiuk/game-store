@@ -12,6 +12,8 @@ public class Order
 
     public DateTime? PaidDate { get; set; }
 
+    public DateTime? ShippedDate { get; set; }
+
     public OrderStatus Status { get; set; } = OrderStatus.Open;
 
     public decimal Sum { get; set; }

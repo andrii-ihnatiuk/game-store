@@ -16,7 +16,7 @@ public class UnitOfWork : IUnitOfWork
         IGenericRepository<Publisher> publishersRepository,
         IGenericRepository<GameGenre> gamesGenresRepository,
         IGenericRepository<GamePlatform> gamesPlatformsRepository,
-        IGenericRepository<Order> ordersRepository,
+        IOrderRepository ordersRepository,
         IGenericRepository<OrderDetail> orderDetailsRepository,
         IGenericRepository<PaymentMethod> paymentMethodsRepository,
         IGenericRepository<Comment> commentsRepository)
@@ -32,6 +32,7 @@ public class UnitOfWork : IUnitOfWork
         OrderDetails = orderDetailsRepository;
         PaymentMethods = paymentMethodsRepository;
         Comments = commentsRepository;
+        Comments = commentsRepository;
     }
 
     public IGameRepository Games { get; }
@@ -46,7 +47,7 @@ public class UnitOfWork : IUnitOfWork
 
     public IGenericRepository<GamePlatform> GamesPlatforms { get; }
 
-    public IGenericRepository<Order> Orders { get; }
+    public IOrderRepository Orders { get; }
 
     public IGenericRepository<OrderDetail> OrderDetails { get; }
 

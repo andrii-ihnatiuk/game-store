@@ -9,7 +9,7 @@ using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.DTOs.Payment.Visa;
 using GameStore.Shared.Exceptions;
-using GameStore.Shared.Settings;
+using GameStore.Shared.Options;
 using Microsoft.Extensions.Options;
 
 namespace GameStore.Services.Payment.Strategies;
@@ -18,16 +18,16 @@ public class VisaPaymentStrategy : IPaymentStrategy
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly VisaSettings _apiSettings;
+    private readonly VisaOptions _apiOptions;
 
-    public VisaPaymentStrategy(IUnitOfWork unitOfWork, IOptions<VisaSettings> apiSettings, IHttpClientFactory httpClientFactory)
+    public VisaPaymentStrategy(IUnitOfWork unitOfWork, IOptions<VisaOptions> apiSettings, IHttpClientFactory httpClientFactory)
     {
         _unitOfWork = unitOfWork;
         _httpClientFactory = httpClientFactory;
-        _apiSettings = apiSettings.Value;
+        _apiOptions = apiSettings.Value;
     }
 
-    public string Name => PaymentStrategyName.Visa;
+    public string Name => PaymentStrategyNames.Visa;
 
     public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId)
     {
@@ -58,7 +58,7 @@ public class VisaPaymentStrategy : IPaymentStrategy
         };
 
         var content = new StringContent(JsonSerializer.Serialize(paymentData), Encoding.UTF8, "application/json");
-        var response = await client.PostAsync(_apiSettings.ApiUrl, content);
+        var response = await client.PostAsync(_apiOptions.ApiUrl, content);
         ThrowPaymentExceptionIfRequestIsNotSuccessful(response);
         return new VisaPaymentResult();
     }

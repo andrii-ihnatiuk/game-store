@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GameStore.Application.Interfaces;
 using GameStore.Application.Interfaces.Migration;
+using GameStore.Application.Interfaces.Util;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.Constants;
 using GameStore.Shared.Constants.Filter;
@@ -15,28 +16,29 @@ namespace GameStore.Application.Services;
 
 public class GameFacadeService : IGameFacadeService
 {
-    private readonly IServiceResolver _serviceResolver;
+    private readonly IEntityServiceResolver _serviceResolver;
     private readonly IGameMigrationService _migrationService;
     private readonly IMapper _mapper;
 
-    public GameFacadeService(IServiceResolver serviceResolver, IGameMigrationService migrationService, IMapper mapper)
+    public GameFacadeService(IEntityServiceResolver serviceResolver, IGameMigrationService migrationService, IMapper mapper)
     {
         _serviceResolver = serviceResolver;
         _migrationService = migrationService;
         _mapper = mapper;
     }
 
-    public async Task<FilteredGamesDto> GetAllGamesAsync(GamesFilterDto filterDto)
+    public async Task<FilteredGamesDto> GetFilteredGamesAsync(GamesFilterDto filterDto, bool showDeleted = false)
     {
         var filter = _mapper.Map<GamesFilter>(filterDto);
+        filter.ShowDeleted = showDeleted;
         filter.ResetPageIfTriggeredNotByPagination();
 
         var coreService = _serviceResolver.ResolveForEntityStorage<IGameService>(EntityStorage.SqlServer);
-        var coreResult = await coreService.GetAllGamesAsync(filter);
+        var coreResult = await coreService.GetFilteredGamesAsync(filter);
 
         filter.Blacklist = coreResult.MongoBlacklist;
         var mongoService = _serviceResolver.ResolveForEntityStorage<IGameService>(EntityStorage.MongoDb);
-        var mongoResult = await mongoService.GetAllGamesAsync(filter);
+        var mongoResult = await mongoService.GetFilteredGamesAsync(filter);
 
         IList<GameFullDto> games = coreResult.Records.Concat(mongoResult.Records).ToList();
         ApplySorting(ref games, filter.Sort);
@@ -91,7 +93,7 @@ public class GameFacadeService : IGameFacadeService
 
     public Task DeleteGameAsync(string alias)
     {
-        var service = _serviceResolver.ResolveForEntityAlias<ICoreGameService>(alias);
+        var service = _serviceResolver.ResolveForEntityAlias<IGameService>(alias);
         return service.DeleteGameAsync(alias);
     }
 

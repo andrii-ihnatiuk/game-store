@@ -54,7 +54,7 @@ public class GameRepositoryTests
                 Comments = new List<Comment>() { new() { Author = "author1", Body = "body1" } },
             },
         };
-        _context.Games.AddRange(testData);
+        _context.Set<Game>().AddRange(testData);
         _context.SaveChanges();
     }
 
@@ -216,6 +216,7 @@ public class GameRepositoryTests
         {
             Page = 1,
             PageCount = 10,
+            Stores = new List<string>() { StoreOption.GameStore },
         };
     }
 

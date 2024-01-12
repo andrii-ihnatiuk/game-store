@@ -1,32 +1,40 @@
-﻿using GameStore.Application.Interfaces;
+﻿using GameStore.Application.Interfaces.Util;
 using GameStore.Application.Services;
+using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Interfaces.Services;
+using GameStore.Shared.Models;
 using Moq;
 
 namespace GameStore.Tests.GameStore.Application.Tests.Services;
 
 public class OrderFacadeServiceTests
 {
-    private readonly Mock<IOrderService> _coreOrderServiceMock;
+    private readonly Mock<ICoreOrderService> _coreOrderServiceMock;
     private readonly Mock<IOrderService> _mongoOrderServiceMock;
-    private readonly Mock<IServiceResolver> _serviceResolver;
+    private readonly Mock<IEntityServiceResolver> _serviceResolver;
     private readonly OrderFacadeService _service;
 
     public OrderFacadeServiceTests()
     {
-        _coreOrderServiceMock = new Mock<IOrderService>();
+        _coreOrderServiceMock = new Mock<ICoreOrderService>();
         _mongoOrderServiceMock = new Mock<IOrderService>();
-        _serviceResolver = new Mock<IServiceResolver>();
+        _serviceResolver = new Mock<IEntityServiceResolver>();
+
+        _serviceResolver.Setup(s => s.ResolveForEntityId<IOrderService>(It.IsAny<string>()))
+            .Returns(_coreOrderServiceMock.Object);
+        _serviceResolver.Setup(s => s.ResolveAll<IOrderService>())
+            .Returns(new List<IOrderService> { _coreOrderServiceMock.Object, _mongoOrderServiceMock.Object });
+        _serviceResolver.Setup(s => s.ResolveAll<ICoreOrderService>())
+            .Returns(new List<ICoreOrderService> { _coreOrderServiceMock.Object });
 
         _service = new OrderFacadeService(_serviceResolver.Object);
     }
 
     [Fact]
-    public async Task GetOrdersHistoryByCustomerAsync_GivenCustomerIdAndDateRange_ShouldReturnOrdersInDescendingOrder()
+    public async Task GetFilteredOrdersAsync_GivenFilter_ShouldReturnOrdersInDescendingOrder()
     {
         // Arrange
-        const string customerId = "someCustomerId";
         var orders = new List<OrderBriefDto>
         {
             new() { OrderDate = DateTime.Now },
@@ -35,17 +43,14 @@ public class OrderFacadeServiceTests
             new() { OrderDate = DateTime.MinValue },
         };
         _coreOrderServiceMock
-            .Setup(s => s.GetPaidOrdersByCustomerAsync(customerId, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Setup(s => s.GetFilteredOrdersAsync(It.IsAny<OrdersFilter>()))
             .ReturnsAsync(orders.Take(3).ToList());
         _mongoOrderServiceMock
-            .Setup(s => s.GetPaidOrdersByCustomerAsync(customerId, It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Setup(s => s.GetFilteredOrdersAsync(It.IsAny<OrdersFilter>()))
             .ReturnsAsync(orders.TakeLast(1).ToList());
 
-        _serviceResolver.Setup(s => s.ResolveAll<IOrderService>())
-            .Returns(new List<IOrderService> { _coreOrderServiceMock.Object, _mongoOrderServiceMock.Object });
-
         // Act
-        var result = await _service.GetOrdersHistoryByCustomerAsync(customerId, DateTime.MinValue, DateTime.MaxValue);
+        var result = await _service.GetFilteredOrdersAsync(new OrdersFilter());
 
         // Assert
         Assert.Equal(orders.Count, result.Count);
@@ -59,19 +64,15 @@ public class OrderFacadeServiceTests
         // Arrange
         const string orderId = "someOrderId";
         var order = new OrderBriefDto { Id = orderId };
-        _serviceResolver.Setup(s => s.ResolveForEntityId<IOrderService>(orderId))
-            .Returns(_coreOrderServiceMock.Object)
-            .Verifiable();
         _coreOrderServiceMock.Setup(s => s.GetOrderByIdAsync(orderId))
             .ReturnsAsync(order)
-            .Verifiable();
+            .Verifiable(Times.Once);
 
         // Act
         var result = await _service.GetOrderByIdAsync(orderId);
 
         // Assert
-        _serviceResolver.Verify(p => p.ResolveForEntityId<IOrderService>(orderId), Times.Once);
-        _coreOrderServiceMock.Verify(s => s.GetOrderByIdAsync(orderId), Times.Once);
+        _coreOrderServiceMock.Verify();
         Assert.Equal(order.Id, result.Id);
     }
 
@@ -81,19 +82,30 @@ public class OrderFacadeServiceTests
         // Arrange
         const string orderId = "someOrderId";
         var orderDetails = new List<OrderDetailDto> { new(), new() };
-        _serviceResolver.Setup(s => s.ResolveForEntityId<IOrderService>(orderId))
-            .Returns(_coreOrderServiceMock.Object)
-            .Verifiable();
         _coreOrderServiceMock.Setup(s => s.GetOrderDetailsAsync(orderId))
             .ReturnsAsync(orderDetails)
-            .Verifiable();
+            .Verifiable(Times.Once);
 
         // Act
         var result = await _service.GetOrderDetailsAsync(orderId);
 
         // Assert
-        _coreOrderServiceMock.Verify(s => s.GetOrderDetailsAsync(orderId), Times.Once);
-        _serviceResolver.Verify(s => s.ResolveForEntityId<IOrderService>(orderId), Times.Once);
+        _coreOrderServiceMock.Verify();
         Assert.Equal(orderDetails.Count, result.Count);
+    }
+
+    [Fact]
+    public async Task ShipOrderAsync_GivenGuidOrderId_CallsOrderService()
+    {
+        // Arrange
+        var orderId = Guid.Empty.ToString();
+        _coreOrderServiceMock.Setup(s => s.ShipOrderAsync(orderId))
+            .Returns(Task.CompletedTask).Verifiable(Times.Once);
+
+        // Act
+        await _service.ShipOrderAsync(orderId);
+
+        // Assert
+        _coreOrderServiceMock.Verify();
     }
 }

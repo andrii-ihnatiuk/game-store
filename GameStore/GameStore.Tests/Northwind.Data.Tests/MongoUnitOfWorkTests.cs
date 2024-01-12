@@ -8,7 +8,7 @@ namespace GameStore.Tests.Northwind.Data.Tests;
 public class MongoUnitOfWorkTests
 {
     private readonly Mock<IMongoContext> _contextMock = new();
-    private readonly Mock<IGenericRepository<Order>> _orderRepoMock = new();
+    private readonly Mock<IOrderRepository> _orderRepoMock = new();
     private readonly Mock<IOrderDetailRepository> _orderDetailsRepoMock = new();
     private readonly Mock<IProductRepository> _productRepoMock = new();
     private readonly Mock<ICategoryRepository> _categoryRepoMock = new();

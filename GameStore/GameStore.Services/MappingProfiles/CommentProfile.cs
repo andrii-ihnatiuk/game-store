@@ -34,6 +34,13 @@ public class CommentProfile : Profile
             .ForMember(
                 dest => dest.Type,
                 opts => opts.MapFrom(src => GetCommentTypeFromString(src.Action)));
+
+        CreateMap<CommentUpdateInnerDto, Comment>();
+        CreateMap<CommentUpdateDto, Comment>()
+            .IncludeMembers(m => m.Comment)
+            .ForMember(
+                dest => dest.Author,
+                opts => opts.MapFrom(src => src.Comment.Name));
     }
 
     private static Guid? ConstructNullableGuidFromString(string? str)

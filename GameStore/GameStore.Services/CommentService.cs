@@ -65,6 +65,13 @@ public class CommentService : ICommentService
         return _mapper.Map<IList<CommentBriefDto>>(updatedComments);
     }
 
+    public async Task UpdateCommentAsync(CommentUpdateDto commentDto)
+    {
+        var comment = await _unitOfWork.Comments.GetByIdAsync(commentDto.Comment.Id);
+        _mapper.Map(commentDto, comment);
+        await _unitOfWork.SaveAsync();
+    }
+
     public async Task DeleteCommentAsync(Guid commentId)
     {
         var comment = await _unitOfWork.Comments.GetOneAsync(

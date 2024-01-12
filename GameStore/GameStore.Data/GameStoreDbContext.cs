@@ -1,12 +1,17 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using GameStore.Data.Entities;
+using GameStore.Data.Entities.Identity;
 using GameStore.Data.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Data;
 
 [ExcludeFromCodeCoverage]
-public sealed class GameStoreDbContext : DbContext
+public sealed class GameStoreDbContext :
+    IdentityDbContext<
+        ApplicationUser, ApplicationRole, string, IdentityUserClaim<string>,
+        ApplicationUserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
 {
     public GameStoreDbContext(DbContextOptions<GameStoreDbContext> options)
         : base(options)
@@ -14,10 +19,6 @@ public sealed class GameStoreDbContext : DbContext
     }
 
     public bool LogChanges { get; set; } = true;
-
-    public DbSet<Game> Games { get; set; }
-
-    public DbSet<Genre> Genres { get; set; }
 
     public override int SaveChanges()
     {
@@ -31,10 +32,11 @@ public sealed class GameStoreDbContext : DbContext
         return base.SaveChangesAsync(cancellationToken);
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
-        modelBuilder.SeedData();
+        base.OnModelCreating(builder);
+        builder.ApplyConfigurationsFromAssembly(GetType().Assembly);
+        builder.SeedData();
     }
 
     private void SetTimestamps()

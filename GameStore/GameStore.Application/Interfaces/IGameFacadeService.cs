@@ -7,7 +7,7 @@ namespace GameStore.Application.Interfaces;
 
 public interface IGameFacadeService
 {
-    Task<FilteredGamesDto> GetAllGamesAsync(GamesFilterDto filterDto);
+    Task<FilteredGamesDto> GetFilteredGamesAsync(GamesFilterDto filterDto, bool showDeleted = false);
 
     Task<GameFullDto> GetGameByIdAsync(string id);
 

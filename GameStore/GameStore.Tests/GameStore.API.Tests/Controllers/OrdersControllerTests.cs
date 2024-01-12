@@ -1,11 +1,14 @@
-﻿using GameStore.API.Controllers;
+﻿using System.Security.Claims;
+using GameStore.API.Controllers;
 using GameStore.Application.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.DTOs.Payment;
+using GameStore.Shared.Models;
 using GameStore.Shared.Validators;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -23,7 +26,19 @@ public class OrdersControllerTests
 
     public OrdersControllerTests()
     {
-        _controller = new OrdersController(_orderService.Object, _orderFacadeService.Object, _paymentService.Object, _paymentValidator.Object);
+        _controller = new OrdersController(_orderService.Object, _orderFacadeService.Object, _paymentService.Object, _paymentValidator.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+                    {
+                        new(ClaimTypes.NameIdentifier, Guid.Empty.ToString()),
+                    })),
+                },
+            },
+        };
     }
 
     [Fact]
@@ -61,11 +76,11 @@ public class OrdersControllerTests
         // Arrange
         var paidOrders = new List<OrderBriefDto> { new(), new() };
         _orderFacadeService
-            .Setup(o => o.GetOrdersHistoryByCustomerAsync(It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>()))
+            .Setup(o => o.GetFilteredOrdersAsync(It.IsAny<OrdersFilter>()))
             .ReturnsAsync(paidOrders);
 
         // Act
-        var result = await _controller.GetOrdersHistoryByCustomerAsync();
+        var result = await _controller.GetOrdersHistoryAsync();
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);

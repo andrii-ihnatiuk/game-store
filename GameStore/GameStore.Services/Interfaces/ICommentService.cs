@@ -12,5 +12,7 @@ public interface ICommentService
 
     Task<IList<CommentBriefDto>> AddCommentToGameAsync(string gameAlias, CommentCreateDto commentDto);
 
+    Task UpdateCommentAsync(CommentUpdateDto commentDto);
+
     Task DeleteCommentAsync(Guid commentId);
 }

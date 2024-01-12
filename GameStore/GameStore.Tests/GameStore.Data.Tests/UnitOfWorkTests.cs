@@ -14,7 +14,7 @@ public class UnitOfWorkTests : IDisposable
     private readonly Mock<IGenericRepository<Publisher>> _publisherRepoMock = new();
     private readonly Mock<IGenericRepository<GameGenre>> _gamesGenresRepoMock = new();
     private readonly Mock<IGenericRepository<GamePlatform>> _gamesPlatformsRepoMock = new();
-    private readonly Mock<IGenericRepository<Order>> _ordersRepoMock = new();
+    private readonly Mock<IOrderRepository> _ordersRepoMock = new();
     private readonly Mock<IGenericRepository<OrderDetail>> _orderDetailsRepoMock = new();
     private readonly Mock<IGenericRepository<PaymentMethod>> _paymentMethodsRepoMock = new();
     private readonly Mock<IGenericRepository<Comment>> _commentsRepoMock = new();
@@ -48,13 +48,13 @@ public class UnitOfWorkTests : IDisposable
             Alias = "Game-1",
             Description = "test description",
         };
-        await _context.Games.AddAsync(game);
+        await _context.Set<Game>().AddAsync(game);
 
         // Act
         await _unitOfWork.SaveAsync();
 
         // Assert
-        var savedGame = await _context.Games.FindAsync(game.Id);
+        var savedGame = await _context.Set<Game>().FindAsync(game.Id);
         Assert.NotNull(savedGame);
     }
 
