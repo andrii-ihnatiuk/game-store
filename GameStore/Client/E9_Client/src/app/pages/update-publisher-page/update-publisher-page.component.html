@@ -1,0 +1,21 @@
+<article *ngIf="!!form">
+  <gamestore-form
+    [form]="form"
+    idName="id"
+    (save)="onSave()"
+    [pageLink]="publisherPageLink"
+  >
+    <gamestore-text-input
+      [name]="labels.publisherCompanyNameLabel"
+      [control]="getFormControl('companyName')"
+    ></gamestore-text-input>
+    <gamestore-text-input
+      [name]="labels.publisherDescriptionLabel"
+      [control]="getFormControl('description')"
+    ></gamestore-text-input>
+    <gamestore-text-input
+      [name]="labels.publisherHomePageLabel"
+      [control]="getFormControl('homePage')"
+    ></gamestore-text-input>
+  </gamestore-form>
+</article>

@@ -1,0 +1,15 @@
+<article *ngIf="!!control && !!games">
+  <div>
+    <gamestore-selector-input
+      [name]="labels.gamesMenuItem"
+      [control]="control"
+      [values]="games"
+    ></gamestore-selector-input>
+  </div>
+
+  <div>
+    <button (click)="onSave()" mat-raised-button color="primary" [disabled]="!control || control.invalid">
+      {{ labels.saveButtonLabel }}
+    </button>
+  </div>
+</article>

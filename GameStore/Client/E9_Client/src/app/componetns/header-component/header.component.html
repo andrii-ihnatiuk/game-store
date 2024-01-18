@@ -1,0 +1,30 @@
+<div class="page-intro">
+  <header>
+    <a routerLink="" mat-button class="logo">GameStore</a>
+
+    <div class="header-right">
+      <a class="link-hoverable" *ngFor="let item of mainListItems" mat-button routerLink="{{ item.pageLink }}">{{ item.title }}</a>
+
+      <a routerLink="{{ links.get(pageRoutes.Login) }}" mat-button class="login link-hoverable">
+        {{
+          isAuth
+          ? labels.exitButtonLabel
+          : labels.loginButtonLabel
+        }}
+      </a>
+
+      <a routerLink="{{ links.get(pageRoutes.Basket) }}" mat-button class="basket link-hoverable">{{ labels.basketMenuItem }}</a>
+
+      <gamestore-selector-input
+      name=""
+      [control]="control"
+      [values]="locales"
+    ></gamestore-selector-input>
+    </div>
+  </header>
+
+  <div class="intro-container">
+    <div class="intro-header">What Can Make Your<br />Life Easier?</div>
+    <div class="intro-text">Empowered Solutions with Simple Process</div>
+  </div>
+</div>

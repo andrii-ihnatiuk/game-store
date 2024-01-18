@@ -1,0 +1,13 @@
+<div class="text-input-wrapper">
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label *ngIf="!!name?.length">{{ name }}</mat-label>
+    <textarea
+      matInput
+      [formControl]="control"
+      [errorStateMatcher]="matcher"
+    ></textarea>
+    <mat-error *ngIf="isErrors">
+      {{ labels.enterValidMessage }}
+    </mat-error>
+  </mat-form-field>
+</div>

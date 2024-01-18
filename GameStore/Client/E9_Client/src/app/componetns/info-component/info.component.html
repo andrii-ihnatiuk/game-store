@@ -1,0 +1,24 @@
+<div>
+  <dl>
+    <ng-container *ngFor="let info of infoList">
+      <dt>{{ info.name }}</dt>
+      <dd>
+        <a
+          *ngIf="!!info.pageLink?.length"
+          routerLink="{{ info.pageLink }}"
+          mat-button
+        >
+          {{ info.value }}
+        </a>
+        <span *ngIf="!info.pageLink?.length">
+          {{ info.value }}
+        </span>
+        <gamestore-list
+          *ngIf="!!info?.nestedValues?.length"
+          [listItems]="info.nestedValues!"
+        >
+        </gamestore-list>
+      </dd>
+    </ng-container>
+  </dl>
+</div>

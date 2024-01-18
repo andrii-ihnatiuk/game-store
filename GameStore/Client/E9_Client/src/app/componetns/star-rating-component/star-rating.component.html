@@ -1,0 +1,9 @@
+<div class="rating-container">
+    <app-rating-star *ngFor="let ratingId of ratingArr; index as i"
+        [size]="starSize"
+        [svgColor]="getStarColor(i)"
+        [readonly]="readonly"
+        (onSelection)="onRatingSelection(i)">
+    </app-rating-star>
+    <div class="rating-number" *ngIf="showRatingNumber" [ngStyle]="ratingNumberStyle">{{rating}}</div>
+</div>

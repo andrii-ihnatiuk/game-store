@@ -1,0 +1,30 @@
+<div *ngIf="!!orderInfoList" class="basket-container">
+  <div class="basket-content">
+    <div class="basket-header">
+      <div class="basket-header-title">{{labels.basketMenuItem}}</div>
+      <div class="basket-header-counter">{{orderInfoList.length}} items</div>
+    </div>
+    <div *ngFor="let item of orderInfoList">
+      <hr class="hr-soft">
+      <app-basket-item [item]="item" (onAdd)="onItemAdd($event)" (onDelete)="onItemDelete($event)"></app-basket-item>
+    </div>
+  </div>
+  <div class="basket-summary">
+    <div class="summary-title">Oder Summary</div>
+    <hr class="hr-soft">
+    <div class="summary-item">
+      <span>Subtotal</span>
+      <span>{{ subtotal | currency: 'USD' }}</span>
+    </div>
+    <div class="summary-item">
+      <span>Taxes</span>
+      <span>{{ taxes | currency: 'USD' }}</span>
+    </div>
+    <hr class="hr-soft">
+    <div class="summary-item summary-total">
+      <span>Total</span>
+      <span class="summary-highlight">{{ total | currency: 'USD' }}</span>
+    </div>
+    <a *ngIf="!!orderInfoList.length" mat-button class="btn-orange" routerLink="{{ links.get(pageRoutes.MakeOrder) }}">{{ labels.checkoutButtonLabel }}</a>
+  </div>
+</div>

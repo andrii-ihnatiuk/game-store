@@ -1,0 +1,28 @@
+<div *ngIf="!!order">
+  <div class="to-list-button">
+    <a routerLink="{{ links.get(pageRoutes.Orders) }}" mat-button>
+      {{ labels.ordersMenuItem }}
+    </a>
+  </div>
+  <div class="add-button">
+    <button mat-stroked-button color="accent" (click)="onAddDetail()">
+      {{ labels.addNewButtonLabel }}
+    </button>
+  </div>
+  <div *ngIf="!order.shippedDate && canShip" class="ship-button">
+    <button mat-stroked-button color="accent" (click)="onShip()">
+      {{ labels.shipButtonLabel }}
+    </button>
+  </div>
+  <div class="details-container">
+    <div *ngFor="let detail of orderDetails">
+      {{ detail.game.name }} : {{ detail.detail.quantity }}
+      <button mat-stroked-button color="accent" (click)="onUpdateCount(detail)">
+        {{ labels.updateButtonLabel }}
+      </button>
+      <button mat-raised-button color="warn" (click)="onDeleteDetail(detail)">
+        {{ labels.deleteButtonLabel }}
+      </button>
+    </div>
+  </div>
+</div>

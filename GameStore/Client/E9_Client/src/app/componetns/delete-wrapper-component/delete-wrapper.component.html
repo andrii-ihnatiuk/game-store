@@ -1,0 +1,17 @@
+<article>
+  <p>{{ labels.deleteMessage }}</p>
+  <h3 *ngIf="!pageLink?.length">{{ name }}</h3>
+  <h3 *ngIf="!!pageLink?.length">
+    <a routerLink="{{ pageLink }}" mat-button>{{ name }}</a>
+  </h3>
+
+  <div>
+    <ng-content></ng-content>
+  </div>
+
+  <div>
+    <button (click)="delete.emit()" mat-raised-button color="warn">
+      {{ labels.deleteButtonLabel }}
+    </button>
+  </div>
+</article>

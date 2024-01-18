@@ -1,0 +1,78 @@
+<div *ngIf="!!game">
+  <a class="go-back-link" routerLink="{{links.get(pageRoutes.Games)}}">Go Back to Game List</a>
+
+  <div class="content-container">
+    <div class="product-images-container">
+      <div class="main-image-wrapper">
+        <img src="https://placehold.co/540x445" alt="product image">
+      </div>
+      <div class="image-galery-container">
+        <div class="galery-image-wrapper">
+          <img src="https://placehold.co/160x115" alt="product image">
+        </div>
+        <div class="galery-image-wrapper">
+          <img src="https://placehold.co/160x115" alt="product image">
+        </div>
+        <div class="galery-image-wrapper">
+          <img src="https://placehold.co/160x115" alt="product image">
+        </div>
+      </div>
+    </div>
+    <div class="product-info-container">
+      <div class="product-title">{{game.name}}</div>
+      <div class="product-subtitle-container">
+        <div class="product-price">
+          <app-price [price]="game.price" [discount]="game.discount"></app-price>
+        </div>
+        <div class="product-rating-container">
+          <app-star-rating [rating]="4" [readonly]="true"></app-star-rating>
+          <div class="rating-comments-count">{{totalComments}} Comments</div>
+        </div>
+      </div>
+      <hr class="hr-soft">
+      <div>
+        <a *ngIf="!!gameInfo.publisherInfo?.value" routerLink="{{ gameInfo.publisherInfo?.pageLink }}"  class="publisher-name">{{ gameInfo.publisherInfo?.value }}</a>
+        <div>
+          <span *ngIf="!!game.type" class="separated">{{ game.type }}</span>
+          <span *ngIf="!!game.publishDate" class="separated">Released {{ game.publishDate | date }}</span>
+        </div>
+      </div>
+      <div *ngIf="!!gameInfo.platformsInfo || !!gameInfo.fileInfo" class="product-details-container">
+        <app-detail *ngIf="!!gameInfo.platformsInfo" [infoItem]="gameInfo.platformsInfo"></app-detail>
+        <app-detail *ngIf="!!gameInfo.fileInfo" [infoItem]="gameInfo.fileInfo"></app-detail>
+      </div>
+      <div *ngIf="!!gameInfo.genresInfo" class="product-details-container">
+        <app-detail [displayChips]="true" [infoItem]="gameInfo.genresInfo"></app-detail>
+      </div>
+      <div class="product-info-wrapper">
+        <div class="product-actions-container">
+          <button type="button" *ngIf="canBuy" mat-flat-button class="btn-orange" (click)="buy()">{{ labels.addToCatButtonLabel }}</button>
+          <a #download mat-flat-button>{{ labels.downloadButtonLabel }}</a>
+          <a *ngIf="!!updateGameLink?.length" routerLink="{{ updateGameLink }}" mat-flat-button>{{labels.updateButtonLabel }}</a>
+          <a *ngIf="!!deleteGameLink?.length" routerLink="{{ deleteGameLink }}" mat-flat-button color="warn">{{labels.deleteButtonLabel }}</a>
+        </div>
+      </div>
+      <hr class="hr-soft">
+      <div class="product-info-wrapper">
+        <div class="product-info-title">What You Get</div>
+        <p>Purchase the Ace Combat 7: Skies Unknown Launch Edition, available until 2/18/2019, and get the following content:</p>
+        <ul>
+          <li>Ace Combat 7: Skies Unknown;</li>
+          <li>Ace Combat 5: The Unsung War;</li>
+          <li>Playable F-4E Phantom II aircraft;</li>
+          <li>3 popular aircraft skins from past titles (Su-37: Yellow 13, F-14D: Razgriz, F-15C).</li>
+        </ul>
+        <p>This bundle also comes with the playable aircraft F-104C: Avril DLC as a digital-exclusive bonus.</p>
+      </div>
+      <div *ngIf="!!game.description?.length" class="product-info-wrapper">
+        <div class="product-info-title">Game Description</div>
+        <div [innerHTML]="game.description"></div>
+      </div>
+    </div>
+  </div>
+  <hr class="hr-soft">
+
+  <gamestore-comments (onCommentsCountChanged)="onCommentsLoaded($event)" *ngIf="canSeeComments" [gameKey]="game.key"></gamestore-comments>
+
+  <gamestore-social></gamestore-social>
+</div>

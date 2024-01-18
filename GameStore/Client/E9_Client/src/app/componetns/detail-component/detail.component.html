@@ -1,0 +1,31 @@
+
+<div *ngIf="!!infoItem" class="detail-container">
+    <div class="detail-title">{{infoItem.name}}</div>
+    <div class="detail-content">
+        <div *ngIf="displayChips; then chipsBlock else defaultBlock"></div>
+    </div>
+
+    <ng-template #chipsBlock>
+        <div class="chips-container">
+            <mat-chip-list>
+                <ng-container *ngIf="!!infoItem.nestedValues; then multiChips else singleChip"></ng-container>
+
+                <ng-template #multiChips>
+                    <mat-chip [routerLink]="item.pageLink" *ngFor="let item of infoItem.nestedValues">{{item.title}}</mat-chip>
+                </ng-template>
+                <ng-template #singleChip>
+                    <mat-chip>{{infoItem.value}}</mat-chip>
+                </ng-template>
+            </mat-chip-list>
+        </div>
+    </ng-template>
+
+    <ng-template #defaultBlock>
+        <ng-container *ngIf="!!infoItem.nestedValues; then linksDetail else textDetail"></ng-container>
+
+        <ng-template #linksDetail>
+            <a class="separated" routerLink="{{item.pageLink}}" *ngFor="let item of infoItem.nestedValues">{{item.title}}</a>
+        </ng-template>
+        <ng-template #textDetail>{{infoItem.value}}</ng-template>
+    </ng-template>
+</div>

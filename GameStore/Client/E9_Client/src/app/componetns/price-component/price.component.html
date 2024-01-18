@@ -1,0 +1,12 @@
+﻿<div class="price-container">
+    <ng-container *ngIf="!!discount; then withDiscount else noDiscount"></ng-container>
+
+    <ng-template #noDiscount>
+        <div class="price">{{ price | currency: 'USD' }}</div>
+    </ng-template>
+
+    <ng-template #withDiscount>
+        <div class="price price-crossed">{{ price | currency: 'USD' }}</div>
+        <div class="price">{{ priceWithDiscount | currency: 'USD' }}</div>
+    </ng-template>
+</div>

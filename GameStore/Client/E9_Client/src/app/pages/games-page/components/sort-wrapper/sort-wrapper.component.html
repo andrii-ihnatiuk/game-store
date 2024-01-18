@@ -1,0 +1,11 @@
+<div *ngIf="!!sortControl" class="sort-container">
+  <div class="top-panel-container">
+    <gamestore-selector-input
+      [control]="sortControl"
+      [values]="sortings"
+    ></gamestore-selector-input>
+  </div>
+  <div class="content-container">
+    <ng-content></ng-content>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<article *ngIf="!!form">
+  <gamestore-form
+    [form]="form"
+    idName="id"
+    (save)="onSave()"
+    [pageLink]="userPageLink"
+  >
+    <gamestore-text-input
+      [name]="labels.userNameLabel"
+      [control]="getFormControl('name')"
+    ></gamestore-text-input>
+    <gamestore-text-input
+      [name]="labels.userPasswordLabel"
+      [control]="getFormControl('password')"
+      [hide]="true"
+    ></gamestore-text-input>
+    <gamestore-checkboxes-input
+      [name]="labels.rolesMenuItem"
+      [controls]="getFormControlArray('roles')"
+      [items]="roleItems"
+    ></gamestore-checkboxes-input>
+  </gamestore-form>
+</article>

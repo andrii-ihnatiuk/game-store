@@ -1,0 +1,12 @@
+<div class="add-comment-container">
+  <div *ngIf="!!currentCommentValue && !!action">
+    {{actionLabel}}: {{ currentCommentValue.author }} 
+    <button mat-button color="accent" (click)="onSelectCancel()">X</button>
+  </div>
+  <div *ngIf="!!form">
+    <gamestore-form [form]="form" idName="id" (save)="onSave()">
+      <gamestore-text-input [control]="getFormControl('name')" [disableValidation] ="true"></gamestore-text-input>
+      <gamestore-textarea-input [control]="getFormControl('body')" [disableValidation] ="true"></gamestore-textarea-input>
+    </gamestore-form>
+  </div>
+</div>

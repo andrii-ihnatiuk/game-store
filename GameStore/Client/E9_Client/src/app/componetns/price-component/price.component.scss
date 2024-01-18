@@ -1,0 +1,10 @@
+﻿.price-container {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    gap: 5px;
+
+    .price-crossed {
+        text-decoration: line-through;
+        font-weight: lighter;
+    }
+}

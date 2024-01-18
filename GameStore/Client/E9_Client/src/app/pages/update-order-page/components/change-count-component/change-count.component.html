@@ -1,0 +1,16 @@
+<article *ngIf="!!control">
+  <h3>{{ name }}</h3>
+
+  <div>
+    <gamestore-number-input
+      [name]="labels.orderDetailsQuantityLabel"
+      [control]="control"
+    ></gamestore-number-input>
+  </div>
+
+  <div>
+    <button (click)="onSave()" mat-raised-button color="warn" [disabled]="!control || control.invalid">
+      {{ labels.saveButtonLabel }}
+    </button>
+  </div>
+</article>

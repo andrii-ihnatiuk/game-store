@@ -1,0 +1,118 @@
+.articles-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    gap: 95px;
+    color: #3E4554;
+
+    .article-left {
+        flex: 1 1 50%;
+    }
+
+    .article-right {
+        flex: 1 1 auto;
+    }
+}
+
+.articles-title {
+    color: #3E4554;
+    font-family: Montserrat;
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 0;
+    margin-bottom: 24px;
+    line-height: 28px;
+}
+
+.article-image-wrapper {
+    position: relative;
+    max-height: 333px;
+    overflow: hidden;
+
+    &::before  {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+    }
+
+    .article-image-overlay {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        text-decoration: none;
+
+        &:hover .overlay-text::after {
+            animation: fadeInOut 1s forwards;
+        }
+    }
+
+    .overlay-text-wrapper {
+        display: flex;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 30px;
+        overflow: hidden;
+
+        .overlay-text {
+            align-self: flex-end;
+            color: #FFFFFF;
+            font-family: Montserrat;
+            font-size: 24px;
+            line-height: 40px;
+            font-weight: 700;
+
+            &::after {
+                content: "";
+                display: inline-block;
+                border: solid;
+                border-width: 0 3px 3px 0;
+                padding: 6px;
+                transform: rotate(-45deg);
+                margin-left: 15px;
+            }
+        }
+    }
+}
+
+@keyframes fadeInOut {
+    0% {
+        margin-left: 15px;
+        opacity: 1;
+    }
+
+    25% {
+        margin-left: 30px;
+        opacity: 0;
+    }
+
+    50% {
+        margin-left: 0px;
+        opacity: 0;
+    }
+
+    75% {
+        margin-left: 15px;
+        opacity: .5;
+    }
+
+    100% {
+        margin-left: 15px;
+        opacity: 1;
+    }
+}

@@ -1,0 +1,13 @@
+<div>
+  <div *ngIf="!!addLink?.length" class="add-container">
+    <a routerLink="{{ addLink }}" mat-stroked-button color="accent">{{
+      labels.addNewButtonLabel
+    }}</a>
+  </div>
+  <mat-list>
+    <gamestore-list-item
+      *ngFor="let item of listItems"
+      [item]="item"
+    ></gamestore-list-item>
+  </mat-list>
+</div>
