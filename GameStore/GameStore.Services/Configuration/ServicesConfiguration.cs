@@ -2,8 +2,10 @@
 using GameStore.Services.Authentication;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Authentication;
+using GameStore.Services.Interfaces.Messaging;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Interfaces.Util;
+using GameStore.Services.Messaging;
 using GameStore.Services.Payment;
 using GameStore.Services.Payment.Strategies;
 using GameStore.Services.Util;
@@ -34,6 +36,8 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<ICommentService, CommentService>();
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IRoleService, RoleService>();
+        serviceCollection.AddScoped<IImageService, ImageService>();
+        serviceCollection.AddScoped<INotificationService, NotificationService>();
 
         serviceCollection.AddScoped<IJwtProvider, JwtProvider>();
         serviceCollection.AddScoped<ILoginService, InternalLoginService>();
@@ -44,8 +48,7 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IPaymentStrategy, VisaPaymentStrategy>();
         serviceCollection.AddScoped<IPaymentStrategyResolver, PaymentStrategyResolver>();
 
-        serviceCollection.AddScoped<IImageService, ImageService>();
-
         serviceCollection.AddSingleton<IBlobFileService, BlobFileService>();
+        serviceCollection.AddSingleton<IMessagePublisher, AzureMessagePublisher>();
     }
 }

@@ -1,4 +1,5 @@
-﻿using GameStore.Shared.Constants;
+﻿using GameStore.Data.Entities.Identity;
+using GameStore.Shared.Constants;
 
 namespace GameStore.Data.Entities;
 
@@ -23,4 +24,6 @@ public class Order
     public PaymentMethod? PaymentMethod { get; set; }
 
     public IList<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+
+    public ApplicationUser Customer { get; set; }
 }

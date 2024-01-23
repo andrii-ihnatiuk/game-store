@@ -1,6 +1,7 @@
 ﻿using GameStore.Application.Interfaces;
 using GameStore.Application.Interfaces.Util;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Exceptions;
 using GameStore.Shared.Extensions;
@@ -50,6 +51,6 @@ public class OrderFacadeService : IOrderFacadeService
         }
 
         var orderService = _serviceResolver.ResolveAll<ICoreOrderService>().Single();
-        await orderService.ShipOrderAsync(orderId);
+        await orderService.UpdateOrderStatusAsync(orderId, OrderStatus.Shipped);
     }
 }

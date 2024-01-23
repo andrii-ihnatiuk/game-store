@@ -28,6 +28,8 @@ public interface IUnitOfWork : IDisposable
 
     IGenericRepository<AppImage> Images { get; }
 
+    IGenericRepository<NotificationMethod> NotificationMethods { get; }
+
     Task<int> SaveAsync();
 
     Task<int> SaveAsync(bool logChanges);

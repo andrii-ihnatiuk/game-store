@@ -53,15 +53,9 @@ public abstract class PaymentStrategyBase : IPaymentStrategy
 
     protected virtual async Task CompletePaymentAsync()
     {
-        UpdateOrderStatus(Order);
+        await OrderService.UpdateOrderStatusAsync(Order.Id.ToString(), OrderStatus.Paid);
         UpdateQuantitiesForProducts(Order.OrderDetails);
         await UnitOfWork.SaveAsync();
-    }
-
-    protected static void UpdateOrderStatus(Order order)
-    {
-        order.PaidDate = DateTime.UtcNow;
-        order.Status = OrderStatus.Paid;
     }
 
     protected static void UpdateQuantitiesForProducts(IEnumerable<OrderDetail> orderDetails)

@@ -27,17 +27,20 @@ public class OrdersController : ControllerBase
     private readonly IOrderFacadeService _orderFacadeService;
     private readonly IPaymentService _paymentService;
     private readonly IValidatorWrapper<PaymentDto> _paymentValidator;
+    private readonly INotificationService _notificationService;
 
     public OrdersController(
         ICoreOrderService coreOrderService,
         IOrderFacadeService orderFacadeService,
         IPaymentService paymentService,
-        IValidatorWrapper<PaymentDto> paymentValidator)
+        IValidatorWrapper<PaymentDto> paymentValidator,
+        INotificationService notificationService)
     {
         _coreOrderService = coreOrderService;
         _orderFacadeService = orderFacadeService;
         _paymentService = paymentService;
         _paymentValidator = paymentValidator;
+        _notificationService = notificationService;
     }
 
     [Authorize]
@@ -131,6 +134,7 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> ShipOrderAsync(string orderId)
     {
         await _orderFacadeService.ShipOrderAsync(orderId);
+        await _notificationService.NotifyOrderStatusChangedAsync(orderId, OrderStatus.Shipped);
         return NoContent();
     }
 

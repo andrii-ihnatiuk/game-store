@@ -26,5 +26,9 @@ public class OrderEntityConfiguration : IEntityTypeConfiguration<Order>
             .WithMany()
             .HasForeignKey(o => o.PaymentMethodId)
             .IsRequired(false);
+
+        builder.HasOne(o => o.Customer)
+            .WithMany(c => c.Orders)
+            .HasForeignKey(o => o.CustomerId);
     }
 }
