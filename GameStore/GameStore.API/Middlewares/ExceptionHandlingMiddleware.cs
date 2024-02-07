@@ -15,7 +15,7 @@ public class ExceptionHandlingMiddleware
     {
         typeof(EntityNotFoundException), typeof(EntityAlreadyExistsException), typeof(ForeignKeyException),
         typeof(PaymentException), typeof(GameStoreNotSupportedException), typeof(UserBannedException),
-        typeof(IdentityException), typeof(LoginException),
+        typeof(IdentityException), typeof(LoginException), typeof(ImageUploadException),
     };
 
     public ExceptionHandlingMiddleware(RequestDelegate next, ILogger logger)
@@ -47,6 +47,7 @@ public class ExceptionHandlingMiddleware
             ValidationException => StatusCodes.Status400BadRequest,
             GameStoreNotSupportedException => StatusCodes.Status400BadRequest,
             IdentityException => StatusCodes.Status400BadRequest,
+            ImageUploadException => StatusCodes.Status400BadRequest,
             LoginException => StatusCodes.Status401Unauthorized,
             PaymentException => StatusCodes.Status402PaymentRequired,
             UserBannedException => StatusCodes.Status403Forbidden,

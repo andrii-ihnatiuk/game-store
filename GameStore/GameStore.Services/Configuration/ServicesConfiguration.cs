@@ -3,8 +3,10 @@ using GameStore.Services.Authentication;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Authentication;
 using GameStore.Services.Interfaces.Payment;
+using GameStore.Services.Interfaces.Util;
 using GameStore.Services.Payment;
 using GameStore.Services.Payment.Strategies;
+using GameStore.Services.Util;
 using GameStore.Shared.Interfaces.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -41,5 +43,9 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<IPaymentStrategy, TerminalPaymentStrategy>();
         serviceCollection.AddScoped<IPaymentStrategy, VisaPaymentStrategy>();
         serviceCollection.AddScoped<IPaymentStrategyResolver, PaymentStrategyResolver>();
+
+        serviceCollection.AddScoped<IImageService, ImageService>();
+
+        serviceCollection.AddSingleton<IBlobFileService, BlobFileService>();
     }
 }

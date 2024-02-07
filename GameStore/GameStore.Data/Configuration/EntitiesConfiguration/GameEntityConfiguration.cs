@@ -29,5 +29,10 @@ internal class GameEntityConfiguration : IEntityTypeConfiguration<Game>
         builder.HasMany(g => g.Translations)
             .WithOne(t => t.Core)
             .HasForeignKey(t => t.CoreId);
+
+        builder.HasMany(g => g.Images)
+            .WithOne(i => i.Game)
+            .HasForeignKey(i => i.GameId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

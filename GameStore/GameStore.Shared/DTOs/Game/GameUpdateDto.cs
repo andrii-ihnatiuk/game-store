@@ -1,4 +1,6 @@
-﻿namespace GameStore.Shared.DTOs.Game;
+﻿using GameStore.Shared.DTOs.Image;
+
+namespace GameStore.Shared.DTOs.Game;
 
 public class GameUpdateDto
 {
@@ -11,4 +13,6 @@ public class GameUpdateDto
     public IList<Guid>? Platforms { get; set; }
 
     public string? Publisher { get; set; }
+
+    public IList<ImageDto>? Images { get; set; }
 }

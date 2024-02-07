@@ -99,6 +99,13 @@ public class GamesController : ControllerBase
         return File(bytes, "text/plain", fileDownloadName: fileName);
     }
 
+    [HttpGet("{gameAlias}/images")]
+    public async Task<IActionResult> GetImagesByGameKeyAsync([FromRoute] string gameAlias)
+    {
+        var images = await _gameFacadeService.GetImagesByGameAliasAsync(gameAlias);
+        return Ok(images);
+    }
+
     [HasAnyPermission(PermissionOptions.GameCreate, PermissionOptions.GameFull)]
     [HttpPost("new")]
     public async Task<IActionResult> PostGameAsync([FromBody] GameCreateDto dto)

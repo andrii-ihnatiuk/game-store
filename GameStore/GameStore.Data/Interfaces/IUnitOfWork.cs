@@ -26,6 +26,8 @@ public interface IUnitOfWork : IDisposable
 
     IGenericRepository<Comment> Comments { get; }
 
+    IGenericRepository<AppImage> Images { get; }
+
     Task<int> SaveAsync();
 
     Task<int> SaveAsync(bool logChanges);

@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>Select image</h2>
+<mat-dialog-content>
+  <div class="images-container">
+    <ng-container *ngFor="let image of images; index as i">
+      <div *ngIf="!!image.id"
+        class="img-wrapper"
+        [ngClass]="{ 'selected': selectedIndices.has(i) }"
+        (click)="onImageSelect(i)"
+        >
+        <img [src]="image.small ?? image.large" alt="image" draggable="false" />
+      </div>
+    </ng-container>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="actions-container">
+    <button mat-stroked-button color="primary" (click)="fileSelect.click()">
+      <mat-icon>attach_file</mat-icon>
+      Upload images
+    </button>
+    <input #fileSelect hidden type="file" accept=".jpg,.jpeg,.png" multiple (change)="handleFileSelect($event)">
+  </div>
+  <div class="actions-container">
+      <button mat-button mat-dialog-close>Cancel</button>
+      <button mat-button (click)="closeWithResult()" cdkFocusInitial>Select</button>
+  </div>
+</mat-dialog-actions>

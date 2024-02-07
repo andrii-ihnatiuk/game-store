@@ -8,6 +8,7 @@ using GameStore.Shared.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Azure;
 using NLog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,6 +48,7 @@ builder.Services.AddHttpClient();
 LogManager.Setup().LoadConfigurationFromFile("nlog.config", false);
 
 builder.Services.Configure<RouteOptions>(options => { options.LowercaseUrls = true; });
+builder.Services.Configure<AzureStorageOptions>(builder.Configuration.GetSection("Azure:Storage"));
 builder.Services.Configure<VisaOptions>(builder.Configuration.GetSection("PaymentOptions:Visa"));
 builder.Services.Configure<TerminalOptions>(builder.Configuration.GetSection("PaymentOptions:IBox"));
 builder.Services.Configure<TaxOptions>(builder.Configuration.GetSection("PaymentOptions:Taxes"));
@@ -63,6 +65,11 @@ builder.Services.AddAuthentication(opt =>
     opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer();
 builder.Services.ConfigureAuthorization();
+
+builder.Services.AddAzureClients(azureFactory =>
+{
+    azureFactory.AddBlobServiceClient(builder.Configuration["Azure:Storage:ConnectionString"]);
+});
 
 var app = builder.Build();
 

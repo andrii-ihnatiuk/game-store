@@ -12,4 +12,5 @@ export class Game extends BaseModel {
   discount?: number;
   unitInStock?: number;
   discontinued?: boolean;
+  previewImgUrl?: string;
 }

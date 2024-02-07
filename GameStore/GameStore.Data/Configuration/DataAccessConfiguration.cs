@@ -19,7 +19,7 @@ public static class DataAccessConfiguration
 
         serviceCollection.AddDbContext<GameStoreDbContext>((sp, options) =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            options.UseSqlServer(configuration.GetConnectionString("SqlDb"));
             options.AddInterceptors(sp.GetRequiredService<MongoLoggingInterceptor>());
         });
 

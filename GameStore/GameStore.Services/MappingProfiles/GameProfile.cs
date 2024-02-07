@@ -58,7 +58,10 @@ public class GameProfile : Profile
                 opts => opts.MapFrom<LocalizedValueResolver<string?>, string>(src => src.Game.Type))
             .ForMember(
                 dest => dest.Description,
-                opts => opts.MapFrom<LocalizedValueResolver<string?>, string?>(src => src.Game.Description));
+                opts => opts.MapFrom<LocalizedValueResolver<string?>, string?>(src => src.Game.Description))
+            .ForMember(
+                dest => dest.Images,
+                opts => opts.Ignore());
 
         CreateMap<Game, GameBriefDto>()
             .ForMember(

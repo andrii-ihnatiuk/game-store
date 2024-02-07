@@ -30,24 +30,21 @@ export class GlobalHttpInterceptorService implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const authKey = localStorage.getItem('authKey');
-    if (!!authKey?.length) {
-      request = request.clone({
-        setHeaders: {
-          Authorization: authKey,
-          'Content-Type': 'application/json',
-          'Accept-Language': localStorage.getItem('overrideLocale') ?? localStorage.getItem('locale') ?? 'en',
-        },
-        url: request.url,
-      });
-    } else {
-      request = request.clone({
-        setHeaders: {
-          'Content-Type': 'application/json',
-          'Accept-Language': localStorage.getItem('overrideLocale') ?? localStorage.getItem('locale') ?? 'en',
-        },
-        url: request.url,
-      });
+
+    const headers: Record<string, string> = authKey?.length 
+      ? { Authorization: authKey } 
+      : {};
+
+    headers['Accept-Language'] = localStorage.getItem('overrideLocale') ?? localStorage.getItem('locale') ?? 'en';
+
+    if (!(request.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
     }
+
+    request = request.clone({
+      setHeaders: headers,
+      url: request.url,
+    });
 
     return next
       .handle(request)

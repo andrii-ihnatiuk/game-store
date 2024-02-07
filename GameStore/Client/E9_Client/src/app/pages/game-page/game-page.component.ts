@@ -5,6 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -32,6 +33,7 @@ export class GamePageComponent
   implements OnInit, AfterViewInit
 {
   private file?: Blob;
+  private image?: Blob;
 
   @ViewChild('download')
   downloadLink!: ElementRef;
@@ -39,6 +41,8 @@ export class GamePageComponent
   gameValue?: Game;
 
   gameInfo: GameInfo = new GameInfo;
+
+  imageUrl?: SafeUrl;
 
   canSeeComments = false;
   canBuy = false;
@@ -52,7 +56,8 @@ export class GamePageComponent
     private orderService: OrderService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) {
     super();
   }
@@ -106,6 +111,7 @@ export class GamePageComponent
         this.addPublisherInfo(x.publisher);
         this.canSeeComments = x.canSeeComments;
         this.canBuy = x.canBuy;
+        this.addImage();
       });
   }
 
@@ -119,7 +125,16 @@ export class GamePageComponent
       (this.downloadLink as any)._elementRef.nativeElement.href = downloadURL;
     }
   }
-
+  
+  addImage(): void {
+    if (!!this.image) {
+      const imageUrl = this.sanitizer.bypassSecurityTrustUrl(
+        URL.createObjectURL(this.image)
+      );
+      this.imageUrl = imageUrl;
+    }
+  }
+  
   addPlatformsInfo(platforms: Platform[]): void {
     if (!platforms?.length) {
       return;

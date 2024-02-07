@@ -1,4 +1,6 @@
-﻿namespace GameStore.Shared.DTOs.Game;
+﻿using GameStore.Shared.DTOs.Image;
+
+namespace GameStore.Shared.DTOs.Game;
 
 public class GameCreateDto
 {
@@ -9,4 +11,6 @@ public class GameCreateDto
     public IList<string>? Genres { get; set; }
 
     public IList<Guid>? Platforms { get; set; }
+
+    public IList<ImageDto>? Images { get; set; }
 }

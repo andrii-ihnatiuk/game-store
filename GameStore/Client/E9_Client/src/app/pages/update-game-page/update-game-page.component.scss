@@ -1,3 +1,111 @@
+.page-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap-reverse;
+
+    .specs-container {
+        flex: 2 0 0;
+    }
+
+    .images-container {
+        flex: 1 0 0;
+        display: flex;
+        flex-direction: column;
+    } 
+}
+
 .form-wrapper {
     padding: 20px 15px;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    cursor: pointer;
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .image-overlay {
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba($color: #000000, $alpha: .7);
+        transition: opacity .2s ease;
+
+        .btn-replace {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            bottom: 36px;
+            left: 0;
+            right: 0;
+            color: white;
+
+            mat-icon {
+                padding-top: 36px;
+                font-size: 50px;
+                height: 50px;
+                width: 50px;
+            }
+        }
+
+        .btn-remove {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    }
+
+    &:hover {
+        .image-overlay {
+            opacity: 1;
+        }
+    }
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    font-weight: 500;
+    color: rgba(0,0,0,.6)
+}
+
+.images-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.image-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    font-size: 80px;
+    font-weight: 300;
+    color: grey;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border: 4px dashed grey;
+
+    &.invalid {
+        border-color: red;
+        color: red;
+    }
 }

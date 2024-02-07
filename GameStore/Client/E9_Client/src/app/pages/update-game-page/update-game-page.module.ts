@@ -9,10 +9,13 @@ import { PlatformService } from 'src/app/services/platform.service';
 import { PublisherService } from 'src/app/services/publisher.service';
 import { GameFormComponent } from './components/game-form/game-form.component';
 import { LocalizationService } from 'src/app/services/localization.service';
+import { ImageService } from 'src/app/services/image.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [UpdateGamePageComponent, GameFormComponent],
-  imports: [CommonModule, CommonComponentsModule, ReactiveFormsModule],
-  providers: [GameService, GenreService, PlatformService, PublisherService, LocalizationService],
+  imports: [CommonModule, CommonComponentsModule, ReactiveFormsModule, MatButtonModule, MatIconModule],
+  providers: [GameService, GenreService, PlatformService, PublisherService, ImageService, LocalizationService],
 })
 export class UpdateGamePageModule {}

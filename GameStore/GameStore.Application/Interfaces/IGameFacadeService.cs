@@ -1,5 +1,6 @@
 ﻿using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Image;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
 
@@ -18,6 +19,8 @@ public interface IGameFacadeService
     Task<IList<PlatformBriefDto>> GetPlatformsByGameAliasAsync(string alias);
 
     Task<PublisherBriefDto> GetPublisherByGameAliasAsync(string alias);
+
+    Task<IList<ImageBriefDto>> GetImagesByGameAliasAsync(string alias);
 
     Task<GameBriefDto> AddGameAsync(GameCreateDto dto);
 

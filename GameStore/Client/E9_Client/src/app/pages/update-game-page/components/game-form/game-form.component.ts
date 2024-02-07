@@ -7,12 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, forkJoin, of } from 'rxjs';
+import { Observable, Subscription, forkJoin, of } from 'rxjs';
 import { finalize, switchMap, tap } from 'rxjs/operators';
 import { BaseComponent } from 'src/app/componetns/base.component';
 import { InputValidator } from 'src/app/configuration/input-validator';
 import { Game } from 'src/app/models/game.model';
 import { Genre } from 'src/app/models/genre.model';
+import { Image } from 'src/app/models/image.model';
 import { Platform } from 'src/app/models/platform.model';
 import { Publisher } from 'src/app/models/publisher.model';
 import { GameService } from 'src/app/services/game.service';
@@ -40,6 +41,7 @@ export class GameFormComponent extends BaseComponent implements OnChanges {
   gameGenres: Genre[] = [];
   gamePublisher?: Publisher;
   gamePlatforms: Platform[] = [];
+  gameImages: Image[] = [];
 
   @Input()
   culture?: string;
@@ -47,7 +49,11 @@ export class GameFormComponent extends BaseComponent implements OnChanges {
   @Input()
   key?: string;
 
+  @Input()
+  onImagesChange?: Observable<Image[]>;
+
   private gameSub?: Subscription;
+  private imagesSub?: Subscription;
 
   constructor(
     private gameService: GameService,
@@ -55,14 +61,17 @@ export class GameFormComponent extends BaseComponent implements OnChanges {
     private platformService: PlatformService,
     private publisherService: PublisherService,
     private builder: FormBuilder,
-    private router: Router
-  ) {
+    private router: Router  ) {
     super();
   }
 
   ngOnChanges(): void {
     if (this.gameSub) {
       this.gameSub.unsubscribe();
+    }
+
+    if (this.imagesSub) {
+      this.imagesSub.unsubscribe();
     }
 
     if (!this.culture) {
@@ -109,6 +118,10 @@ export class GameFormComponent extends BaseComponent implements OnChanges {
         this.gamePublisher = x.gamePublisher;
         this.createForm();
       });
+
+      this.imagesSub = this.onImagesChange?.subscribe((images) => {
+        this.gameImages = images;
+      });
   }
 
   getFormControl(name: string): FormControl {
@@ -122,6 +135,11 @@ export class GameFormComponent extends BaseComponent implements OnChanges {
   }
 
   onSave(): void {
+    if (!!this.gameImages.length && !this.gameImages.some(img => img.isCover)) {
+      alert("Cover image is required when selecting additional images!");
+      return;
+    }
+
     const game: Game = {
       id: this.form!.value.id,
       name: this.form!.value.name,
@@ -151,13 +169,14 @@ export class GameFormComponent extends BaseComponent implements OnChanges {
           selectedGenres,
           selectedPlatforms,
           selectedPublisher,
-          this.culture!
+          this.culture!,
+          this.gameImages.map(image => ({ id: image.id, isCover: image.isCover }))
         )
       : this.gameService.addGame(
           game,
           selectedGenres,
           selectedPlatforms,
-          selectedPublisher
+          selectedPublisher,
         )
     ).subscribe((_) =>
       this.router.navigateByUrl(
@@ -211,5 +230,4 @@ export class GameFormComponent extends BaseComponent implements OnChanges {
     this.genreItems = this.genres.map((x) => x.name);
     this.platformItems = this.platforms.map((x) => x.type);
   }
-
 }
