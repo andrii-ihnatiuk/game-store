@@ -5,7 +5,9 @@ using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Util;
 using GameStore.Shared.DTOs.Image;
 using GameStore.Shared.Exceptions;
+using GameStore.Shared.Options;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
@@ -16,13 +18,18 @@ public class ImageService : IImageService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBlobFileService _blobService;
     private readonly IMapper _mapper;
-    private static readonly IReadOnlyList<string> SupportedFormats = new List<string> { ".JPEG", ".JPG", ".PNG" };
+    private readonly FileUploadOptions _fileOptions;
 
-    public ImageService(IUnitOfWork unitOfWork, IBlobFileService blobService, IMapper mapper)
+    public ImageService(
+        IUnitOfWork unitOfWork,
+        IBlobFileService blobService,
+        IMapper mapper,
+        IOptions<FileUploadOptions> fileOptions)
     {
         _unitOfWork = unitOfWork;
         _blobService = blobService;
         _mapper = mapper;
+        _fileOptions = fileOptions.Value;
     }
 
     public async Task UploadImagesAsync(IFormFileCollection files)
@@ -34,10 +41,9 @@ public class ImageService : IImageService
             using Stream largeImageStream = new MemoryStream();
             using Stream smallImageStream = new MemoryStream();
 
-            Image? image = null;
             try
             {
-                image = await Image.LoadAsync(fileStream);
+                using var image = await Image.LoadAsync(fileStream);
                 ResizeImageIfBiggerThanMax(image, 1200, 1200);
                 await image.SaveAsync(largeImageStream, image.Metadata.DecodedImageFormat!);
                 ResizeImageIfBiggerThanMax(image, 256, 256);
@@ -49,10 +55,6 @@ public class ImageService : IImageService
             catch (Exception)
             {
                 throw new ImageUploadException("Couldn't read the contents of provided file.");
-            }
-            finally
-            {
-                image?.Dispose();
             }
 
             var uploadedImage = new AppImage { Id = Guid.NewGuid() };
@@ -79,16 +81,21 @@ public class ImageService : IImageService
         return _mapper.Map<IList<ImageBriefDto>>(images);
     }
 
-    private static void ValidateFile(IFormFile file)
+    private void ValidateFile(IFormFile file)
     {
         if (file.Length == 0)
         {
             throw new ImageUploadException("The provided file is empty.");
         }
 
-        if (!SupportedFormats.Contains(Path.GetExtension(file.FileName).ToUpperInvariant()))
+        if (file.Length > _fileOptions.MaxImageSizeMb * 1024 * 1024)
         {
-            throw new ImageUploadException($"Only {string.Join(", ", SupportedFormats)} formats are supported.");
+            throw new ImageUploadException($"The maximum allowed file size is {_fileOptions.MaxImageSizeMb} MB.");
+        }
+
+        if (!_fileOptions.ImageFormats.Contains(Path.GetExtension(file.FileName).ToUpperInvariant()))
+        {
+            throw new ImageUploadException($"Only {string.Join(", ", _fileOptions.ImageFormats)} formats are supported.");
         }
     }
 
