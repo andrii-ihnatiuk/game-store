@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Image } from 'src/app/models/image.model';
-import { DialogData } from './dialog-data';
+import { ImageSelectData } from './image-select-data';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -17,7 +17,7 @@ export class ImageSelectDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<ImageSelectDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public dialogOpts: DialogData,
+    @Inject(MAT_DIALOG_DATA) public dialogOpts: ImageSelectData,
   ) { }
 
   ngOnInit(): void {
@@ -98,7 +98,6 @@ export class ImageSelectDialogComponent implements OnInit {
 
   private uploadImages(filesToUpload: File[]) {
     const formData = new FormData();
-    console.log(filesToUpload);
     filesToUpload.forEach((f) => {
       formData.append("files", f);
     });

@@ -205,10 +205,11 @@ public class CoreGameService : MultiLingualEntityServiceBase<Game, GameTranslati
 
             image.GameId = game.Id;
             image.IsCover = image.Id == coverImageId;
-            image.Order = (ushort)i;
+            image.Order = (ushort)(i + 1);
 
             if (image.IsCover)
             {
+                image.Order = 0;
                 game.PreviewImgUrl = image.Small ?? image.Large;
             }
         }

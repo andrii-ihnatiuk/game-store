@@ -213,3 +213,7 @@ a.mat-button-base {
         transform: none !important;
     }
 }
+
+.dialog-no-padding .mat-dialog-container {
+    padding: 0;
+}

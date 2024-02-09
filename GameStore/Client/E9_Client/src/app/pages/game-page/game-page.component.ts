@@ -5,7 +5,6 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
@@ -22,6 +21,11 @@ import { PlatformService } from 'src/app/services/platform.service';
 import { PublisherService } from 'src/app/services/publisher.service';
 import { UserService } from 'src/app/services/user.service';
 import { GameInfo } from './game-info';
+import { ImageService } from 'src/app/services/image.service';
+import { Image } from 'src/app/models/image.model';
+import { GalleryItem } from 'src/app/componetns/image-gallery-component/gallery-item';
+import { MatDialog } from '@angular/material/dialog';
+import { ImageViewerDialogComponent } from 'src/app/componetns/image-viewer-dialog-component/image-viewer-dialog.component';
 
 @Component({
   selector: 'gamestore-game',
@@ -33,7 +37,6 @@ export class GamePageComponent
   implements OnInit, AfterViewInit
 {
   private file?: Blob;
-  private image?: Blob;
 
   @ViewChild('download')
   downloadLink!: ElementRef;
@@ -42,7 +45,9 @@ export class GamePageComponent
 
   gameInfo: GameInfo = new GameInfo;
 
-  imageUrl?: SafeUrl;
+  coverImage?: string;
+  gameImages?: Image[];
+  galleryImages?: GalleryItem[];
 
   canSeeComments = false;
   canBuy = false;
@@ -56,8 +61,9 @@ export class GamePageComponent
     private orderService: OrderService,
     private route: ActivatedRoute,
     private userService: UserService,
+    private imageService: ImageService,
     private router: Router,
-    private sanitizer: DomSanitizer
+    private imageViewer: MatDialog
   ) {
     super();
   }
@@ -100,6 +106,7 @@ export class GamePageComponent
             publisher: this.publisherService.getPublisherByGameKey(x.key),
             canSeeComments: this.userService.checkAccess('Comments', x.key),
             canBuy: this.userService.checkAccess('Buy', x.key),
+            images: this.imageService.getImagesByGameKey(x.key)
           })
         )
       )
@@ -111,7 +118,7 @@ export class GamePageComponent
         this.addPublisherInfo(x.publisher);
         this.canSeeComments = x.canSeeComments;
         this.canBuy = x.canBuy;
-        this.addImage();
+        this.addImages(x.images);
       });
   }
 
@@ -123,15 +130,6 @@ export class GamePageComponent
     if (!!this.file && !!this.downloadLink) {
       const downloadURL = window.URL.createObjectURL(this.file);
       (this.downloadLink as any)._elementRef.nativeElement.href = downloadURL;
-    }
-  }
-  
-  addImage(): void {
-    if (!!this.image) {
-      const imageUrl = this.sanitizer.bypassSecurityTrustUrl(
-        URL.createObjectURL(this.image)
-      );
-      this.imageUrl = imageUrl;
     }
   }
   
@@ -191,6 +189,14 @@ export class GamePageComponent
     this.gameInfo.genresInfo = genresInfo;
   }
 
+  private addImages(images: Image[]) {
+    this.gameImages = images;
+    this.galleryImages = images.map(i => (
+      { id: i.id!, imageUrl: i.small ?? i.large }
+   ));
+   this.coverImage = images.find(i => i.isCover)?.large ?? 'https://placehold.co/540x445';
+  }
+
   buy(): void {
     this.orderService
       .buyGame(this.game!.key)
@@ -201,5 +207,20 @@ export class GamePageComponent
 
   onCommentsLoaded(commentsCount: number) {
     this.totalComments = commentsCount;
+  }
+
+  onImageSelected(imageId: string): void {
+    let index = this.gameImages?.findIndex(i => i.id == imageId)!;
+    this.openImageViewer(index);
+  }
+
+  private openImageViewer(activeIndex: number) {
+    this.imageViewer.open(ImageViewerDialogComponent, {
+      panelClass: "dialog-no-padding",
+      data: { 
+        activeIndex: activeIndex,
+        images: this.gameImages,
+      }
+    });
   }
 }
