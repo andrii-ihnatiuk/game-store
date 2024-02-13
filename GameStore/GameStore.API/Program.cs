@@ -49,6 +49,7 @@ LogManager.Setup().LoadConfigurationFromFile("nlog.config", false);
 builder.Services.Configure<RouteOptions>(options => { options.LowercaseUrls = true; });
 builder.Services.Configure<VisaOptions>(builder.Configuration.GetSection("PaymentOptions:Visa"));
 builder.Services.Configure<TerminalOptions>(builder.Configuration.GetSection("PaymentOptions:IBox"));
+builder.Services.Configure<TaxOptions>(builder.Configuration.GetSection("PaymentOptions:Taxes"));
 builder.Services.Configure<MongoDbOptions>(builder.Configuration.GetSection("MongoDbOptions"));
 builder.Services.Configure<AuthApiOptions>(builder.Configuration.GetSection("AuthApiOptions"));
 builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityOptions"));

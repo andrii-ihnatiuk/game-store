@@ -1,0 +1,42 @@
+<div *ngIf="!!comment" class="comment-container" id="comment{{comment.id}}">
+  <div class="comment-image-container">
+    <div class="comment-image-wrapper">
+      <img src="https://placehold.co/50" alt="author photo">
+    </div>
+  </div>
+  <div class="comment-content-container">
+    <div class="comment-header">
+      <div>
+        <div class="comment-author">{{comment.author}}</div>
+        <div class="comment-faded">{{ comment.creationDate | date: 'dd/MM/yyyy' }}</div>
+      </div>
+      <app-star-rating *ngIf="hasRating" [rating]="commentRating" [starSize]="commentStarSize" [readonly]="true"></app-star-rating>
+    </div>
+    <div class="comment-body" [innerHTML]="comment.body"></div>
+    <div class="comment-footer">
+      <div *ngIf="!!comment.likesCount" class="comment-faded">{{ comment.likesCount }} likes</div>
+      <div class="comment-actions">
+        <button mat-button class="btn-underline" (click)="onAction(action.Like)">
+          {{ labels.likeButtonLabel }}
+        </button>
+        <button *ngIf="canReply" mat-button class="btn-underline" (click)="onAction(action.Reply)">
+          {{ labels.replyButtonLabel }}
+        </button>
+        <button *ngIf="canQuote" mat-button class="btn-underline" (click)="onAction(action.Quote)">
+          {{ labels.quoteButtonLabel }}
+        </button>
+        <button *ngIf="canDelete" mat-raised-button color="warn" (click)="deleteComment.emit(comment)">
+          {{ labels.deleteButtonLabel }}
+        </button>
+        <button *ngIf="canBan" mat-raised-button color="warn" (click)="banComment.emit(comment)">
+          {{ labels.banButtonLabel }}
+        </button>
+      </div>
+    </div>
+    <div *ngIf="!!comment.childComments?.length" class="child-comments">
+      <gamestore-comment *ngFor="let childComment of comment.childComments" [comment]="childComment" [hasRating]="false"
+        (select)="select.emit($event)" (deleteComment)="deleteComment.emit($event)"
+        (banComment)="banComment.emit($event)"></gamestore-comment>
+    </div>
+  </div>
+</div>

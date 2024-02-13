@@ -1,0 +1,21 @@
+<div class="card-container">
+  <div class="card">
+    <div class="card-image-wrapper">
+      <img src="https://placehold.co/160" alt="game image">
+    </div>
+    <div class="card-content">
+      <div class="card-title">{{ item.title }}</div>
+      <div *ngIf="!!item.type" class="card-subtitle">{{ item.type }}</div>
+      <app-price [price]="item.price" [discount]="item.discount"></app-price>
+    </div>
+    <a routerLink="{{item.pageLink}}"></a>
+  </div>
+  <div class="card-actions">
+    <a *ngIf="!!item.updateLink?.length" mat-stroked-button color="warn" routerLink="{{ item.updateLink }}">
+      {{ labels.updateButtonLabel }}
+    </a>
+    <a *ngIf="!!item.deleteLink?.length" mat-stroked-button color="warn" routerLink="{{ item.deleteLink }}">
+      {{ labels.deleteButtonLabel }}
+    </a>
+  </div>
+</div>

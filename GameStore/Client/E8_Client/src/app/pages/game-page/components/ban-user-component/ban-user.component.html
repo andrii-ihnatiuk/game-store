@@ -1,0 +1,18 @@
+<article *ngIf="!!control && !!banDurations">
+  <p>{{ labels.banMessage }}</p>
+  <h3>{{ name }}</h3>
+
+  <div>
+    <gamestore-selector-input
+      [name]="labels.banDurationLabel"
+      [control]="control"
+      [values]="banDurations"
+    ></gamestore-selector-input>
+  </div>
+
+  <div>
+    <button (click)="onBan()" mat-raised-button color="warn" [disabled]="!control || control.invalid">
+      {{ labels.banButtonLabel }}
+    </button>
+  </div>
+</article>

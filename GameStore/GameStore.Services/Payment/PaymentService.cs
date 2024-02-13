@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.DTOs.Payment;
+using GameStore.Shared.Exceptions;
 
 namespace GameStore.Services.Payment;
 
@@ -25,9 +27,20 @@ public class PaymentService : IPaymentService
         return _mapper.Map<IList<PaymentMethodDto>>(methods);
     }
 
-    public Task<IPaymentResult> RequestPaymentAsync(PaymentDto payment, string customerId)
+    public async Task<IPaymentResult> RequestPaymentAsync(PaymentDto payment, string customerId)
     {
-        var strategy = _strategyResolver.Resolve(payment.Method);
-        return strategy.ProcessPayment(payment, customerId);
+        PaymentMethod paymentMethod;
+        try
+        {
+            paymentMethod = await _unitOfWork.PaymentMethods.GetOneAsync(p => p.Title.Equals(payment.Method));
+            payment.Method = paymentMethod.Id.ToString();
+        }
+        catch (EntityNotFoundException)
+        {
+            throw new GameStoreNotSupportedException("Selected payment method is not supported");
+        }
+
+        var strategy = _strategyResolver.Resolve(paymentMethod.StrategyName);
+        return await strategy.ProcessPaymentAsync(payment, customerId);
     }
 }

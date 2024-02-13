@@ -1,0 +1,90 @@
+<article *ngIf="!!form">
+  <gamestore-form
+    [form]="form"
+    idName="id"
+    (save)="onSave()"
+    [pageLink]="gamePageLink"
+  >
+    <div class="form-item-wrapper">
+      <gamestore-text-input
+        [name]="labels.gameKeyLabel"
+        [control]="getFormControl('key')"
+      ></gamestore-text-input>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-text-input
+        [name]="labels.gameNameLabel"
+        [control]="getFormControl('name')"
+      ></gamestore-text-input>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-text-input
+        [name]="labels.gameTypeLabel"
+        [control]="getFormControl('type')"
+      ></gamestore-text-input>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-text-input
+        [name]="labels.gameFileSizeLabel"
+        [control]="getFormControl('fileSize')"
+      ></gamestore-text-input>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-number-input
+        [name]="labels.gamePriceLabel"
+        [control]="getFormControl('price')"
+      ></gamestore-number-input>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-number-input
+        [name]="labels.gameDiscountLabel"
+        [control]="getFormControl('discount')"
+      ></gamestore-number-input>
+    </div>
+    <div class="form-item-wrapper">
+      <app-datepicker
+        [name]="labels.gameDatePublishing"
+        [control]="getFormControl('publishDate')"
+      ></app-datepicker>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-number-input
+        [name]="labels.gameUnitInStockLabel"
+        [control]="getFormControl('unitInStock')"
+      ></gamestore-number-input>
+    </div>
+    <div class="form-item-wrapper">
+      <app-slide-input-component
+        [name]="labels.gameDiscontinuedLabel"
+        [control]="getFormControl('discontinued')"
+      ></app-slide-input-component>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-textarea-input
+        [name]="labels.gameDescriptionLabel"
+        [control]="getFormControl('description')"
+      ></gamestore-textarea-input>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-checkboxes-input
+        [name]="labels.genresMenuItem"
+        [controls]="getFormControlArray('genres')"
+        [items]="genreItems"
+      ></gamestore-checkboxes-input>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-checkboxes-input
+        [name]="labels.platformsMenuItem"
+        [controls]="getFormControlArray('platforms')"
+        [items]="platformItems"
+      ></gamestore-checkboxes-input>
+    </div>
+    <div class="form-item-wrapper">
+      <gamestore-selector-input
+        [name]="labels.publisherLabel"
+        [control]="getFormControl('publisher')"
+        [values]="publishers"
+      ></gamestore-selector-input>
+    </div>
+  </gamestore-form>
+</article>

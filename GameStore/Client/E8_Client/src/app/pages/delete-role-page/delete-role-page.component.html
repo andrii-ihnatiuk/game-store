@@ -1,0 +1,3 @@
+<article *ngIf="!!role">
+  <gamestore-delete-wrapper [name]="role.name" (delete)="onDelete()" [pageLink]="rolePageLink"></gamestore-delete-wrapper>
+</article>

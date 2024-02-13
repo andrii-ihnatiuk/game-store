@@ -1,5 +1,6 @@
 ﻿using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Payment;
+using GameStore.Shared.Constants;
 using GameStore.Shared.Exceptions;
 using Moq;
 
@@ -23,11 +24,11 @@ public class PaymentStrategyResolverTests
     public void Resolve_FindsCorrectStrategy()
     {
         // Arrange
-        _bankStrategy.Setup(s => s.Name).Returns("Bank");
-        _terminalStrategy.Setup(s => s.Name).Returns("Terminal");
+        _bankStrategy.Setup(s => s.Name).Returns(PaymentStrategyName.Bank);
+        _terminalStrategy.Setup(s => s.Name).Returns(PaymentStrategyName.Terminal);
 
         // Act
-        var strategy = _resolver.Resolve("Terminal");
+        var strategy = _resolver.Resolve(PaymentStrategyName.Terminal);
 
         // Assert
         Assert.Equal(_terminalStrategy.Object, strategy);
@@ -37,10 +38,10 @@ public class PaymentStrategyResolverTests
     public void Resolve_ThrowsExceptionWhenStrategyNotFound()
     {
         // Arrange
-        _bankStrategy.Setup(s => s.Name).Returns("Bank");
-        _terminalStrategy.Setup(s => s.Name).Returns("Terminal");
+        _bankStrategy.Setup(s => s.Name).Returns(PaymentStrategyName.Bank);
+        _terminalStrategy.Setup(s => s.Name).Returns(PaymentStrategyName.Terminal);
 
         // Assert
-        Assert.Throws<PaymentException>(() => _resolver.Resolve("NotImplementedPayment"));
+        Assert.Throws<PaymentException>(() => _resolver.Resolve(PaymentStrategyName.Visa));
     }
 }

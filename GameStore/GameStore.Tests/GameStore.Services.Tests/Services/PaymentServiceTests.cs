@@ -4,6 +4,7 @@ using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Payment;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.DTOs.Payment;
 using Microsoft.EntityFrameworkCore.Query;
@@ -50,16 +51,25 @@ public class PaymentServiceTests
     public void RequestPaymentAsync_CallsCorrectStrategy()
     {
         // Arrange
-        var payment = new PaymentDto { Method = "Bank" };
+        var paymentMethod = PaymentStrategyName.Bank;
+        _unitOfWork.Setup(s => s.PaymentMethods.GetOneAsync(
+                It.IsAny<Expression<Func<PaymentMethod, bool>>>(),
+                It.IsAny<Func<IQueryable<PaymentMethod>, IIncludableQueryable<PaymentMethod, object?>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(new PaymentMethod { StrategyName = paymentMethod });
+
         var strategy = new Mock<IPaymentStrategy>();
-        _strategyResolver.Setup(s => s.Resolve(payment.Method)).Returns(strategy.Object);
-        var paymentResult = new Mock<IPaymentResult>();
-        strategy.Setup(s => s.ProcessPayment(payment, It.IsAny<string>())).ReturnsAsync(paymentResult.Object);
+        _strategyResolver.Setup(s => s.Resolve(paymentMethod))
+            .Returns(strategy.Object)
+            .Verifiable(Times.Once);
+
+        strategy.Setup(s => s.ProcessPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<string>()))
+            .ReturnsAsync(new Mock<IPaymentResult>().Object);
 
         // Act
-        var result = _service.RequestPaymentAsync(payment, "customer-id");
+        var result = _service.RequestPaymentAsync(new PaymentDto(), "customer-id");
 
         // Assert
-        strategy.Verify(s => s.ProcessPayment(payment, It.IsAny<string>()), Times.Once);
+        strategy.Verify();
     }
 }

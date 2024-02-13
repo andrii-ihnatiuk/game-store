@@ -36,6 +36,9 @@ namespace GameStore.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("GameId")
                         .HasColumnType("uniqueidentifier");
 
@@ -81,6 +84,12 @@ namespace GameStore.Data.Migrations
                     b.Property<bool>("Discontinued")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileSize")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LegacyId")
                         .HasColumnType("nvarchar(max)");
 
@@ -99,6 +108,9 @@ namespace GameStore.Data.Migrations
 
                     b.Property<Guid?>("PublisherId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<short>("UnitInStock")
                         .HasColumnType("smallint");
@@ -121,11 +133,14 @@ namespace GameStore.Data.Migrations
                             Deleted = false,
                             Description = "An action-adventure game in an open world.",
                             Discontinued = false,
+                            Discount = 10,
+                            FileSize = "65.76 GB",
                             Name = "The Legend of Zelda: Breath of the Wild",
                             PageViews = 0m,
                             Price = 1500.2m,
                             PublishDate = new DateTime(2017, 4, 23, 0, 0, 0, 0, DateTimeKind.Utc),
                             PublisherId = new Guid("defd4ed1-a967-48af-83fb-4e5ffee412b0"),
+                            Type = "Full Game",
                             UnitInStock = (short)50
                         },
                         new
@@ -136,11 +151,14 @@ namespace GameStore.Data.Migrations
                             Deleted = false,
                             Description = "An open-world action-adventure game.",
                             Discontinued = true,
+                            Discount = 0,
+                            FileSize = "120 GB",
                             Name = "Grand Theft Auto V",
                             PageViews = 0m,
                             Price = 500m,
                             PublishDate = new DateTime(2013, 9, 17, 0, 0, 0, 0, DateTimeKind.Utc),
                             PublisherId = new Guid("ec62c5de-e415-4e74-bc75-3a7606563c78"),
+                            Type = "Bundle",
                             UnitInStock = (short)32
                         },
                         new
@@ -151,11 +169,14 @@ namespace GameStore.Data.Migrations
                             Deleted = false,
                             Description = "Overwatch 2 is a free-to-play, team-based action game.",
                             Discontinued = false,
+                            Discount = 5,
+                            FileSize = "54.32 GB",
                             Name = "Overwatch 2",
                             PageViews = 0m,
                             Price = 1200m,
                             PublishDate = new DateTime(2022, 10, 4, 0, 0, 0, 0, DateTimeKind.Utc),
                             PublisherId = new Guid("3f8fc430-d0a5-4779-a3a4-5e0add54fde6"),
+                            Type = "Collector's edition",
                             UnitInStock = (short)20
                         },
                         new
@@ -166,11 +187,13 @@ namespace GameStore.Data.Migrations
                             Deleted = false,
                             Description = "Hearthstone is a fast-paced strategy card game from Blizzard Entertainment.",
                             Discontinued = false,
+                            Discount = 0,
                             Name = "Hearthstone",
                             PageViews = 0m,
                             Price = 800m,
                             PublishDate = new DateTime(2014, 4, 11, 0, 0, 0, 0, DateTimeKind.Utc),
                             PublisherId = new Guid("3f8fc430-d0a5-4779-a3a4-5e0add54fde6"),
+                            Type = "Full Game",
                             UnitInStock = (short)45
                         },
                         new
@@ -181,11 +204,13 @@ namespace GameStore.Data.Migrations
                             Deleted = false,
                             Description = "A 3rd person action-adventure title from Respawn.",
                             Discontinued = false,
+                            Discount = 0,
                             Name = "Star Wars Jedi: Fallen Order",
                             PageViews = 0m,
                             Price = 1400m,
                             PublishDate = new DateTime(2019, 9, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             PublisherId = new Guid("08029ea0-8bd8-494c-b3c5-b65a61538f81"),
+                            Type = "Bundle",
                             UnitInStock = (short)34
                         });
                 });
@@ -595,8 +620,11 @@ namespace GameStore.Data.Migrations
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<float>("Discount")
-                        .HasColumnType("real");
+                    b.Property<int>("Discount")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("FinalPrice")
+                        .HasColumnType("money");
 
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
@@ -611,8 +639,8 @@ namespace GameStore.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<short>("Quantity")
-                        .HasColumnType("smallint");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -637,6 +665,9 @@ namespace GameStore.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("StrategyName")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -654,6 +685,7 @@ namespace GameStore.Data.Migrations
                             Id = new Guid("77301abc-0738-4540-aa3a-19db9f6bc2dc"),
                             Description = "Use a bank of your choice to make payments!",
                             ImageUrl = "https://static.vecteezy.com/system/resources/thumbnails/000/594/232/small/B001.jpg",
+                            StrategyName = 0,
                             Title = "Bank"
                         },
                         new
@@ -661,6 +693,7 @@ namespace GameStore.Data.Migrations
                             Id = new Guid("32bda162-d288-4a60-a684-9bd7caf61951"),
                             Description = "Simply pay with IBox!",
                             ImageUrl = "https://logowik.com/content/uploads/images/ibox9043.logowik.com.webp",
+                            StrategyName = 1,
                             Title = "IBox terminal"
                         },
                         new
@@ -668,6 +701,7 @@ namespace GameStore.Data.Migrations
                             Id = new Guid("d84def54-1f51-4f1d-aedc-fc1d18b4fa12"),
                             Description = "Pay with your favourite card!",
                             ImageUrl = "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0013/4323/brand.gif?itok=fSmoZrGH",
+                            StrategyName = 2,
                             Title = "Visa"
                         });
                 });

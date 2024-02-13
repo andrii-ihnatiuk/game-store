@@ -15,6 +15,9 @@ public class OrderDetailEntityConfiguration : IEntityTypeConfiguration<OrderDeta
         builder.Property(od => od.Price)
             .HasColumnType("money");
 
+        builder.Property(od => od.FinalPrice)
+            .HasColumnType("money");
+
         builder.HasOne(od => od.Product)
             .WithMany()
             .HasForeignKey(od => od.ProductId);

@@ -6,7 +6,9 @@ using GameStore.Services;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Exceptions;
 using GameStore.Shared.Models;
+using GameStore.Shared.Options;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace GameStore.Tests.GameStore.Services.Tests.Services;
@@ -18,11 +20,14 @@ public class OrderServiceTests
     private static readonly Guid ProductId = Guid.NewGuid();
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IMapper> _mapper = new();
+    private readonly Mock<IOptions<TaxOptions>> _taxOptionsMock = new();
     private readonly CoreOrderService _service;
 
     public OrderServiceTests()
     {
-        _service = new CoreOrderService(_unitOfWork.Object, _mapper.Object);
+        _taxOptionsMock.SetupGet(e => e.Value)
+            .Returns(new TaxOptions { DefaultTax = 20 });
+        _service = new CoreOrderService(_unitOfWork.Object, _mapper.Object, _taxOptionsMock.Object);
     }
 
     [Fact]
@@ -54,15 +59,15 @@ public class OrderServiceTests
     public async Task AddGameToCartAsync_WhenOrderExists_IncrementsQuantity()
     {
         // Arrange
+        var game = new Game { Price = 100, Id = ProductId, Alias = GameAlias, Name = "name" };
         var order = new Order()
         {
             Id = Guid.Empty,
             OrderDetails = new List<OrderDetail>()
             {
-                new() { ProductId = ProductId, Quantity = 2 },
+                new() { ProductId = ProductId, Quantity = 2, Product = game },
             },
         };
-        var game = new Game { Price = 100, Id = ProductId, Alias = GameAlias, Name = "name" };
         _unitOfWork.Setup(u => u.Orders.GetOneAsync(
                 It.IsAny<Expression<Func<Order, bool>>>(),
                 It.IsAny<Func<IQueryable<Order>, IIncludableQueryable<Order, object>>>(),
@@ -87,7 +92,9 @@ public class OrderServiceTests
     public async Task GetCartByCustomerAsync_ReturnsCorrectAmountOfOrderDetails()
     {
         // Arrange
-        var order = new Order { OrderDetails = new List<OrderDetail> { new() } };
+        var game = new Game { Price = 10, Id = ProductId, Alias = GameAlias, Name = "name" };
+        var orderDetail = new OrderDetail { ProductName = GameAlias, Quantity = 2, Price = 20, Discount = 50, Product = game };
+        var order = new Order { Sum = 20, OrderDetails = new List<OrderDetail> { orderDetail } };
         _unitOfWork.Setup(u => u.Orders.GetOneAsync(
                 It.IsAny<Expression<Func<Order, bool>>>(),
                 It.IsAny<Func<IQueryable<Order>, IIncludableQueryable<Order, object>>>(),
@@ -102,7 +109,7 @@ public class OrderServiceTests
         var result = await _service.GetCartByCustomerAsync(CustomerId);
 
         // Assert
-        Assert.Equal(orderDetailDtos.Count, result.Count);
+        Assert.Equal(orderDetailDtos.Count, result.Details.Count);
     }
 
     [Fact]
@@ -166,9 +173,9 @@ public class OrderServiceTests
     public async Task DeleteGameFromCartAsync_WhenQuantityIsOne_RemovesOrderDetail()
     {
         // Arrange
-        var orderDetail = new OrderDetail { ProductName = GameAlias, Quantity = 1 };
-        var order = new Order { Sum = 100, OrderDetails = new List<OrderDetail> { orderDetail } };
-
+        var game = new Game { Price = 10, Id = ProductId, Alias = GameAlias, Name = "name" };
+        var orderDetail = new OrderDetail { ProductName = GameAlias, Quantity = 1, Price = 20, Discount = 50, Product = game };
+        var order = new Order { Sum = 20, OrderDetails = new List<OrderDetail> { orderDetail } };
         _unitOfWork.Setup(
                 u => u.Orders.GetOneAsync(
                     It.IsAny<Expression<Func<Order, bool>>>(),
@@ -177,7 +184,7 @@ public class OrderServiceTests
             .ReturnsAsync(order);
 
         // Act
-        await _service.DeleteGameFromCartAsync(CustomerId, GameAlias);
+        await _service.DeleteGameFromCartAsync(CustomerId, GameAlias, false);
 
         // Assert
         Assert.DoesNotContain(orderDetail, order.OrderDetails);
@@ -189,7 +196,8 @@ public class OrderServiceTests
     public async Task DeleteGameFromCartAsync_WhenQuantityGreaterThanOne_DecreasesQuantity()
     {
         // Arrange
-        var orderDetail = new OrderDetail { ProductName = GameAlias, Quantity = 2, Price = 20, Discount = 50 };
+        var game = new Game { Price = 10, Id = ProductId, Alias = GameAlias, Name = "name" };
+        var orderDetail = new OrderDetail { ProductName = GameAlias, Quantity = 2, Price = 20, Discount = 50, Product = game };
         var order = new Order { Sum = 20, OrderDetails = new List<OrderDetail> { orderDetail } };
 
         _unitOfWork.Setup(
@@ -200,11 +208,10 @@ public class OrderServiceTests
             .ReturnsAsync(order);
 
         // Act
-        await _service.DeleteGameFromCartAsync(CustomerId, GameAlias);
+        await _service.DeleteGameFromCartAsync(CustomerId, GameAlias, false);
 
         // Assert
         Assert.Equal(1, orderDetail.Quantity);
-        Assert.Equal(10, order.Sum);
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
     }
 }

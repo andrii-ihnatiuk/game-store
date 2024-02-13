@@ -1,0 +1,5 @@
+<article *ngIf="!!form">
+  <gamestore-form [form]="form" idName="id" (save)="onSave()" [pageLink]="platformPageLink">
+    <gamestore-text-input [name]="labels.platformTypeLabel" [control]="getFormControl('type')"></gamestore-text-input>
+  </gamestore-form>
+</article>

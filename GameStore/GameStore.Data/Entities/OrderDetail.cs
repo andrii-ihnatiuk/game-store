@@ -10,9 +10,11 @@ public class OrderDetail : ICreationTrackable
 
     public decimal Price { get; set; }
 
-    public short Quantity { get; set; }
+    public decimal FinalPrice { get; set; }
 
-    public float Discount { get; set; }
+    public ushort Quantity { get; set; }
+
+    public ushort Discount { get; set; }
 
     public DateTime CreationDate { get; set; }
 

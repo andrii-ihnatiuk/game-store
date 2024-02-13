@@ -58,16 +58,16 @@ public class OrdersControllerTests
     public async Task GetCartByCustomerAsync_ReturnsOkResultWithOrderDetailList()
     {
         // Arrange
-        var orderDetails = new List<OrderDetailDto> { new(), new() };
-        _orderService.Setup(o => o.GetCartByCustomerAsync(It.IsAny<string>())).ReturnsAsync(orderDetails);
+        var cartDetails = new CartDetailsDto();
+        _orderService.Setup(o => o.GetCartByCustomerAsync(It.IsAny<string>())).ReturnsAsync(cartDetails);
 
         // Act
         var result = await _controller.GetCartByCustomerAsync();
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
-        var returnValue = Assert.IsType<List<OrderDetailDto>>(okResult.Value);
-        Assert.Equal(orderDetails, returnValue);
+        var returnValue = Assert.IsType<CartDetailsDto>(okResult.Value);
+        Assert.Equal(cartDetails, returnValue);
     }
 
     [Fact]
@@ -172,7 +172,11 @@ public class OrdersControllerTests
     public async Task DeleteGameFromCartAsync_ReturnsNoContentResult()
     {
         // Arrange
-        _orderService.Setup(o => o.DeleteGameFromCartAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
+        _orderService.Setup(o => o.DeleteGameFromCartAsync(
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>()))
+            .Returns(Task.CompletedTask);
 
         // Act
         var result = await _controller.DeleteGameFromCartAsync(GameAlias);

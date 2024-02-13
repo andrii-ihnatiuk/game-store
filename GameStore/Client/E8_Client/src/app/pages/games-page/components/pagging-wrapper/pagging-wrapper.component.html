@@ -1,0 +1,28 @@
+<div *ngIf="!!pageCountControl && !!pageControl" class="pagging-container">
+  <div class="content-container">
+    <ng-content></ng-content>
+  </div>
+  <div class="bottom-panel-container">
+    <div class="page-controls">
+      <button
+        mat-stroked-button
+        (click)="onPrevChange()"
+        [disabled]="currentPage <= 1 || pageControl.disabled"
+        type="button">
+        <
+      </button>
+      <span>{{ currentPage }}</span>
+      <button
+        mat-stroked-button
+        (click)="onNextChange()"
+        [disabled]="currentPage >= totalPages || pageControl.disabled"
+        type="button">
+        >
+      </button>
+    </div>
+    <gamestore-selector-input
+      [control]="pageCountControl"
+      [values]="paggings"
+    ></gamestore-selector-input>
+  </div>
+</div>

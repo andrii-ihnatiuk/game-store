@@ -6,7 +6,9 @@ using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Exceptions;
 using GameStore.Shared.Models;
+using GameStore.Shared.Options;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace GameStore.Services;
 
@@ -14,25 +16,42 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly TaxOptions _taxOptions;
 
-    public CoreOrderService(IUnitOfWork unitOfWork, IMapper mapper)
+    public CoreOrderService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<TaxOptions> taxOptions)
     {
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _taxOptions = taxOptions.Value;
     }
 
     public async Task AddGameToCartAsync(string customerId, string gameAlias)
     {
         var order = await GetExistingOrderOrCreateNewAsync(customerId);
         await AddGameToOrderOrIncrementQuantityAsync(order, gameAlias);
-        RecalculateTotalSumFor(order);
+        RecalculateOrderPricing(order, _taxOptions);
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task<IList<OrderDetailDto>> GetCartByCustomerAsync(string customerId)
+    public async Task<CartDetailsDto> GetCartByCustomerAsync(string customerId)
     {
         var order = await GetExistingOrderOrCreateNewAsync(customerId, noTracking: true);
-        return _mapper.Map<IList<OrderDetailDto>>(order.OrderDetails);
+        var cartDetails = CreateCartDetailsFromOrder(order);
+        cartDetails.Details = _mapper.Map<IList<OrderDetailDto>>(order.OrderDetails);
+        return cartDetails;
+    }
+
+    public async Task<Order> GetOrderForProcessingAsync(string customerId, bool noTracking = false)
+    {
+        var order = await _unitOfWork.Orders.GetOneAsync(
+            predicate: o => o.CustomerId == customerId && o.PaidDate == null,
+            include: q => q.Include(o => o.OrderDetails).ThenInclude(od => od.Product),
+            noTracking: noTracking);
+
+        RecalculateOrderPricing(order, _taxOptions);
+        RefreshProductsRelatedInfo(order.OrderDetails);
+
+        return order;
     }
 
     public async Task ShipOrderAsync(string orderId)
@@ -66,16 +85,49 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
         return _mapper.Map<IList<OrderDetailDto>>(order.OrderDetails);
     }
 
-    public async Task DeleteGameFromCartAsync(string customerId, string gameAlias)
+    public async Task DeleteGameFromCartAsync(string customerId, string gameAlias, bool deleteAll)
     {
-        var order = await _unitOfWork.Orders.GetOneAsync(
-            predicate: o => o.CustomerId == customerId && o.PaidDate == null,
-            include: q => q.Include(o => o.OrderDetails),
-            noTracking: false);
-
-        DeleteGameFromOrderOrDecrementQuantity(order, gameAlias);
-        RecalculateTotalSumFor(order);
+        var order = await GetOrderForProcessingAsync(customerId);
+        DeleteGameFromOrderOrDecrementQuantity(order, gameAlias, deleteAll);
+        RecalculateOrderPricing(order, _taxOptions);
         await _unitOfWork.SaveAsync();
+    }
+
+    private static void RecalculateOrderPricing(Order order, TaxOptions taxOptions)
+    {
+        order.Sum = 0;
+        foreach (var d in order.OrderDetails)
+        {
+            d.Price = d.Product.Price * d.Quantity;
+            d.Discount = d.Product.Discount;
+            d.FinalPrice = CalculateProductFinalPrice(d.Product.Price, d.Quantity, d.Product.Discount);
+            order.Sum += d.FinalPrice + (d.FinalPrice * taxOptions.DefaultTax / 100);
+        }
+    }
+
+    private static void RefreshProductsRelatedInfo(IEnumerable<OrderDetail> details)
+    {
+        foreach (var d in details)
+        {
+            d.ProductName = d.Product.Alias;
+        }
+    }
+
+    private static decimal CalculateProductFinalPrice(decimal price, uint quantity, uint discountPercentage)
+    {
+        return price * quantity * (100 - discountPercentage) / 100;
+    }
+
+    private static CartDetailsDto CreateCartDetailsFromOrder(Order order)
+    {
+        var cartDetails = new CartDetailsDto
+        {
+            Subtotal = order.OrderDetails.Select(d => d.FinalPrice).Sum(),
+            Total = order.Sum,
+        };
+        cartDetails.Taxes = order.Sum - cartDetails.Subtotal;
+
+        return cartDetails;
     }
 
     private async Task<Order> GetExistingOrderOrCreateNewAsync(string customerId, bool noTracking = false)
@@ -83,10 +135,7 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
         Order order;
         try
         {
-            order = await _unitOfWork.Orders.GetOneAsync(
-                predicate: o => o.CustomerId == customerId && o.PaidDate == null,
-                include: q => q.Include(o => o.OrderDetails),
-                noTracking: noTracking);
+            order = await GetOrderForProcessingAsync(customerId, noTracking);
         }
         catch (EntityNotFoundException)
         {
@@ -107,7 +156,7 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
 
     private async Task AddGameToOrderOrIncrementQuantityAsync(Order order, string gameAlias)
     {
-        var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == gameAlias);
+        var game = await _unitOfWork.Games.GetOneAsync(g => g.Alias == gameAlias, noTracking: false);
         if (game.Deleted)
         {
             throw new GameStoreNotSupportedException("Cannot buy a deleted game!");
@@ -125,24 +174,20 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
             {
                 OrderId = order.Id,
                 ProductId = game.Id,
-                Price = game.Price,
-                Quantity = 1,
                 ProductName = game.Alias,
-                Discount = 0,
+                Product = game,
+                Price = game.Price,
+                FinalPrice = CalculateProductFinalPrice(game.Price, quantity: 1, game.Discount),
+                Discount = game.Discount,
+                Quantity = 1,
             });
         }
     }
 
-    private static void RecalculateTotalSumFor(Order order)
-    {
-        order.Sum = order.OrderDetails
-            .Select(d => (d.Price * d.Quantity) - (d.Price * d.Quantity * (decimal)d.Discount / 100)).Sum();
-    }
-
-    private static void DeleteGameFromOrderOrDecrementQuantity(Order order, string gameAlias)
+    private static void DeleteGameFromOrderOrDecrementQuantity(Order order, string gameAlias, bool deleteAll)
     {
         var orderDetail = order.OrderDetails.First(d => d.ProductName == gameAlias);
-        if (orderDetail.Quantity > 1)
+        if (orderDetail.Quantity > 1 && !deleteAll)
         {
             orderDetail.Quantity -= 1;
         }

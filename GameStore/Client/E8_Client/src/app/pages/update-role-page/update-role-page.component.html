@@ -1,0 +1,19 @@
+<article *ngIf="!!form">
+  <gamestore-form
+    [form]="form"
+    idName="id"
+    (save)="onSave()"
+    [pageLink]="rolePageLink"
+  >
+    <gamestore-text-input
+      [name]="labels.roleNameLabel"
+      [control]="getFormControl('name')"
+    ></gamestore-text-input>
+    <gamestore-checkboxes-input
+      *ngIf="!!permissionItems?.length"
+      [name]="labels.permissionsLabel"
+      [controls]="getFormControlArray('permissions')"
+      [items]="permissionItems"
+    ></gamestore-checkboxes-input>
+  </gamestore-form>
+</article>

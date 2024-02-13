@@ -1,0 +1,3 @@
+<article *ngIf="!!publisher">
+  <gamestore-delete-wrapper [name]="publisher.companyName" (delete)="onDelete()" [pageLink]="publisherPageLink"></gamestore-delete-wrapper>
+</article>

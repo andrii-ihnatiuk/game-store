@@ -1,0 +1,25 @@
+<div *ngIf="totalForPay !== undefined" class="make-order-container">
+  <div *ngIf="!terminalResult && !paymentViaVisa">
+    <div class="total">{{ labels.totalLabel }} : {{ totalForPay }}</div>
+    <div *ngIf="!!paymentMethods?.length">
+      <div *ngFor="let method of paymentMethods" class="payment-method">
+        <img src="{{ method.imageUrl }}" />
+        <span class="title">{{ method.title }}</span>
+        <span>{{ method.description }}</span>
+        <button
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="onPay(method.method)"
+        >
+          {{ labels.payButtonLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <gamestore-terminal-result
+    *ngIf="!!terminalResult && !paymentViaVisa"
+    [terminalResult]="terminalResult"
+  ></gamestore-terminal-result>
+  <gamestore-visa-payment *ngIf="!terminalResult && paymentViaVisa" (payVisa)="onPayVisa($event)"></gamestore-visa-payment>
+</div>

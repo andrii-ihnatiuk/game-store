@@ -1,0 +1,61 @@
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 80px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1;
+    padding: 30px 25px;
+    background-color: #F7F7F7;
+    color: #3E4554;
+    min-width: 300px;
+
+    .card-content {
+        padding: 24px 0;
+    }
+
+    .card-header {
+        font-family: Montserrat;
+        font-size: 26px;
+        line-height: 32px;
+        font-weight: bold;
+        letter-spacing: 0;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    button {
+        align-self: flex-end;
+        margin-top: auto;
+    }
+
+    hr {
+        margin: 16px 0 14px;
+    }
+}
+
+.twitter-block {
+    .twitter-title {
+        color: #3E4554;
+        font-size: 15px;
+        margin-bottom: 5px;
+    }
+
+    .twitter-subtitle {
+        margin-top: 3px;
+        color: #9B9B9B;
+        font-size: 12px;
+    }
+}
+
+.blog-block {
+    .blog-text {
+        display: inline-block;
+    }
+}

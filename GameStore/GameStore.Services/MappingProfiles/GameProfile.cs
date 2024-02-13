@@ -21,9 +21,6 @@ public class GameProfile : Profile
                 dest => dest.Alias,
                 opts => opts.MapFrom(src => ConstructAliasIfEmpty(src.Game.Key, src.Game.Name)))
             .ForMember(
-                dest => dest.Discontinued,
-                opts => opts.MapFrom(src => src.Game.Discontinued != 0))
-            .ForMember(
                 dest => dest.GameGenres,
                 opts => opts.MapFrom(src => ConstructGameGenresFromIds(src.Genres, Guid.Empty.ToString())))
             .ForMember(
@@ -42,9 +39,6 @@ public class GameProfile : Profile
             .ForMember(
                 dest => dest.Alias,
                 opts => opts.MapFrom(src => ConstructAliasIfEmpty(src.Game.Key, src.Game.Name)))
-            .ForMember(
-                dest => dest.Discontinued,
-                opts => opts.MapFrom(src => src.Game.Discontinued != 0))
             .ForMember(
                 dest => dest.GameGenres,
                 opts => opts.MapFrom(src => ConstructGameGenresFromIds(src.Genres, src.Game.Id)))

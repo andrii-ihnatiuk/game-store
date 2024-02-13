@@ -1,0 +1,7 @@
+<div class="checkboxes-input-wrapper">
+  <div *ngIf="!!name?.length">{{ name }}</div>
+  <div *ngFor="let control of controls; let i = index" class="checkbox-container">
+    <mat-checkbox [color]="'warn'" [formControl]="control"></mat-checkbox>
+    <span *ngIf="!!getItem(i)">{{ getItem(i) }}</span>
+  </div>
+</div>

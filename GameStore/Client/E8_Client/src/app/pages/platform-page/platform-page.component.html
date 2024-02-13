@@ -1,0 +1,13 @@
+<div *ngIf="!!platform">
+  <div class="to-list-button">
+    <a routerLink="{{ links.get(pageRoutes.Platforms) }}" mat-button>
+      {{ labels.platformsMenuItem }}
+    </a>
+  </div>
+  <gamestore-info-wrapper
+    [deleteLink]="deletePlatformLink"
+    [updateLink]="updatePlatformLink"
+  >
+    <gamestore-info [infoList]="platformInfoList"></gamestore-info>
+  </gamestore-info-wrapper>
+</div>

@@ -1,0 +1,76 @@
+﻿.container {
+    display: flex;
+    gap: 15px;
+
+    .quantity {
+        color: #3E4554;
+        font-size: 18px;
+        line-height: 26px;
+    }
+
+    button {
+        position: relative;
+        width: 26px;
+        height: 26px;
+        padding: 0;
+        border: 1px solid #D8D8D8;
+        background-color: transparent;
+        transition: background-color .2s ease;
+
+        &.minus {
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+                height: 2px;
+                background-color: #727272;
+                width: 50%;
+            }
+        }
+
+        &.plus {
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+                height: 2px;
+                background-color: #FF7E2A;
+                width: 50%;
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin: auto;
+                width: 2px;
+                height: 50%;
+                background-color: #FF7E2A;
+            }
+        }
+
+        &::after, &::before {
+            transition: background-color .2s ease;
+        }
+
+        &:enabled:hover {
+            background-color: #FF7E2A;
+            cursor: pointer;
+
+            &::after, &::before {
+                background-color: #FFFF;
+            }
+        }
+    }
+}

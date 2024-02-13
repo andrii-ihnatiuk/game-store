@@ -42,23 +42,8 @@ public class OrdersController : ControllerBase
 
     [Authorize]
     [HttpGet]
-    [Route("/cart/buy/{gameAlias}")]
-    public async Task<IActionResult> AddGameToCartAsync(string gameAlias)
-    {
-        if (EntityAliasUtil.ContainsSuffix(gameAlias))
-        {
-            throw new GameStoreNotSupportedException("Ordering goods from Northwind is not supported!");
-        }
-
-        string customerId = User.Claims.Single(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value;
-        await _coreOrderService.AddGameToCartAsync(customerId, gameAlias);
-        return Ok();
-    }
-
-    [Authorize]
-    [HttpGet]
     [Route("/cart")]
-    public async Task<ActionResult<IList<OrderDetailDto>>> GetCartByCustomerAsync()
+    public async Task<ActionResult<CartDetailsDto>> GetCartByCustomerAsync()
     {
         string customerId = User.Claims.Single(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value;
         return Ok(await _coreOrderService.GetCartByCustomerAsync(customerId));
@@ -110,6 +95,21 @@ public class OrdersController : ControllerBase
     }
 
     [Authorize]
+    [HttpPost]
+    [Route("/cart/buy/{gameAlias}")]
+    public async Task<IActionResult> AddGameToCartAsync(string gameAlias)
+    {
+        if (EntityAliasUtil.ContainsSuffix(gameAlias))
+        {
+            throw new GameStoreNotSupportedException("Ordering goods from Northwind is not supported!");
+        }
+
+        string customerId = User.Claims.Single(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value;
+        await _coreOrderService.AddGameToCartAsync(customerId, gameAlias);
+        return Ok();
+    }
+
+    [Authorize]
     [HttpPost("pay")]
     public async Task<IActionResult> PayForOrderAsync(PaymentDto payment)
     {
@@ -137,10 +137,10 @@ public class OrdersController : ControllerBase
     [Authorize]
     [HttpDelete]
     [Route("/cart/remove/{gameAlias}")]
-    public async Task<IActionResult> DeleteGameFromCartAsync(string gameAlias)
+    public async Task<IActionResult> DeleteGameFromCartAsync([FromRoute] string gameAlias, [FromQuery] bool deleteAll = false)
     {
         string customerId = User.Claims.Single(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value;
-        await _coreOrderService.DeleteGameFromCartAsync(customerId, gameAlias);
+        await _coreOrderService.DeleteGameFromCartAsync(customerId, gameAlias, deleteAll);
         return NoContent();
     }
 

@@ -16,9 +16,6 @@ public class CommentProfile : Profile
                 dest => dest.ChildComments,
                 opts => opts.MapFrom(src => src.Replies))
             .ForMember(
-                dest => dest.Name,
-                opts => opts.MapFrom(src => src.Author))
-            .ForMember(
                 dest => dest.Body,
                 opts => opts.MapFrom(src => src.Intro + src.Body));
 

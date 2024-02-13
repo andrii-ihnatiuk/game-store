@@ -1,0 +1,24 @@
+<article *ngIf="!!form">
+  <gamestore-form [form]="form" (save)="payVisa.emit(form.value)">
+    <gamestore-text-input
+      name="Holder"
+      [control]="getFormControl('holder')"
+    ></gamestore-text-input>
+    <gamestore-text-input
+      name="Card Number"
+      [control]="getFormControl('cardNumber')"
+    ></gamestore-text-input>
+    <gamestore-number-input
+      name="Month Expire"
+      [control]="getFormControl('monthExpire')"
+    ></gamestore-number-input>
+    <gamestore-number-input
+      name="Year Expire"
+      [control]="getFormControl('yearExpire')"
+    ></gamestore-number-input>
+    <gamestore-number-input
+      name="CVV2"
+      [control]="getFormControl('cvv2')"
+    ></gamestore-number-input>
+  </gamestore-form>
+</article>

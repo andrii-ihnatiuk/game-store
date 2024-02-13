@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using GameStore.Data.Entities;
+using GameStore.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -63,10 +64,13 @@ internal static class DataSeeder
                 Id = GameId1,
                 Alias = "zelda-breath-of-the-wild",
                 Name = "The Legend of Zelda: Breath of the Wild",
+                Type = "Full Game",
+                FileSize = "65.76 GB",
                 Description = "An action-adventure game in an open world.",
                 Discontinued = false,
                 UnitInStock = 50,
                 Price = 1500.2M,
+                Discount = 10,
                 PublisherId = PublisherId4,
                 PublishDate = new DateTime(2017, 4, 23, 0, 0, 0, DateTimeKind.Utc),
                 CreationDate = new DateTime(2023, 10, 20, 0, 0, 0, DateTimeKind.Utc),
@@ -76,6 +80,8 @@ internal static class DataSeeder
                 Id = GameId2,
                 Alias = "gta-v",
                 Name = "Grand Theft Auto V",
+                Type = "Bundle",
+                FileSize = "120 GB",
                 Description = "An open-world action-adventure game.",
                 Discontinued = true,
                 UnitInStock = 32,
@@ -89,8 +95,11 @@ internal static class DataSeeder
                 Id = GameId3,
                 Alias = "overwatch-2",
                 Name = "Overwatch 2",
+                Type = "Collector's edition",
+                FileSize = "54.32 GB",
                 Description = "Overwatch 2 is a free-to-play, team-based action game.",
                 Discontinued = false,
+                Discount = 5,
                 UnitInStock = 20,
                 Price = 1200M,
                 PublisherId = PublisherId1,
@@ -102,6 +111,7 @@ internal static class DataSeeder
                 Id = GameId4,
                 Alias = "hearthstone",
                 Name = "Hearthstone",
+                Type = "Full Game",
                 Description = "Hearthstone is a fast-paced strategy card game from Blizzard Entertainment.",
                 Discontinued = false,
                 UnitInStock = 45,
@@ -115,6 +125,7 @@ internal static class DataSeeder
                 Id = GameId5,
                 Alias = "star-wars-jedi",
                 Name = "Star Wars Jedi: Fallen Order",
+                Type = "Bundle",
                 Description = "A 3rd person action-adventure title from Respawn.",
                 Discontinued = false,
                 UnitInStock = 34,
@@ -192,8 +203,8 @@ internal static class DataSeeder
     private static void SeedPaymentMethods(EntityTypeBuilder<PaymentMethod> builder)
     {
         builder.HasData(
-            new PaymentMethod { Id = PaymentMethodId1, Title = "Bank", Description = "Use a bank of your choice to make payments!", ImageUrl = "https://static.vecteezy.com/system/resources/thumbnails/000/594/232/small/B001.jpg" },
-            new PaymentMethod { Id = PaymentMethodId2, Title = "IBox terminal", Description = "Simply pay with IBox!", ImageUrl = "https://logowik.com/content/uploads/images/ibox9043.logowik.com.webp" },
-            new PaymentMethod { Id = PaymentMethodId3, Title = "Visa", Description = "Pay with your favourite card!", ImageUrl = "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0013/4323/brand.gif?itok=fSmoZrGH" });
+            new PaymentMethod { Id = PaymentMethodId1, Title = "Bank", StrategyName = PaymentStrategyName.Bank, Description = "Use a bank of your choice to make payments!", ImageUrl = "https://static.vecteezy.com/system/resources/thumbnails/000/594/232/small/B001.jpg" },
+            new PaymentMethod { Id = PaymentMethodId2, Title = "IBox terminal", StrategyName = PaymentStrategyName.Terminal, Description = "Simply pay with IBox!", ImageUrl = "https://logowik.com/content/uploads/images/ibox9043.logowik.com.webp" },
+            new PaymentMethod { Id = PaymentMethodId3, Title = "Visa", StrategyName = PaymentStrategyName.Visa, Description = "Pay with your favourite card!", ImageUrl = "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0013/4323/brand.gif?itok=fSmoZrGH" });
     }
 }

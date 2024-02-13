@@ -1,0 +1,13 @@
+<div *ngIf="!!user">
+  <div class="to-list-button">
+    <a routerLink="{{ links.get(pageRoutes.Users) }}" mat-button>
+      {{ labels.usersMenuItem }}
+    </a>
+  </div>
+  <gamestore-info-wrapper
+    [deleteLink]="deleteUserLink"
+    [updateLink]="updateUserLink"
+  >
+    <gamestore-info [infoList]="userInfoList"></gamestore-info>
+  </gamestore-info-wrapper>
+</div>

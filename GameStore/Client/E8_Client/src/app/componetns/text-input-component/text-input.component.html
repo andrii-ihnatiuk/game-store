@@ -1,0 +1,14 @@
+<div class="text-input-wrapper">
+  <mat-form-field class="example-full-width" appearance="outline">
+    <mat-label *ngIf="!!name?.length">{{ name }}</mat-label>
+    <input
+      type="{{ hide ? 'password' : 'text' }}"
+      matInput
+      [formControl]="control"
+      [errorStateMatcher]="matcher"
+    />
+    <mat-error *ngIf="isErrors">
+      {{ labels.enterValidMessage }}
+    </mat-error>
+  </mat-form-field>
+</div>

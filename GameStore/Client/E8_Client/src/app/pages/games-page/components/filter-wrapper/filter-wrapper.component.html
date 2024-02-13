@@ -1,0 +1,105 @@
+<article *ngIf="!!form">
+  <div class="content-container">
+    <div class="content-title-container">
+      <div class="section-title">{{ pageTitle }}</div>
+      <div class="content-title-actions">
+        <a mat-button class="btn-orange" routerLink="{{ links.get(pageRoutes.AddGame) }}" >{{labels.addNewButtonLabel}}</a>
+        <gamestore-text-input [name]="'Search for game'" [control]="getFormControl('name')"></gamestore-text-input>
+      </div>
+    </div>
+    <gamestore-pagging-wrapper
+      [pageCountControl]="getFormControl('pageCount')"
+      [pageControl]="getFormControl('page')"
+      [totalPages]="totalPages">
+      <ng-content></ng-content>
+    </gamestore-pagging-wrapper>
+  </div>
+  <aside class="filters-container">
+    <div class="section-title">Refine Results</div>
+    <div class="filters-wrapper">
+      <div class="filter-btn-wrapper">
+        <button
+          class="btn-orange"
+          mat-flat-button
+          type="button"
+          (click)="applyFilters()"
+          [disabled]="form.disabled">
+          {{ labels.filterButtonLabel }}
+        </button>
+      </div>
+      <mat-expansion-panel hideToggle [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="filter-title">Sorting</div>
+            <hr>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <gamestore-sort-wrapper [sortControl]="getFormControl('sort')"></gamestore-sort-wrapper>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel hideToggle [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="filter-title">Price Range</div>
+            <hr>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="filter-inline">
+          <div class="filter-inline-item">
+            <gamestore-number-input [name]="labels.gameMinPriceLabel" [control]="getFormControl('minPrice')">
+            </gamestore-number-input>
+          </div>
+          <div class="filter-inline-item">
+            <gamestore-number-input [name]="labels.gameMaxPriceLabel" [control]="getFormControl('maxPrice')">
+            </gamestore-number-input>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel hideToggle [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="filter-title">{{labels.publishersMenuItem}}</div>
+            <hr>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <gamestore-checkboxes-input [controls]="getFormControlArray('publishers')" [items]="publisherItems">
+        </gamestore-checkboxes-input>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel hideToggle [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="filter-title">{{labels.gameDatePublishing}}</div>
+            <hr>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <gamestore-radio-input [control]="getFormControl('datePublishing')" [items]="datesPublishingItems">
+        </gamestore-radio-input>
+      </mat-expansion-panel>
+
+
+      <mat-expansion-panel hideToggle [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="filter-title">{{labels.genresMenuItem}}</div>
+            <hr>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <gamestore-checkboxes-input [controls]="getFormControlArray('genres')" [items]="genreItems">
+        </gamestore-checkboxes-input>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel hideToggle [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="filter-title">{{labels.platformsMenuItem}}</div>
+            <hr>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <gamestore-checkboxes-input [controls]="getFormControlArray('platforms')" [items]="platformItems">
+        </gamestore-checkboxes-input>
+      </mat-expansion-panel>
+    </div>
+  </aside>
+</article>
