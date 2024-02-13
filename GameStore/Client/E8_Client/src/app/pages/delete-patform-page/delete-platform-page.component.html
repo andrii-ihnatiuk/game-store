@@ -1,0 +1,3 @@
+<article *ngIf="!!platform">
+  <gamestore-delete-wrapper [name]="platform.type" (delete)="onDelete()" [pageLink]="platformPageLink"></gamestore-delete-wrapper>
+</article>

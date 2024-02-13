@@ -1,0 +1,10 @@
+<div *ngIf="!!order">
+  <div class="to-list-button">
+    <a routerLink="{{ links.get(pageRoutes.History) }}" mat-button>
+      {{ labels.historyMenuItem }}
+    </a>
+  </div>
+  <gamestore-info-wrapper>
+    <gamestore-info [infoList]="orderInfoList"></gamestore-info>
+  </gamestore-info-wrapper>
+</div>

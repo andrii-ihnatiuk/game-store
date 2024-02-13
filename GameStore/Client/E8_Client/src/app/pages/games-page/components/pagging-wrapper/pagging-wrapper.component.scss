@@ -1,0 +1,27 @@
+.pagging-container {
+    width: 100%;
+
+    .bottom-panel-container {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        gamestore-selector-input {
+            display: inline-block;
+        }
+
+        .page-controls {
+            display: inline-block;
+            padding-right: 15px;
+
+            span {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+    }
+
+    .content-container {
+        margin-bottom: 20px;
+    }
+}

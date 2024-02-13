@@ -1,0 +1,13 @@
+<div *ngIf="!!role">
+  <div class="to-list-button">
+    <a routerLink="{{ links.get(pageRoutes.Roles) }}" mat-button>
+      {{ labels.rolesMenuItem }}
+    </a>
+  </div>
+  <gamestore-info-wrapper
+    [deleteLink]="deleteRoleLink"
+    [updateLink]="updateRoleLink"
+  >
+    <gamestore-info [infoList]="roleInfoList"></gamestore-info>
+  </gamestore-info-wrapper>
+</div>

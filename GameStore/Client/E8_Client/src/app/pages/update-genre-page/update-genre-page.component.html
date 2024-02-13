@@ -1,0 +1,18 @@
+<article *ngIf="!!form">
+  <gamestore-form
+    [form]="form"
+    idName="id"
+    (save)="onSave()"
+    [pageLink]="genrePageLink"
+  >
+    <gamestore-selector-input
+      [name]="labels.genreParentLabel"
+      [control]="getFormControl('parentGenreId')"
+      [values]="genres"
+    ></gamestore-selector-input>
+    <gamestore-text-input
+      [name]="labels.genreNameLabel"
+      [control]="getFormControl('name')"
+    ></gamestore-text-input>
+  </gamestore-form>
+</article>

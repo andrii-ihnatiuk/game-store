@@ -1,0 +1,27 @@
+<mat-list-item class="list-item-container">
+  <a
+    *ngIf="!!item.pageLink?.length"
+    mat-button
+    color="acient"
+    routerLink="{{ item.pageLink }}"
+  >
+    {{ item.title }}
+  </a>
+  <span *ngIf="!item.pageLink?.length">{{ item.title }}</span>
+  <a
+    *ngIf="!!item.updateLink?.length"
+    mat-stroked-button
+    color="accent"
+    routerLink="{{ item.updateLink }}"
+  >
+    {{ labels.updateButtonLabel }}
+  </a>
+  <a
+    *ngIf="!!item.deleteLink?.length"
+    mat-stroked-button
+    color="accent"
+    routerLink="{{ item.deleteLink }}"
+  >
+    {{ labels.deleteButtonLabel }}
+  </a>
+</mat-list-item>

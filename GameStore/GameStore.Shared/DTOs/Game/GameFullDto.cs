@@ -8,9 +8,15 @@ public class GameFullDto
 
     public string Name { get; set; } = string.Empty;
 
+    public string? Type { get; set; }
+
+    public string? FileSize { get; set; }
+
     public string Description { get; set; } = string.Empty;
 
     public decimal Price { get; set; }
+
+    public ushort Discount { get; set; }
 
     public short UnitInStock { get; set; }
 
@@ -19,4 +25,6 @@ public class GameFullDto
     public bool Deleted { get; set; }
 
     public string? PublisherId { get; set; }
+
+    public DateTime? PublishDate { get; set; }
 }

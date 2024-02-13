@@ -1,0 +1,43 @@
+.card-container {
+    overflow: hidden;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    > a {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+    }
+}
+
+.card-image-wrapper img {
+    vertical-align: middle;
+}
+
+.card-content {
+    padding: 12px 0;
+
+    .card-title {
+        color: #3E4554;
+        font-family: Montserrat;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 22px;
+    }
+
+    .card-subtitle {
+        color: #545454;
+        font-size: 12px;
+    }
+}
+
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+}

@@ -1,0 +1,32 @@
+<article class="info-container">
+  <div
+    *ngIf="!!addLink?.length || !!deleteLink?.length || !!updateLink?.length"
+    class="controls-container"
+  >
+    <a
+      *ngIf="!!addLink?.length"
+      routerLink="{{ addLink }}"
+      mat-stroked-button
+      color="accent"
+      >{{ labels.addNewButtonLabel }}</a
+    >
+    <a
+      *ngIf="!!deleteLink?.length"
+      routerLink="{{ deleteLink }}"
+      mat-stroked-button
+      color="accent"
+      >{{ labels.deleteButtonLabel }}</a
+    >
+    <a
+      *ngIf="!!updateLink?.length"
+      routerLink="{{ updateLink }}"
+      mat-stroked-button
+      color="accent"
+      >{{ labels.updateButtonLabel }}</a
+    >
+  </div>
+
+  <div>
+    <ng-content></ng-content>
+  </div>
+</article>

@@ -1,10 +1,11 @@
-﻿using GameStore.Shared.DTOs.Payment;
+﻿using GameStore.Shared.Constants;
+using GameStore.Shared.DTOs.Payment;
 
 namespace GameStore.Services.Interfaces.Payment;
 
 public interface IPaymentStrategy
 {
-    string Name { get; }
+    PaymentStrategyName Name { get; }
 
-    Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId);
+    Task<IPaymentResult> ProcessPaymentAsync(PaymentDto payment, string customerId);
 }

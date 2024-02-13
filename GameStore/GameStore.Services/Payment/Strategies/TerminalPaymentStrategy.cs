@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
+using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.Constants;
@@ -17,31 +18,31 @@ namespace GameStore.Services.Payment.Strategies;
 public class TerminalPaymentStrategy : IPaymentStrategy
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICoreOrderService _orderService;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TerminalOptions _apiOptions;
 
-    public TerminalPaymentStrategy(IUnitOfWork unitOfWork, IOptions<TerminalOptions> apiSettings, IHttpClientFactory httpClientFactory)
+    public TerminalPaymentStrategy(
+        IUnitOfWork unitOfWork,
+        ICoreOrderService orderService,
+        IOptions<TerminalOptions> apiSettings,
+        IHttpClientFactory httpClientFactory)
     {
         _unitOfWork = unitOfWork;
+        _orderService = orderService;
         _httpClientFactory = httpClientFactory;
         _apiOptions = apiSettings.Value;
     }
 
-    public string Name => PaymentStrategyNames.Terminal;
+    public PaymentStrategyName Name => PaymentStrategyName.Terminal;
 
-    public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId)
+    public async Task<IPaymentResult> ProcessPaymentAsync(PaymentDto payment, string customerId)
     {
-        var order = await GetOrderForPaymentAsync(customerId);
+        var order = await _orderService.GetOrderForProcessingAsync(customerId);
+        order.PaymentMethodId = Guid.Parse(payment.Method);
         var terminalPaymentResult = await SendPaymentRequestAsync(order);
         await UpdateOrderStatusAsync(order);
         return terminalPaymentResult;
-    }
-
-    private async Task<Order> GetOrderForPaymentAsync(string customerId)
-    {
-        return await _unitOfWork.Orders.GetOneAsync(
-            predicate: o => o.CustomerId == customerId && o.PaidDate == null,
-            noTracking: false);
     }
 
     private async Task<TerminalPaymentResult> SendPaymentRequestAsync(Order order)

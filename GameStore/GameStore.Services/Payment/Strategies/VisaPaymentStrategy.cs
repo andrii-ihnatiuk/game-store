@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
+using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.Constants;
@@ -17,31 +18,31 @@ namespace GameStore.Services.Payment.Strategies;
 public class VisaPaymentStrategy : IPaymentStrategy
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICoreOrderService _orderService;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly VisaOptions _apiOptions;
 
-    public VisaPaymentStrategy(IUnitOfWork unitOfWork, IOptions<VisaOptions> apiSettings, IHttpClientFactory httpClientFactory)
+    public VisaPaymentStrategy(
+        IUnitOfWork unitOfWork,
+        ICoreOrderService orderService,
+        IOptions<VisaOptions> apiSettings,
+        IHttpClientFactory httpClientFactory)
     {
         _unitOfWork = unitOfWork;
+        _orderService = orderService;
         _httpClientFactory = httpClientFactory;
         _apiOptions = apiSettings.Value;
     }
 
-    public string Name => PaymentStrategyNames.Visa;
+    public PaymentStrategyName Name => PaymentStrategyName.Visa;
 
-    public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId)
+    public async Task<IPaymentResult> ProcessPaymentAsync(PaymentDto payment, string customerId)
     {
-        var order = await GetOrderForPaymentAsync(customerId);
+        var order = await _orderService.GetOrderForProcessingAsync(customerId);
+        order.PaymentMethodId = Guid.Parse(payment.Method);
         var visaPaymentResult = await SendPaymentRequestAsync(payment, order);
         await UpdateOrderStatusAsync(order);
         return visaPaymentResult;
-    }
-
-    private async Task<Order> GetOrderForPaymentAsync(string customerId)
-    {
-        return await _unitOfWork.Orders.GetOneAsync(
-            predicate: o => o.CustomerId == customerId && o.PaidDate == null,
-            noTracking: false);
     }
 
     private async Task<VisaPaymentResult> SendPaymentRequestAsync(PaymentDto payment, Order order)

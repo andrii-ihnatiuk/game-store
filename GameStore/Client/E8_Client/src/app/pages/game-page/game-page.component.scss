@@ -1,0 +1,130 @@
+hr {
+    margin: 32px 0px;
+}
+
+.go-back-link {
+    text-decoration: none;
+    color: #FF7E2A;
+    font-family: Montserrat;
+    font-weight: 700;
+
+    &::before {
+        content: "";
+        display: inline-block;
+        padding: 4px;
+        border: #FF7E2A solid;
+        border-width: 2px 0 0 2px;
+        transform: rotate(-45deg);
+        margin-right: 11px;
+    }
+}
+
+.content-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin: 24px 0;
+
+    .product-images-container {
+        flex: 1 1;
+        min-width: 400px;
+
+        img {
+            width: 100%;
+            object-fit: cover;
+            display: block;
+        }
+    }
+
+    .product-info-container {
+        flex: 1 1;
+    }
+}
+
+.main-image-wrapper {
+    overflow: hidden;
+}
+
+.image-galery-container {
+    display: block;
+    width: 100%;
+    margin: 30px 0;
+    overflow-x: auto;
+    white-space: nowrap;
+
+    .galery-image-wrapper {
+        display: inline-block;
+        margin-right: 30px;
+    }
+}
+
+.product-title {
+    color: #3E4554;
+    font-family: Montserrat;
+    font-size: 34px;
+    line-height: 46px;
+    font-weight: 700;
+}
+
+.product-subtitle-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: space-between;
+    margin-top: 16px;
+
+    .product-price {
+        color: #3E4554;
+        font-family: Montserrat;
+        font-size: 28px;
+        font-weight: 500;
+    }
+
+    .product-rating-container {
+        color: #3E4554;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        gap: 16px;
+        align-items: center;
+    }
+}
+
+.product-details-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 60px;
+    margin: 20px 0;
+}
+
+.publisher-name {
+    display: inline-block;
+    color: #3E4554;
+    font-size: 16px;
+    line-height: 22px;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 5px;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.product-info-wrapper {
+    margin: 32px 0;
+
+    .product-info-title {
+        color: #3E4554;
+        font-family: Montserrat;
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+}
+
+.product-actions-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}

@@ -1,0 +1,14 @@
+<div *ngIf="!!publisher">
+  <div class="to-list-button">
+    <a routerLink="{{ links.get(pageRoutes.Publishers) }}" mat-button>
+      {{ labels.publishersMenuItem }}
+    </a>
+  </div>
+  <gamestore-info-wrapper
+    [deleteLink]="deletePublisherLink"
+    [updateLink]="updatePublisherLink"
+  >
+    <gamestore-info [infoList]="publisherInfoList"></gamestore-info>
+    <a *ngIf="!!publisher.homePage?.length" mat-button target="_blank" href="{{publisher.homePage}}">{{ labels.publisherHomePageLabel }}</a>
+  </gamestore-info-wrapper>
+</div>

@@ -6,7 +6,7 @@ public class Order
 {
     public Guid Id { get; set; }
 
-    public string CustomerId { get; set; } = "VINET";
+    public string CustomerId { get; set; }
 
     public DateTime OrderDate { get; set; }
 

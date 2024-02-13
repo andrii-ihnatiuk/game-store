@@ -1,0 +1,30 @@
+<form [formGroup]="form">
+  <input
+    *ngIf="!!idName?.length"
+    type="hidden"
+    formControlName="{{ idName }}"
+  />
+
+  <div>
+    <ng-content></ng-content>
+  </div>
+
+  <div class="buttons-container">
+    <button
+      type="button"
+      mat-raised-button
+      color="primary"
+      (click)="save.emit()"
+      [disabled]="form.invalid"
+    >
+      {{ labels.saveButtonLabel }}
+    </button>
+    <a
+      *ngIf="!!pageLink?.length"
+      routerLink="{{ pageLink }}"
+      mat-button
+    >
+      {{ labels.toPageLabel }}
+    </a>
+  </div>
+</form>

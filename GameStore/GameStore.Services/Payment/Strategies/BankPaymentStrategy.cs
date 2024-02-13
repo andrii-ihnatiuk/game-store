@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
+using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.Constants;
@@ -14,27 +15,23 @@ namespace GameStore.Services.Payment.Strategies;
 public class BankPaymentStrategy : IPaymentStrategy
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ICoreOrderService _orderService;
 
-    public BankPaymentStrategy(IUnitOfWork unitOfWork)
+    public BankPaymentStrategy(IUnitOfWork unitOfWork, ICoreOrderService orderService)
     {
         _unitOfWork = unitOfWork;
+        _orderService = orderService;
     }
 
-    public string Name => PaymentStrategyNames.Bank;
+    public PaymentStrategyName Name => PaymentStrategyName.Bank;
 
-    public async Task<IPaymentResult> ProcessPayment(PaymentDto payment, string customerId)
+    public async Task<IPaymentResult> ProcessPaymentAsync(PaymentDto payment, string customerId)
     {
-        var order = await GetOrderForPaymentAsync(customerId);
+        var order = await _orderService.GetOrderForProcessingAsync(customerId);
+        order.PaymentMethodId = Guid.Parse(payment.Method);
         byte[] fileBytes = GeneratePdfInvoice(order);
         await UpdateOrderStatusAsync(order);
         return ConvertToBankPaymentResult(fileBytes);
-    }
-
-    private async Task<Order> GetOrderForPaymentAsync(string customerId)
-    {
-        return await _unitOfWork.Orders.GetOneAsync(
-            predicate: o => o.CustomerId == customerId && o.PaidDate == null,
-            noTracking: false);
     }
 
     private static byte[] GeneratePdfInvoice(Order order)

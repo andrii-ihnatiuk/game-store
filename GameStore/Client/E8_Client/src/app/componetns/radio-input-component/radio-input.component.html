@@ -1,0 +1,10 @@
+<div class="radio-input-wrapper">
+  <div *ngIf="!!name?.length">{{ name }}</div>
+  <mat-radio-group [formControl]="control">
+    <div *ngFor="let item of items" class="radio-container">
+      <mat-radio-button [color]="'warn'" [value]="item.value">
+        {{ item.title }}
+      </mat-radio-button>
+    </div>
+  </mat-radio-group>
+</div>

@@ -29,7 +29,8 @@ public class CommentService : ICommentService
         var comments = (await _unitOfWork.Comments.GetAsync(
                 predicate: c => c.Game.Alias == gameAlias,
                 noTracking: false))
-            .Where(c => c.ParentId == null);
+            .Where(c => c.ParentId == null)
+            .OrderByDescending(c => c.CreationDate);
         return _mapper.Map<IList<CommentBriefDto>>(comments);
     }
 

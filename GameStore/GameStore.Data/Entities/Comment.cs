@@ -1,8 +1,9 @@
-﻿using GameStore.Shared.Constants;
+﻿using GameStore.Data.Interfaces;
+using GameStore.Shared.Constants;
 
 namespace GameStore.Data.Entities;
 
-public class Comment
+public class Comment : ICreationTrackable
 {
     public Guid Id { get; set; }
 
@@ -13,6 +14,8 @@ public class Comment
     public CommentType Type { get; set; } = CommentType.Plain;
 
     public string Intro { get; set; } = string.Empty;
+
+    public DateTime CreationDate { get; set; }
 
     public Guid? ParentId { get; set; }
 

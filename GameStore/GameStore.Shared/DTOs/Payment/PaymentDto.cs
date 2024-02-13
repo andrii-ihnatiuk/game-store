@@ -2,7 +2,7 @@
 
 public class PaymentDto
 {
-    public string Method { get; init; }
+    public string Method { get; set; }
 
     public VisaPaymentDto? Model { get; init; }
 }

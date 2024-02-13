@@ -1,0 +1,32 @@
+<article *ngIf="!!form">
+  <gamestore-text-input
+    [name]="labels.userNameLabel"
+    [control]="getFormControl('name')"
+  ></gamestore-text-input>
+  <gamestore-text-input
+    [name]="labels.userPasswordLabel"
+    [control]="getFormControl('password')"
+    [hide]="true"
+  ></gamestore-text-input>
+  <div>
+    <button
+      type="button"
+      mat-raised-button
+      color="primary"
+      (click)="onLogin(true)"
+      [disabled]="form.invalid"
+    >
+      {{ labels.loginButtonLabel }}
+    </button>
+    <div class="separator"></div>
+    <button
+    type="button"
+    mat-raised-button
+    color="primary"
+    (click)="onLogin(false)"
+    [disabled]="form.invalid"
+  >
+    {{ labels.loginButtonLabel }} AuthService
+  </button>
+  </div>
+</article>

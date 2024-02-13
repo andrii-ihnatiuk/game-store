@@ -1,0 +1,18 @@
+﻿<div class="item-container">
+    <div class="image-wrapper">
+        <img src="https://placehold.co/160" alt="product image">
+        <a routerLink="{{ item.gamePageLink }}"></a>
+    </div>
+    <div class="item-info-container">
+        <a routerLink="{{ item.gamePageLink }}" class="info-title">{{ item.game.name }}</a>
+        <div class="info-subtitle">Bundle PS4</div>
+        <div class="info-size">53.76 GB</div>
+        <div class="info-price">
+            <app-price [price]="item.detail.price" [discount]="item.detail.discount"></app-price>
+        </div>
+        <app-item-quantity [quantity]="item.detail.quantity" [min]="1" (onIncrement)="onItemAdd()" (onDecrement)="onItemDelete(false)"></app-item-quantity>
+    </div>
+    <div class="item-remove-wrapper">
+        <button mat-button class="btn-underline" (click)="onItemDelete(true)">{{ labels.deleteButtonLabel }}</button>
+    </div>
+</div>

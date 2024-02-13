@@ -1,0 +1,3 @@
+<article *ngIf="!!genre">
+  <gamestore-delete-wrapper [name]="genre.name" (delete)="onDelete()" [pageLink]="genrePageLink"></gamestore-delete-wrapper>
+</article>

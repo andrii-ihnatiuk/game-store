@@ -1,4 +1,5 @@
 ﻿using GameStore.Services.Interfaces.Payment;
+using GameStore.Shared.Constants;
 using GameStore.Shared.Exceptions;
 
 namespace GameStore.Services.Payment;
@@ -12,7 +13,7 @@ public class PaymentStrategyResolver : IPaymentStrategyResolver
         _strategies = strategies;
     }
 
-    public IPaymentStrategy Resolve(string name)
+    public IPaymentStrategy Resolve(PaymentStrategyName name)
     {
         var strategy = _strategies.FirstOrDefault(s => s.Name == name);
         return strategy ?? throw new PaymentException($"Payment strategy cannot be resolved for '{name}.'");

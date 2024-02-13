@@ -1,0 +1,13 @@
+<div *ngIf="!!genre">
+  <div class="to-list-button">
+    <a routerLink="{{ links.get(pageRoutes.Genres) }}" mat-button>
+      {{ labels.genresMenuItem }}
+    </a>
+  </div>
+  <gamestore-info-wrapper
+    [deleteLink]="deleteGenreLink"
+    [updateLink]="updateGenreLink"
+  >
+    <gamestore-info [infoList]="genreInfoList"></gamestore-info>
+  </gamestore-info-wrapper>
+</div>

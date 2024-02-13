@@ -1,0 +1,14 @@
+<article>
+  <div class="filter-container"*ngIf="!!range">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ labels.historyDateRangeLabel }}</mat-label>
+      <mat-date-range-input [rangePicker]="picker" [formGroup]="range">
+        <input matStartDate readonly formControlName="start"/>
+        <input matEndDate readonly formControlName="end"/>
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+  </div>
+  <gamestore-list [listItems]="ordersList"></gamestore-list>
+</article>

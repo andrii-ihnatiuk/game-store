@@ -1,0 +1,65 @@
+.page-intro {
+    position: relative;
+    padding: 50px 85px;
+    box-sizing: border-box;
+    background: url('~src/assets/img/header-background.png');
+    height: 100vh;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+
+    .logo {
+        height: 44px;
+        font-size: 36px;
+        font-weight: bold;
+        letter-spacing: 0;
+        line-height: 44px;
+        margin-left: -16px;
+        margin-right: 16px;
+        min-width: 250px;
+        color: #FFFFFF;
+        font-family: Montserrat;
+    }
+
+    .header-right {
+        a {
+            color: #FFFFFF;
+            font-family: Montserrat;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+
+        .login {
+            margin-left: 30px;
+        }
+    }
+}
+
+.intro-container {
+    position: absolute;
+    bottom: 100px;
+    color: #FFFFFF;
+    font-family: Montserrat;
+
+    .intro-header {
+        font-size: 46px;
+        font-weight: bold;
+        letter-spacing: 0;
+        line-height: 57px;
+        margin-bottom: 25px;
+    }
+
+    .intro-text {
+        font-size: 18px;
+        font-weight: 500;
+    }
+}

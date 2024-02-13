@@ -18,9 +18,7 @@ public class GameCreateValidator : AbstractValidator<GameCreateDto>
             .Must(x => !EntityAliasUtil.ContainsSuffix(x))
             .WithMessage($"{nameof(GameCreateDto.Game.Name)} cannot end with '{EntityAliasUtil.AliasSuffix}'.");
         RuleFor(g => g.Game.Price).GreaterThanOrEqualTo(0M);
-        RuleFor(g => g.Game.Discontinued)
-            .Must(x => x is 0 or 1)
-            .WithMessage($"'{nameof(GameCreateDto.Game)} {nameof(GameCreateDto.Game.Discontinued)}' must be either 0 or 1.");
+        RuleFor(g => g.Game.Discount).InclusiveBetween((ushort)0, (ushort)100);
         RuleFor(g => g.Game.UnitInStock).GreaterThanOrEqualTo((short)0);
     }
 }
