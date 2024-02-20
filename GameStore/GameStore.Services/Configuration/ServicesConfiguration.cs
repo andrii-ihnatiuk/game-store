@@ -36,6 +36,7 @@ public static class ServicesConfiguration
         serviceCollection.AddScoped<ICommentService, CommentService>();
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IRoleService, RoleService>();
+        serviceCollection.AddScoped<IProfileService, ProfileService>();
         serviceCollection.AddScoped<IImageService, ImageService>();
         serviceCollection.AddScoped<INotificationService, NotificationService>();
 

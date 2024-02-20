@@ -67,6 +67,9 @@
   "loginApiUrl": "users/login",
   "checkAccessApiUrl": "users/check-access",
 
+  "contactInfoApiUrl": "profile/contacts",
+  "notificationMethodsApiUrl": "notifications",
+
   "roleApiUrl": "roles/{id}",
   "rolesApiUrl": "roles",
   "addRoleApiUrl": "roles/new",

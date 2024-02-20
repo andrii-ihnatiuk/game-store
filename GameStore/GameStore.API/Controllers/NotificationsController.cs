@@ -15,15 +15,9 @@ public class NotificationsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetNotificationMethod()
+    public async Task<IActionResult> GetNotificationMethods()
     {
         var methods = await _notificationService.GetNotificationMethodsAsync();
         return Ok(methods);
-    }
-
-    [HttpPost]
-    public IActionResult SendNotification()
-    {
-        return NoContent();
     }
 }

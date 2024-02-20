@@ -36,6 +36,7 @@
   "DeleteUser": "users/remove",
   "AddUser": "users/new",
   "Login": "login",
+  "Profile": "profile",
 
   "Roles": "roles",
   "Role": "roles",

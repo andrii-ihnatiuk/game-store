@@ -67,6 +67,9 @@ export class Configuration {
   deleteUserApiUrl: string = '';
   loginApiUrl: string = '';
   checkAccessApiUrl: string = '';
+  
+  contactInfoApiUrl: string = '';
+  notificationMethodsApiUrl: string = '';
 
   roleApiUrl: string = '';
   rolesApiUrl: string = '';

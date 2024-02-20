@@ -46,6 +46,10 @@ import { AuthGuard } from './configuration/auth-guard';
 import { FooterComponent } from './componetns/footer-component/footer.component';
 import { CommonComponentsModule } from "./componetns/common-components.module";
 import { LocalizationService } from './services/localization.service';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+import { ProfilePageModule } from './pages/profile-page/profile-page.module';
 
 @NgModule({
     declarations: [AppComponent, HeaderComponent, FooterComponent],
@@ -77,6 +81,8 @@ import { LocalizationService } from './services/localization.service';
         UpdateGamePageModule,
         DeleteGamePageModule,
         MatButtonModule,
+        MatMenuModule,
+        MatIconModule,
         GenrePageModule,
         GenresPageModule,
         UpdateGenrePageModule,
@@ -104,6 +110,7 @@ import { LocalizationService } from './services/localization.service';
         UpdateLoginPageModule,
         OrdersPageModule,
         UpdateOrderPageModule,
+        ProfilePageModule,
         CommonComponentsModule
     ]
 })

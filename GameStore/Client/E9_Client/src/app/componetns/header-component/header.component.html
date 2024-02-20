@@ -3,24 +3,25 @@
     <a routerLink="" mat-button class="logo">GameStore</a>
 
     <div class="header-right">
-      <a class="link-hoverable" *ngFor="let item of mainListItems" mat-button routerLink="{{ item.pageLink }}">{{ item.title }}</a>
+      <a class="link-hoverable" *ngFor="let item of mainListItems" mat-button routerLink="{{ item.pageLink }}">{{
+        item.title }}</a>
 
-      <a routerLink="{{ links.get(pageRoutes.Login) }}" mat-button class="login link-hoverable">
-        {{
-          isAuth
-          ? labels.exitButtonLabel
-          : labels.loginButtonLabel
-        }}
-      </a>
+      <ng-container *ngIf="isAuth; else notAuthenticated">
+        <a class="link-hoverable" mat-button [matMenuTriggerFor]="profileMenu">
+          <mat-icon aria-hidden="false" aria-label="account">account_box</mat-icon>
+          Profile
+        </a>
+        <mat-menu #profileMenu="matMenu">
+          <a class="link-hoverable" mat-menu-item routerLink="{{ links.get(pageRoutes.Profile) }}">Settings</a>
+          <a class="link-hoverable" mat-menu-item routerLink="{{ links.get(pageRoutes.Login) }}">{{ labels.exitButtonLabel }}</a>
+        </mat-menu>
+      </ng-container>
 
-      <a routerLink="{{ links.get(pageRoutes.Basket) }}" mat-button class="basket link-hoverable">{{ labels.basketMenuItem }}</a>
+      <a routerLink="{{ links.get(pageRoutes.Basket) }}" mat-button class="basket link-hoverable">{{
+        labels.basketMenuItem }}</a>
 
       <div class="language-selector-wrapper">
-        <gamestore-selector-input
-        name=""
-        [control]="control"
-        [values]="locales"
-      ></gamestore-selector-input>
+        <gamestore-selector-input name="" [control]="control" [values]="locales"></gamestore-selector-input>
       </div>
     </div>
   </header>
@@ -30,3 +31,9 @@
     <div class="intro-text">Empowered Solutions with Simple Process</div>
   </div>
 </div>
+
+<ng-template #notAuthenticated>
+  <a routerLink="{{ links.get(pageRoutes.Login) }}" mat-button class="login link-hoverable">
+    {{ labels.loginButtonLabel }}
+  </a>
+</ng-template>

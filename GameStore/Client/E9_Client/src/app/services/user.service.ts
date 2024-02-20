@@ -7,11 +7,18 @@ import { LoaderService } from '../componetns/loader-component/loader.service';
 import { appConfiguration } from '../configuration/configuration-resolver';
 import { User } from '../models/user.model';
 import { BaseService } from './base.service';
+import { UserContactInfo } from '../models/user-contact-info.model';
 
 @Injectable()
 export class UserService extends BaseService {
   constructor(http: HttpClient, loaderService: LoaderService) {
     super(http, loaderService);
+  }
+
+  getContactInfo(): Observable<UserContactInfo> {
+    return this.get<UserContactInfo>(
+      appConfiguration.contactInfoApiUrl
+    );
   }
 
   getUser(id: string): Observable<User> {
@@ -54,6 +61,10 @@ export class UserService extends BaseService {
       roles,
       password,
     });
+  }
+
+  updateContactInfo(contactInfo: UserContactInfo): Observable<any> {
+    return this.put(appConfiguration.contactInfoApiUrl, contactInfo)
   }
 
   deleteUser(id: string): Observable<any> {
