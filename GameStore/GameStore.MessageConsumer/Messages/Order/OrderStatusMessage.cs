@@ -1,10 +1,10 @@
 ﻿using GameStore.MessageConsumer.Interfaces;
-using GameStore.MessageConsumer.Interfaces.MessageInitializers;
-using GameStore.MessageConsumer.MessageInitializers.Order;
+using GameStore.MessageConsumer.Interfaces.MessageFormatters;
+using GameStore.MessageConsumer.MessageFormatters.Order;
 
 namespace GameStore.MessageConsumer.Messages.Order;
 
-public class OrderStatusMessage : IEmailMessage
+public class OrderStatusMessage : IEmailMessage, ISmsMessage, IPushMessage
 {
     public string OrderId { get; set; }
 
@@ -18,8 +18,22 @@ public class OrderStatusMessage : IEmailMessage
 
     public string EmailSubject { get; set; }
 
-    IEmailInitializer IEmailMessage.CreateInitializer()
+    public string RecipientPhoneNumber { get; set; }
+
+    public string RecipientDeviceToken { get; set; }
+
+    IEmailFormatter IEmailMessage.CreateFormatter()
     {
-        return new OrderStatusEmailInitializer(this);
+        return new OrderStatusEmailFormatter(this);
+    }
+
+    ISmsFormatter ISmsMessage.CreateFormatter()
+    {
+        return new OrderStatusSmsFormatter(this);
+    }
+
+    IPushFormatter IPushMessage.CreateFormatter()
+    {
+        return new OrderStatusPushFormatter(this);
     }
 }

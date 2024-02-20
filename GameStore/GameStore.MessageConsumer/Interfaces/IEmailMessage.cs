@@ -1,4 +1,4 @@
-﻿using GameStore.MessageConsumer.Interfaces.MessageInitializers;
+﻿using GameStore.MessageConsumer.Interfaces.MessageFormatters;
 
 namespace GameStore.MessageConsumer.Interfaces;
 
@@ -8,5 +8,5 @@ public interface IEmailMessage : IMessage
 
     public string EmailSubject { get; set; }
 
-    IEmailInitializer CreateInitializer();
+    IEmailFormatter CreateFormatter();
 }

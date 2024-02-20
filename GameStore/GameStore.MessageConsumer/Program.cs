@@ -13,6 +13,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IEmailService, EmailService>();
 
         services.AddHostedService<EmailConsumerService>();
+        services.AddHostedService<SmsConsumerService>();
+        services.AddHostedService<PushConsumerService>();
     })
     .Build();
 

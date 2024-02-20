@@ -8,14 +8,14 @@ using Microsoft.Extensions.Options;
 
 namespace GameStore.MessageConsumer.Consumers;
 
-public class EmailConsumerService : AzureTopicConsumerBase
+public class PushConsumerService : AzureTopicConsumerBase
 {
-    private readonly ILogger<EmailConsumerService> _logger;
+    private readonly ILogger<PushConsumerService> _logger;
     private readonly ServiceBusOptions _serviceBusOptions;
 
-    public EmailConsumerService(
+    public PushConsumerService(
         IOptions<ServiceBusOptions> serviceBusOptions,
-        ILogger<EmailConsumerService> logger,
+        ILogger<PushConsumerService> logger,
         IServiceScopeFactory scopeFactory)
         : base(logger, scopeFactory)
     {
@@ -27,24 +27,22 @@ public class EmailConsumerService : AzureTopicConsumerBase
 
     protected override string TopicName => _serviceBusOptions.TopicName;
 
-    protected override string SubscriptionName => _serviceBusOptions.EmailSubscriptionName;
+    protected override string SubscriptionName => _serviceBusOptions.PushSubscriptionName;
 
-    protected override async Task ProcessMessageInternalAsync(ServiceBusReceivedMessage message, IServiceProvider provider)
+    protected override Task ProcessMessageInternalAsync(ServiceBusReceivedMessage message, IServiceProvider provider)
     {
-        _logger.LogInformation("Processing email message with body:\n{body}", message.Body);
-        var emailService = provider.GetRequiredService<IEmailService>();
+        _logger.LogInformation("Processing push message with body:\n{body}", message.Body);
 
-        IEmailMessage emailMessage = ConsumerUtil.GetMessageTypeName(message) switch
+        IPushMessage pushMessage = ConsumerUtil.GetMessageTypeName(message) switch
         {
             nameof(OrderStatusMessageDto) => message.Body.ToObjectFromJson<OrderStatusMessage>(),
             _ => throw new NotSupportedException("The provided message type is not supported."),
         };
 
-        emailMessage.CreateFormatter()
-            .FormatBody()
-            .FormatSubject();
+        pushMessage.CreateFormatter()
+            .FormatBody();
 
-        _logger.LogInformation("Formatted email text:\n{content}", emailMessage.BodyContent);
-        await emailService.SendAsync(emailMessage);
+        _logger.LogInformation("Formatted push notification text:\n{content}", pushMessage.BodyContent);
+        return Task.CompletedTask;
     }
 }
