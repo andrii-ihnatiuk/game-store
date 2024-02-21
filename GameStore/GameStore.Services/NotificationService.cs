@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GameStore.Data.Entities.Identity;
 using GameStore.Data.Interfaces;
 using GameStore.Messaging.Constants;
 using GameStore.Messaging.DTOs.Order;
@@ -42,40 +43,54 @@ public class NotificationService : INotificationService
 
     public async Task NotifyOrderStatusChangedAsync(string orderId, OrderStatus status)
     {
-        var order = await _unitOfWork.Orders.GetOneAsync(
-            predicate: o => o.Id == Guid.Parse(orderId),
+        foreach (var user in await GetCustomerAndAdminsToNotifyAsync(Guid.Parse(orderId)))
+        {
+            string notificationMethods = string.Join(
+                MethodsDelimiter, user.NotificationMethods.Select(x => x.NotificationMethod.NormalizedName));
+            var messageBody = new OrderStatusMessageDto
+            {
+                Status = status.ToString(),
+                OrderId = orderId,
+                RecipientName = user.UserName,
+                RecipientEmail = user.Email,
+                RecipientPhoneNumber = user.PhoneNumber,
+                RecipientDeviceToken = Guid.Empty.ToString(),
+            };
+
+            var message = new TopicMessage<OrderStatusMessageDto>
+            {
+                TopicName = _serviceBusOptions.NotificationsTopic,
+                Properties = new Dictionary<string, object>
+                {
+                    { MessageProperties.NotifyVia, notificationMethods },
+                    { MessageProperties.MessageType, nameof(OrderStatusMessageDto) },
+                },
+                Value = messageBody,
+            };
+
+            await _messagePublisher.PublishAsync(message);
+        }
+    }
+
+    private async Task<IList<ApplicationUser>> GetCustomerAndAdminsToNotifyAsync(Guid orderId)
+    {
+        var customer = (await _unitOfWork.Orders.GetOneAsync(
+            predicate: o => o.Id == orderId,
             include: q => q.Include(o => o.Customer)
                 .ThenInclude(c => c.NotificationMethods)
-                .ThenInclude(x => x.NotificationMethod));
+                .ThenInclude(x => x.NotificationMethod)))
+            .Customer;
+        var adminUsers = (await _unitOfWork.UsersRoles.GetAsync(
+            predicate: x => x.Role.NormalizedName.Equals(Roles.Admin.ToUpperInvariant()),
+            include: q => q.Include(x => x.User)
+                .ThenInclude(u => u.NotificationMethods)
+                .ThenInclude(nm => nm.NotificationMethod)))
+            .Select(x => x.User);
 
-        if (order.Customer.NotificationMethods.Count == 0)
-        {
-            return;
-        }
-
-        string notificationMethods = string.Join(
-            MethodsDelimiter, order.Customer.NotificationMethods.Select(x => x.NotificationMethod.NormalizedName));
-        var messageBody = new OrderStatusMessageDto
-        {
-            Status = status.ToString(),
-            OrderId = orderId,
-            RecipientName = order.Customer.UserName,
-            RecipientEmail = order.Customer.Email,
-            RecipientPhoneNumber = order.Customer.PhoneNumber,
-            RecipientDeviceToken = Guid.Empty.ToString(),
-        };
-
-        var message = new TopicMessage<OrderStatusMessageDto>
-        {
-            TopicName = _serviceBusOptions.NotificationsTopic,
-            Properties = new Dictionary<string, object>
-            {
-                { MessageProperties.NotifyVia, notificationMethods },
-                { MessageProperties.MessageType, nameof(OrderStatusMessageDto) },
-            },
-            Value = messageBody,
-        };
-
-        await _messagePublisher.PublishAsync(message);
+        var usersToNotify = adminUsers.Append(customer)
+            .Where(u => u.NotificationMethods.Count > 0)
+            .GroupBy(u => u.Id)
+            .Select(x => x.First());
+        return usersToNotify.ToList();
     }
 }

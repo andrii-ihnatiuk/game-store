@@ -1,5 +1,6 @@
 ﻿using GameStore.Data;
 using GameStore.Data.Entities;
+using GameStore.Data.Entities.Identity;
 using GameStore.Data.Interfaces;
 using GameStore.Tests.Util;
 using Moq;
@@ -20,6 +21,7 @@ public class UnitOfWorkTests : IDisposable
     private readonly Mock<IGenericRepository<Comment>> _commentsRepoMock = new();
     private readonly Mock<IGenericRepository<AppImage>> _imagesRepoMock = new();
     private readonly Mock<IGenericRepository<NotificationMethod>> _notificationMethodsRepoMock = new();
+    private readonly Mock<IGenericRepository<ApplicationUserRole>> _usersRolesRepoMock = new();
     private readonly GameStoreDbContext _context;
     private readonly UnitOfWork _unitOfWork;
 
@@ -39,7 +41,8 @@ public class UnitOfWorkTests : IDisposable
             _paymentMethodsRepoMock.Object,
             _commentsRepoMock.Object,
             _imagesRepoMock.Object,
-            _notificationMethodsRepoMock.Object);
+            _notificationMethodsRepoMock.Object,
+            _usersRolesRepoMock.Object);
     }
 
     [Fact]

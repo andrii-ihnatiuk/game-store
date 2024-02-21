@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using GameStore.Data.Entities;
+using GameStore.Data.Entities.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GameStore.Data.Interfaces;
@@ -29,6 +30,8 @@ public interface IUnitOfWork : IDisposable
     IGenericRepository<AppImage> Images { get; }
 
     IGenericRepository<NotificationMethod> NotificationMethods { get; }
+
+    IGenericRepository<ApplicationUserRole> UsersRoles { get; }
 
     Task<int> SaveAsync();
 

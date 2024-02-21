@@ -1,6 +1,7 @@
 ﻿using GameStore.Data.Extensions;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.User;
+using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +12,14 @@ namespace GameStore.API.Controllers;
 public class ProfileController : ControllerBase
 {
     private readonly IProfileService _profileService;
+    private readonly IValidatorWrapper<ContactInfoUpdateDto> _validator;
 
-    public ProfileController(IProfileService profileService)
+    public ProfileController(
+        IProfileService profileService,
+        IValidatorWrapper<ContactInfoUpdateDto> validator)
     {
         _profileService = profileService;
+        _validator = validator;
     }
 
     [Authorize]
@@ -29,6 +34,7 @@ public class ProfileController : ControllerBase
     [HttpPut("contacts")]
     public async Task<IActionResult> UpdateContactInfo([FromBody] ContactInfoUpdateDto dto)
     {
+        _validator.ValidateAndThrow(dto);
         await _profileService.UpdateContactInfoAsync(dto);
         return NoContent();
     }
