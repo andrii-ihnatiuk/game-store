@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
         "angular-front",
         policyBuilder =>
         {
-            policyBuilder.WithOrigins("http://127.0.0.1:8080")
+            policyBuilder.WithOrigins("http://127.0.0.1:8080", "http://localhost:8080")
                 .WithExposedHeaders("x-total-numbers-of-games");
             policyBuilder.AllowAnyHeader();
             policyBuilder.AllowAnyMethod();
@@ -55,6 +55,7 @@ builder.Services.Configure<AuthApiOptions>(builder.Configuration.GetSection("Aut
 builder.Services.Configure<IdentityOptions>(builder.Configuration.GetSection("IdentityOptions"));
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+builder.Services.ConfigureOptions<RequestLocalizationOptionsSetup>();
 
 builder.Services.AddAuthentication(opt =>
 {
@@ -74,6 +75,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRequestLocalization();
 app.UseMiddleware<PerformanceLoggingMiddleware>();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<IpLoggingMiddleware>();

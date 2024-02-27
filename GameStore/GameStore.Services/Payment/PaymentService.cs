@@ -2,6 +2,7 @@
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces.Payment;
+using GameStore.Services.Models;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.Exceptions;
@@ -41,6 +42,12 @@ public class PaymentService : IPaymentService
         }
 
         var strategy = _strategyResolver.Resolve(paymentMethod.StrategyName);
-        return await strategy.ProcessPaymentAsync(payment, customerId);
+        var request = new PaymentRequest
+        {
+            Method = payment.Method,
+            CustomerId = customerId,
+            VisaModel = payment.Model,
+        };
+        return await strategy.ProcessPaymentAsync(request);
     }
 }

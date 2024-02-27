@@ -29,7 +29,7 @@ public class UpdateGameAuthorizationHandler : AuthorizationHandler<CanUpdateGame
             return;
         }
 
-        var game = await _gameFacadeService.GetGameByIdAsync(resource.Game.Id);
+        var game = await _gameFacadeService.GetGameByIdAsync(resource.Game.Id, resource.Culture);
         if ((game.Deleted && context.User.HasPermission(PermissionOptions.GameUpdateDeleted)) ||
             (!game.Deleted && context.User.HasPermission(PermissionOptions.GameUpdate)))
         {

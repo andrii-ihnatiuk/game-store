@@ -45,8 +45,8 @@ export class GenreService extends BaseService {
     return this.post(appConfiguration.addGenreApiUrl, { genre });
   }
 
-  updateGenre(genre: Genre): Observable<any> {
-    return this.put(appConfiguration.updateGenreApiUrl, { genre });
+  updateGenre(genre: Genre, culture: string): Observable<any> {
+    return this.put(appConfiguration.updateGenreApiUrl, { genre, culture });
   }
 
   deleteGenre(id: string): Observable<any> {

@@ -1,19 +1,19 @@
 <div class="footer-container">
 <div class="footer-top">
     <div class="footer-block">
-        <div class="block-header">Site Links</div>
+        <div class="block-header">{{ labels.siteLinksLabel }}</div>
         <a class="block-link link-hoverable" *ngFor="let item of mainListItems" routerLink="{{ item.pageLink }}">{{ item.title }}</a>
     </div>
     <div class="footer-block">
-        <div class="block-header">Company Information</div>
-        <a class="block-link link-hoverable" routerLink="">About</a>
-        <a class="block-link link-hoverable" routerLink="">Awards</a>
-        <a class="block-link link-hoverable" routerLink="">Reviews</a>
-        <a class="block-link link-hoverable" routerLink="">Testimonials</a>
-        <a class="block-link link-hoverable" routerLink="">Contact</a>
+        <div class="block-header">{{ labels.companyInfoLabel }}</div>
+        <a class="block-link link-hoverable" routerLink="">{{ labels.aboutMenuItem }}</a>
+        <a class="block-link link-hoverable" routerLink="">{{ labels.awardsMenuItem }}</a>
+        <a class="block-link link-hoverable" routerLink="">{{ labels.reviewsMenuItem }}</a>
+        <a class="block-link link-hoverable" routerLink="">{{ labels.testimonialsMenuItem }}</a>
+        <a class="block-link link-hoverable" routerLink="">{{ labels.contactMenuItem }}</a>
     </div>
     <div class="footer-block">
-        <div class="block-header">Social Media</div>
+        <div class="block-header">{{ labels.socialMediaLabel }}</div>
         <div class="social-icons">
             <a href="" class="icon-wrapper">
                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 50 50">
@@ -51,8 +51,6 @@
                 <svg height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                     fill="#000000">
                     <g id="SVGRepo_iconCarrier">
-                        <title>instagram [#167]</title>
-                        <desc>Created with Sketch.</desc>
                         <defs> </defs>
                         <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                             <g id="Dribbble-Light-Preview" transform="translate(-340.000000, -7439.000000)" fill="#000000">
@@ -69,5 +67,5 @@
         </div>
     </div>
 </div>
-<div class="footer-bottom">@2007 - 2024 All Rights Reserved</div>
+<div class="footer-bottom">@2007 - 2024 {{ labels.rightsReservedLabel }}</div>
 </div>

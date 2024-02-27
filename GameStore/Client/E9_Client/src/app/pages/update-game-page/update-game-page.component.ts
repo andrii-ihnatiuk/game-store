@@ -1,199 +1,41 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  MaxValidator,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, of } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { combineLatest } from 'rxjs';
 import { BaseComponent } from 'src/app/componetns/base.component';
-import { InputValidator } from 'src/app/configuration/input-validator';
-import { Game } from 'src/app/models/game.model';
-import { Genre } from 'src/app/models/genre.model';
-import { Platform } from 'src/app/models/platform.model';
-import { Publisher } from 'src/app/models/publisher.model';
-import { GameService } from 'src/app/services/game.service';
-import { GenreService } from 'src/app/services/genre.service';
-import { PlatformService } from 'src/app/services/platform.service';
-import { PublisherService } from 'src/app/services/publisher.service';
+import { Culture } from 'src/app/models/culture.model';
+import { LocalizationService } from 'src/app/services/localization.service';
 
+@UntilDestroy()
 @Component({
   selector: 'gamestore-update-game',
   templateUrl: './update-game-page.component.html',
   styleUrls: ['./update-game-page.component.scss'],
 })
 export class UpdateGamePageComponent extends BaseComponent implements OnInit {
-  form?: FormGroup;
-  genreItems: string[] = [];
-  platformItems: string[] = [];
-  gamePageLink?: string;
 
-  game?: Game;
+  contentCultures: Culture[] = [];
 
-  genres: Genre[] = [];
-  publishers: { name: string; value: string }[] = [{ name: '-', value: '' }];
-  platforms: Platform[] = [];
+  gameKey?: string;
 
-  gameGenres: Genre[] = [];
-  gamePublisher?: Publisher;
-  gamePlatforms: Platform[] = [];
-
-  constructor(
-    private gameService: GameService,
-    private genreService: GenreService,
-    private platformService: PlatformService,
-    private publisherService: PublisherService,
-    private route: ActivatedRoute,
-    private builder: FormBuilder,
-    private router: Router
-  ) {
+  constructor(private localizationService: LocalizationService, private route: ActivatedRoute,) {
     super();
   }
 
   ngOnInit(): void {
-    this.getRouteParam(this.route, 'key')
-      .pipe(
-        switchMap((key) =>
-          !!key?.length ? this.gameService.getGame(key) : of(undefined)
-        ),
-        tap((x) => (this.game = x)),
-        switchMap((x) =>
-          forkJoin({
-            gameGenres: !!x?.key?.length
-              ? this.genreService.getGenresByGameKey(x.key)
-              : of([]),
-            gamePlatforms: !!x?.key?.length
-              ? this.platformService.getPlatformsByGameKey(x.key)
-              : of([]),
-            gamePublisher: !!x?.key?.length
-              ? this.publisherService.getPublisherByGameKey(x.key)
-              : of(undefined),
-            genres: this.genreService.getGenres(),
-            platforms: this.platformService.getPlatforms(),
-            publishers: this.publisherService.getPublishers(),
-          })
-        )
-      )
-      .subscribe((x) => {
-        this.platforms = x.platforms;
-        x.publishers.forEach((publisher) =>
-          this.publishers.push({
-            name: publisher.companyName,
-            value: publisher.id ?? '',
-          })
-        );
-        this.genres = x.genres;
-        this.gameGenres = x.gameGenres;
-        this.gamePlatforms = x.gamePlatforms;
-        this.gamePublisher = x.gamePublisher;
-        this.createForm();
-      });
+    combineLatest([
+      this.localizationService.cultures$,
+      this.getRouteParam(this.route, "key")
+    ])
+    .pipe(untilDestroyed(this))
+    .subscribe(([cultures, key]) => {
+      this.gameKey = key;
+      this.contentCultures = !!key ? cultures : this.takeOnlyDefaultCulture(cultures);
+    })
   }
 
-  getFormControl(name: string): FormControl {
-    return this.form?.get(name) as FormControl;
-  }
-
-  getFormControlArray(name: string): FormControl[] {
-    return (this.form?.get(name) as FormArray).controls.map(
-      (x) => x as FormControl
-    );
-  }
-
-  onSave(): void {
-    const game: Game = {
-      id: this.form!.value.id,
-      name: this.form!.value.name,
-      type: this.form!.value.type,
-      fileSize: this.form!.value.fileSize,
-      description: this.form!.value.description,
-      key: this.form!.value.key,
-      unitInStock: this.form!.value.unitInStock,
-      price: this.form!.value.price,
-      discount: this.form!.value.discount,
-      publishDate: this.form!.value.publishDate || null,
-      discontinued: this.form!.value.discontinued,
-    };
-
-    const selectedGenres = this.genres
-      .filter((x, i) => !!this.form!.value.genres[i])
-      .map((x) => x.id ?? '');
-    const selectedPlatforms = this.platforms
-      .filter((x, i) => !!this.form!.value.platforms[i])
-      .map((x) => x.id ?? '');
-
-    const selectedPublisher = this.form!.value.publisher || null;
-
-    (!!game.id
-      ? this.gameService.updateGame(
-          game,
-          selectedGenres,
-          selectedPlatforms,
-          selectedPublisher
-        )
-      : this.gameService.addGame(
-          game,
-          selectedGenres,
-          selectedPlatforms,
-          selectedPublisher
-        )
-    ).subscribe((_) =>
-      this.router.navigateByUrl(
-        !!game.id
-          ? this.links.get(this.pageRoutes.Game) + `/${game.key}`
-          : this.links.get(this.pageRoutes.Games) ?? ''
-      )
-    );
-  }
-
-  private createForm(): void {
-    this.gamePageLink = !!this.game
-      ? `${this.links.get(this.pageRoutes.Game)}/${this.game.key}`
-      : undefined;
-
-    this.form = this.builder.group({
-      id: [this.game?.id ?? ''],
-      name: [this.game?.name ?? '', Validators.required],
-      key: [this.game?.key ?? ''],
-      type: [this.game?.type ?? ''],
-      fileSize: [this.game?.fileSize ?? ''],
-      description: [this.game?.description ?? ''],
-      unitInStock: [
-        this.game?.unitInStock ?? '',
-        [Validators.required, InputValidator.getNumberValidator()],
-      ],
-      price: [
-        this.game?.price ?? '',
-        [Validators.required, Validators.min(0)],
-      ],
-      discount: [
-        this.game?.discount ?? 0,
-        [Validators.required, Validators.min(0), Validators.max(100)]
-      ],
-      discontinued: [
-        this.game?.discontinued ?? false,
-        [Validators.required],
-      ],
-      publishDate: [
-        this.game?.publishDate ?? ''
-      ],
-      publisher: [this.gamePublisher?.id ?? ''],
-      genres: this.builder.array(
-        this.genres.map((x) => this.gameGenres.some((z) => z.id === x.id))
-      ),
-      platforms: this.builder.array(
-        this.platforms.map((x) => this.gamePlatforms.some((z) => z.id === x.id))
-      ),
-    });
-
-    this.genreItems = this.genres.map((x) => x.name);
-    this.platformItems = this.platforms.map((x) => x.type);
+  private takeOnlyDefaultCulture(cultures: Culture[]): Culture[] {
+    var defaultCulture = cultures.find(x => x.isDefault);
+    return !!defaultCulture ? [defaultCulture] : [];
   }
 }

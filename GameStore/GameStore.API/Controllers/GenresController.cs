@@ -1,5 +1,6 @@
 using GameStore.API.Attributes;
 using GameStore.Application.Interfaces;
+using GameStore.Data.Extensions;
 using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
@@ -30,28 +31,28 @@ public class GenresController : ControllerBase
     [HttpGet("{genreId}", Name = "GetGenreById")]
     public async Task<IActionResult> GetGenreAsync([FromRoute] string genreId)
     {
-        var genreFullDto = await _genreFacadeService.GetGenreByIdAsync(genreId);
+        var genreFullDto = await _genreFacadeService.GetGenreByIdAsync(genreId, this.GetCurrentCultureName());
         return Ok(genreFullDto);
     }
 
     [HttpGet("")]
     public async Task<ActionResult<IList<GenreBriefDto>>> GetAllGenresAsync()
     {
-        var genresDto = await _genreFacadeService.GetAllGenresAsync();
+        var genresDto = await _genreFacadeService.GetAllGenresAsync(this.GetCurrentCultureName());
         return Ok(genresDto);
     }
 
     [HttpGet("{id}/subgenres")]
     public async Task<ActionResult<IList<GenreBriefDto>>> GetSubgenresAsync(string id)
     {
-        var subgenres = await _genreFacadeService.GetSubgenresByParentAsync(id);
+        var subgenres = await _genreFacadeService.GetSubgenresByParentAsync(id, this.GetCurrentCultureName());
         return Ok(subgenres);
     }
 
     [HttpGet("{id}/games")]
     public async Task<ActionResult<IList<GameBriefDto>>> GetGamesByGenreAsync(string id)
     {
-        var games = await _genreFacadeService.GetGamesByGenreIdAsync(id);
+        var games = await _genreFacadeService.GetGamesByGenreIdAsync(id, this.GetCurrentCultureName());
         return Ok(games);
     }
 

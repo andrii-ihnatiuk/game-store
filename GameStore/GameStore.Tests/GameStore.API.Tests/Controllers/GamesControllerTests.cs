@@ -9,6 +9,7 @@ using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -30,7 +31,16 @@ public class GamesControllerTests
             _gameCreateValidator.Object,
             _gameUpdateValidator.Object,
             _gamesFilterValidator.Object,
-            _mockAuthService.Object);
+            _mockAuthService.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext(),
+            },
+        };
+
+        _controller.HttpContext.Features.Set<IRequestCultureFeature>(
+            new RequestCultureFeature(new RequestCulture("en", "en"), null));
     }
 
     [Fact]
@@ -38,7 +48,7 @@ public class GamesControllerTests
     {
         // Arrange
         const string gameAlias = "game-alias";
-        _gameFacadeService.Setup(s => s.GetGameByAliasAsync(gameAlias))
+        _gameFacadeService.Setup(s => s.GetGameByAliasAsync(gameAlias, It.IsAny<string>()))
             .ReturnsAsync(new GameFullDto { Key = gameAlias })
             .Verifiable();
 
@@ -55,7 +65,7 @@ public class GamesControllerTests
     public async Task GetGameByIdAsync_ReturnsGameFullDto()
     {
         // Arrange
-        _gameFacadeService.Setup(s => s.GetGameByIdAsync(Guid.Empty.ToString()))
+        _gameFacadeService.Setup(s => s.GetGameByIdAsync(Guid.Empty.ToString(), It.IsAny<string>()))
             .ReturnsAsync(new GameFullDto())
             .Verifiable();
 
@@ -72,7 +82,10 @@ public class GamesControllerTests
     public async Task GetFilteredGamesAsync_ReturnsGames()
     {
         // Arrange
-        _gameFacadeService.Setup(s => s.GetFilteredGamesAsync(It.IsAny<GamesFilterDto>(), It.IsAny<bool>()))
+        _gameFacadeService.Setup(s => s.GetFilteredGamesAsync(
+                It.IsAny<GamesFilterDto>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>()))
             .ReturnsAsync(new FilteredGamesDto(new List<GameFullDto>(), 1, 1))
             .Verifiable();
 
@@ -80,10 +93,7 @@ public class GamesControllerTests
         {
             new(CustomClaimTypes.Permission, PermissionOptions.CommentFull),
         }));
-        _controller.ControllerContext = new ControllerContext()
-        {
-            HttpContext = new DefaultHttpContext() { User = principal },
-        };
+        _controller.ControllerContext.HttpContext.User = principal;
 
         // Act
         var result = await _controller.GetFilteredGamesAsync(new GamesFilterDto());

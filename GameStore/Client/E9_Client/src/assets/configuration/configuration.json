@@ -31,7 +31,7 @@
   "addPlatformApiUrl": "platforms/new",
   "deletePlatformApiUrl": "platforms/remove/{id}",
 
-  "publisherApiUrl": "publishers/{companyname}",
+  "publisherApiUrl": "publishers/{id}",
   "publishersApiUrl": "publishers",
   "publisherByGameApiUrl": "games/{key}/publisher",
   "updatePublisherApiUrl": "publishers/update",
@@ -73,5 +73,7 @@
   "deleteRoleApiUrl": "roles/remove/{id}",
   "userRolesApiUrl": "users/{id}/roles",
   "rolePermissionsApiUrl": "roles/{id}/permissions",
-  "permissionsApiUrl": "permissions"
+  "permissionsApiUrl": "permissions",
+
+  "culturesApiUrl": "localization/cultures"
 }

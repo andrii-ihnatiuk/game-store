@@ -29,13 +29,13 @@ export class PublisherPageComponent extends BaseComponent implements OnInit {
 
   get deletePublisherLink(): string {
     return `${this.links.get(this.pageRoutes.DeletePublisher)}/${
-      this.publisherValue?.companyName
+      this.publisherValue?.id
     }`;
   }
 
   get updatePublisherLink(): string {
     return `${this.links.get(this.pageRoutes.UpdatePublisher)}/${
-      this.publisherValue?.companyName
+      this.publisherValue?.id
     }`;
   }
 
@@ -63,11 +63,11 @@ export class PublisherPageComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.getRouteParam(this.route, 'id')
       .pipe(
-        switchMap((companyName) => this.publisherService.getPublisher(companyName)),
+        switchMap((id) => this.publisherService.getPublisher(id)),
         tap((x) => (this.publisher = x)),
         switchMap((x) =>
           forkJoin({
-            games: !!x?.companyName ? this.gameService.getGamesByPublisher(x.companyName) : of([]),
+            games: !!x?.id ? this.gameService.getGamesByPublisher(x.id) : of([]),
           })
         )
       )

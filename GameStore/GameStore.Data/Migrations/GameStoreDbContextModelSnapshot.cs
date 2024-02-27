@@ -95,7 +95,7 @@ namespace GameStore.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("PageViews")
                         .HasColumnType("decimal(20,0)");
@@ -119,6 +119,10 @@ namespace GameStore.Data.Migrations
 
                     b.HasIndex("Alias")
                         .IsUnique();
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("PublishDate");
 
                     b.HasIndex("PublisherId");
 
@@ -575,6 +579,259 @@ namespace GameStore.Data.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("GameStore.Data.Entities.Localization.GameTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoreId");
+
+                    b.ToTable("GameTranslation");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("1fe565b1-ac46-435a-9c10-ed4820a6a4a5"),
+                            CoreId = new Guid("8e9d1000-50e0-4bd8-8159-42c7431f32b5"),
+                            Description = "Пригодницька гра у відкритому світі.",
+                            LanguageCode = "uk-UA",
+                            Name = "The Legend of Zelda: Breath of the Wild / Легенда про Зельду",
+                            Type = "Повна гра"
+                        },
+                        new
+                        {
+                            Id = new Guid("3baba5f2-85aa-4c18-a86a-7f02a5e037aa"),
+                            CoreId = new Guid("95ffb14c-267a-432a-9d7c-22f887290d49"),
+                            Description = "Пригодницька гра з відкритим світом.",
+                            LanguageCode = "uk-UA",
+                            Name = "Grand Theft Auto V / ГТА 5",
+                            Type = "Комплект"
+                        },
+                        new
+                        {
+                            Id = new Guid("b632f58b-f4b7-4d6b-bbcf-f2654011c044"),
+                            CoreId = new Guid("e2e928c4-ab49-4bc0-a904-37c34e1385cc"),
+                            Description = "Overwatch 2 — це безкоштовна командна гра-екшен.",
+                            LanguageCode = "uk-UA",
+                            Name = "Overwatch 2 / Овервотч",
+                            Type = "Колекційне видання"
+                        },
+                        new
+                        {
+                            Id = new Guid("40c0e97f-3c51-4e09-ad59-ccc75515a01f"),
+                            CoreId = new Guid("4b5f1e22-cd59-4523-a4e9-f0c0239ab820"),
+                            Description = "Hearthstone — це швидка стратегічна карткова гра від Blizzard Entertainment.",
+                            LanguageCode = "uk-UA",
+                            Name = "Hearthstone / Хартстоун",
+                            Type = "Повна гра"
+                        });
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Localization.GenreTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoreId");
+
+                    b.ToTable("GenreTranslation");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("63d580f5-5ee9-4da6-9f4e-00e4607d48e3"),
+                            CoreId = new Guid("073f790e-a105-491d-965c-946e841c3b3e"),
+                            LanguageCode = "uk-UA",
+                            Name = "Стратегія"
+                        },
+                        new
+                        {
+                            Id = new Guid("a3bed4b2-77db-4277-9089-50432871c8ad"),
+                            CoreId = new Guid("13ba20d2-42fc-4eaa-a7f9-900782cabfc3"),
+                            LanguageCode = "uk-UA",
+                            Name = "Спорт"
+                        },
+                        new
+                        {
+                            Id = new Guid("e3bdad9c-e738-43d9-a9e3-a13adc028709"),
+                            CoreId = new Guid("b3562f18-5e7c-411a-ab76-b675b78bd23d"),
+                            LanguageCode = "uk-UA",
+                            Name = "Гонки"
+                        },
+                        new
+                        {
+                            Id = new Guid("1d69066b-62d2-40e3-93e5-ed33c7a93dce"),
+                            CoreId = new Guid("2ba0604c-5515-470c-a500-58b60e8be000"),
+                            LanguageCode = "uk-UA",
+                            Name = "Ралі"
+                        },
+                        new
+                        {
+                            Id = new Guid("110f9f7e-1e88-4b12-a090-693897fbdc4a"),
+                            CoreId = new Guid("e0e725ed-50ed-4ff7-94e7-38d0e1d2fa39"),
+                            LanguageCode = "uk-UA",
+                            Name = "Аркада"
+                        },
+                        new
+                        {
+                            Id = new Guid("fa678f2e-e047-4de2-892a-b73680db0c39"),
+                            CoreId = new Guid("927cc631-c4f1-4feb-8a0c-9db6cd43402a"),
+                            LanguageCode = "uk-UA",
+                            Name = "Формула"
+                        },
+                        new
+                        {
+                            Id = new Guid("18b35271-7959-4782-a456-05c6450c1d01"),
+                            CoreId = new Guid("5d7545f5-a77a-4632-89c6-40f8756d2f75"),
+                            LanguageCode = "uk-UA",
+                            Name = "Бездоріжжя"
+                        },
+                        new
+                        {
+                            Id = new Guid("cc24ce33-7808-404c-abe2-8618a173ea73"),
+                            CoreId = new Guid("e96511b9-e864-44cc-899f-8313609ffb63"),
+                            LanguageCode = "uk-UA",
+                            Name = "Екшн"
+                        },
+                        new
+                        {
+                            Id = new Guid("bfd40057-71c0-4f07-bd54-070fb158d86e"),
+                            CoreId = new Guid("dd2bf352-9cfd-4b88-b46f-08217104f90d"),
+                            LanguageCode = "uk-UA",
+                            Name = "Пригоди"
+                        },
+                        new
+                        {
+                            Id = new Guid("3dba4278-245a-47ac-9fbd-2d340c85f1d1"),
+                            CoreId = new Guid("d9eaef23-9680-4d25-869b-4ed91847fd03"),
+                            LanguageCode = "uk-UA",
+                            Name = "Головоломки"
+                        },
+                        new
+                        {
+                            Id = new Guid("b78bf3c6-8214-41bc-b6f6-d5369abd6389"),
+                            CoreId = new Guid("956c4baf-e989-4046-b6cb-1d98df33cf6d"),
+                            LanguageCode = "uk-UA",
+                            Name = "Інше"
+                        });
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Localization.PlatformTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoreId");
+
+                    b.ToTable("PlatformTranslation");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("e30f48c6-e381-48b0-8de8-85e0e40d688e"),
+                            CoreId = new Guid("a9f806b4-28c5-4d7b-a776-65dfe029de8f"),
+                            LanguageCode = "uk-UA",
+                            Type = "Мобільні пристрої"
+                        },
+                        new
+                        {
+                            Id = new Guid("d6b4239d-7ddf-4eba-9c9e-726b5c36a550"),
+                            CoreId = new Guid("467762c6-8a10-4570-b829-e29de78a0757"),
+                            LanguageCode = "uk-UA",
+                            Type = "Хмара"
+                        },
+                        new
+                        {
+                            Id = new Guid("bffd53a2-ccbd-44dd-834f-8da69ef0ef44"),
+                            CoreId = new Guid("4adb2c38-f819-43cd-aa78-f46d482ceeb7"),
+                            LanguageCode = "uk-UA",
+                            Type = "Комп'ютер"
+                        },
+                        new
+                        {
+                            Id = new Guid("8febf7f4-795a-47ee-adc9-47835bd2c906"),
+                            CoreId = new Guid("83262eb9-517e-4581-b7ba-88b57c33d721"),
+                            LanguageCode = "uk-UA",
+                            Type = "Консоль"
+                        });
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Localization.PublisherTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoreId");
+
+                    b.ToTable("PublisherTranslation");
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -999,6 +1256,50 @@ namespace GameStore.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("GameStore.Data.Entities.Localization.GameTranslation", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Game", "Core")
+                        .WithMany("Translations")
+                        .HasForeignKey("CoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Core");
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Localization.GenreTranslation", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Genre", "Core")
+                        .WithMany("Translations")
+                        .HasForeignKey("CoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Core");
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Localization.PlatformTranslation", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Platform", "Core")
+                        .WithMany("Translations")
+                        .HasForeignKey("CoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Core");
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.Localization.PublisherTranslation", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Publisher", "Core")
+                        .WithMany("Translations")
+                        .HasForeignKey("CoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Core");
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Order", b =>
                 {
                     b.HasOne("GameStore.Data.Entities.PaymentMethod", "PaymentMethod")
@@ -1083,6 +1384,8 @@ namespace GameStore.Data.Migrations
                     b.Navigation("GameGenres");
 
                     b.Navigation("GamePlatforms");
+
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("GameStore.Data.Entities.Genre", b =>
@@ -1090,6 +1393,8 @@ namespace GameStore.Data.Migrations
                     b.Navigation("GenreGames");
 
                     b.Navigation("SubGenres");
+
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("GameStore.Data.Entities.Identity.ApplicationRole", b =>
@@ -1112,11 +1417,15 @@ namespace GameStore.Data.Migrations
             modelBuilder.Entity("GameStore.Data.Entities.Platform", b =>
                 {
                     b.Navigation("PlatformGames");
+
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("GameStore.Data.Entities.Publisher", b =>
                 {
                     b.Navigation("Games");
+
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,6 @@
-﻿using GameStore.Data.Entities;
+﻿using System.Data;
+using GameStore.Data.Entities;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GameStore.Data.Interfaces;
 
@@ -27,4 +29,6 @@ public interface IUnitOfWork : IDisposable
     Task<int> SaveAsync();
 
     Task<int> SaveAsync(bool logChanges);
+
+    Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted);
 }

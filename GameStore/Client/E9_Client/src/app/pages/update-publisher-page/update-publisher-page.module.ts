@@ -4,9 +4,10 @@ import { CommonComponentsModule } from 'src/app/componetns/common-components.mod
 import { ReactiveFormsModule } from '@angular/forms';
 import { UpdatePublisherPageComponent } from './update-publisher-page.component';
 import { PublisherService } from 'src/app/services/publisher.service';
+import { PublisherFormComponent } from './components/publisher-form/publisher-form.component';
 
 @NgModule({
-  declarations: [UpdatePublisherPageComponent],
+  declarations: [UpdatePublisherPageComponent, PublisherFormComponent],
   imports: [CommonModule, CommonComponentsModule, ReactiveFormsModule],
   providers: [PublisherService]
 })

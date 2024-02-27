@@ -22,32 +22,32 @@ public class GenreFacadeService : IGenreFacadeService
         _migrationService = migrationService;
     }
 
-    public async Task<IList<GenreBriefDto>> GetAllGenresAsync()
+    public async Task<IList<GenreBriefDto>> GetAllGenresAsync(string culture)
     {
         var services = _serviceResolver.ResolveAll<IGenreService>();
-        var tasks = services.Select(s => s.GetAllGenresAsync()).ToList();
+        var tasks = services.Select(s => s.GetAllGenresAsync(culture)).ToList();
         await Task.WhenAll(tasks);
 
         var genres = tasks.SelectMany(t => t.Result).ToList();
         return genres.FilterLegacyEntities();
     }
 
-    public Task<GenreFullDto> GetGenreByIdAsync(string id)
+    public Task<GenreFullDto> GetGenreByIdAsync(string id, string culture)
     {
         var genreService = _serviceResolver.ResolveForEntityId<IGenreService>(id);
-        return genreService.GetGenreByIdAsync(id);
+        return genreService.GetGenreByIdAsync(id, culture);
     }
 
-    public Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId)
+    public Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId, string culture)
     {
         var genreService = _serviceResolver.ResolveForEntityId<IGenreService>(parentId);
-        return genreService.GetSubgenresByParentAsync(parentId);
+        return genreService.GetSubgenresByParentAsync(parentId, culture);
     }
 
-    public Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id)
+    public Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id, string culture)
     {
         var genreService = _serviceResolver.ResolveForEntityId<IGenreService>(id);
-        return genreService.GetGamesByGenreIdAsync(id);
+        return genreService.GetGamesByGenreIdAsync(id, culture);
     }
 
     public async Task<GenreBriefDto> AddGenreAsync(GenreCreateDto dto)

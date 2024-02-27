@@ -35,7 +35,7 @@ export class GlobalHttpInterceptorService implements HttpInterceptor {
         setHeaders: {
           Authorization: authKey,
           'Content-Type': 'application/json',
-          'Accept-Language': localStorage.getItem('locale') ?? 'en',
+          'Accept-Language': localStorage.getItem('overrideLocale') ?? localStorage.getItem('locale') ?? 'en',
         },
         url: request.url,
       });
@@ -43,7 +43,7 @@ export class GlobalHttpInterceptorService implements HttpInterceptor {
       request = request.clone({
         setHeaders: {
           'Content-Type': 'application/json',
-          'Accept-Language': localStorage.getItem('locale') ?? 'en',
+          'Accept-Language': localStorage.getItem('overrideLocale') ?? localStorage.getItem('locale') ?? 'en',
         },
         url: request.url,
       });

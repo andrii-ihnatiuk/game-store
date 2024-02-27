@@ -39,7 +39,7 @@ public class PlatformServiceTests
             .Returns(new PlatformFullDto());
 
         // Act
-        await _service.GetPlatformByIdAsync(id);
+        await _service.GetPlatformByIdAsync(id, string.Empty);
 
         // Assert
         _unitOfWork.Verify(
@@ -55,7 +55,7 @@ public class PlatformServiceTests
     {
         // Arrange
         var platformId = Guid.Empty;
-        var gamesPlatforms = new List<GamePlatform> { new(), new() };
+        var gamesPlatforms = new List<GamePlatform> { new() { Game = new Game() }, new() { Game = new Game() } };
         var games = gamesPlatforms.Select(gp => gp.Game).ToList();
         _unitOfWork.Setup(uow => uow.GamesPlatforms.GetAsync(
                 It.IsAny<Expression<Func<GamePlatform, bool>>>(),
@@ -68,7 +68,7 @@ public class PlatformServiceTests
             .Returns(games.Select(game => new GameBriefDto()).ToList());
 
         // Act
-        var gamesDto = await _service.GetGamesByPlatformAsync(platformId);
+        var gamesDto = await _service.GetGamesByPlatformAsync(platformId, string.Empty);
 
         // Assert
         Assert.NotNull(gamesDto);
@@ -91,7 +91,7 @@ public class PlatformServiceTests
             .Returns(new List<PlatformBriefDto> { new(), new() });
 
         // Act
-        var platforms = await _service.GetAllPlatformsAsync();
+        var platforms = await _service.GetAllPlatformsAsync(string.Empty);
 
         // Assert
         Assert.Equal(platformsData.Count, platforms.Count);

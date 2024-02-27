@@ -15,11 +15,13 @@
 
       <a routerLink="{{ links.get(pageRoutes.Basket) }}" mat-button class="basket link-hoverable">{{ labels.basketMenuItem }}</a>
 
-      <gamestore-selector-input
-      name=""
-      [control]="control"
-      [values]="locales"
-    ></gamestore-selector-input>
+      <div class="language-selector-wrapper">
+        <gamestore-selector-input
+        name=""
+        [control]="control"
+        [values]="locales"
+      ></gamestore-selector-input>
+      </div>
     </div>
   </header>
 

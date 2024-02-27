@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Data;
+using System.Linq.Expressions;
 using System.Text;
 using AutoMapper;
 using GameStore.Data.Entities;
@@ -11,6 +12,7 @@ using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Exceptions;
 using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Storage;
 using Moq;
 
 namespace GameStore.Tests.GameStore.Services.Tests.Services;
@@ -25,6 +27,9 @@ public class GameServiceTests
     public GameServiceTests()
     {
         _service = new CoreGameService(_unitOfWork.Object, _mapper.Object);
+
+        _unitOfWork.Setup(s => s.BeginTransactionAsync(It.IsAny<IsolationLevel>()))
+            .ReturnsAsync(new Mock<IDbContextTransaction>().Object);
     }
 
     [Fact]
@@ -42,7 +47,7 @@ public class GameServiceTests
             .Returns(new GameFullDto());
 
         // Act
-        await _service.GetGameByAliasAsync(GameAlias);
+        await _service.GetGameByAliasAsync(GameAlias, string.Empty);
 
         // Assert
         _unitOfWork.Verify(
@@ -253,7 +258,11 @@ public class GameServiceTests
     public async Task UpdateGameAsync_AllOk_CallsRepository()
     {
         // Arrange
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias } };
+        var gameUpdateDto = new GameUpdateDto
+        {
+            Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias },
+            Culture = "en",
+        };
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
 
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
@@ -282,7 +291,11 @@ public class GameServiceTests
     {
         // Arrange
         const string updatedAlias = "updated-but-already-exists";
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = updatedAlias } };
+        var gameUpdateDto = new GameUpdateDto
+        {
+            Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = updatedAlias },
+            Culture = "en",
+        };
 
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
                 It.IsAny<Expression<Func<Game, bool>>>(),
@@ -302,7 +315,11 @@ public class GameServiceTests
     {
         // Arrange
         var gameGenres = new List<GameGenre>() { new() };
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias } };
+        var gameUpdateDto = new GameUpdateDto
+        {
+            Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias },
+            Culture = "en",
+        };
 
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
@@ -311,9 +328,8 @@ public class GameServiceTests
                 It.IsAny<bool>()))
             .ReturnsAsync(existingGame);
 
-        var updatedGame = new Game() { Id = Guid.Empty, Alias = GameAlias, GameGenres = gameGenres };
-        _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
-            .Returns(updatedGame);
+        _mapper.Setup(m => m.Map(It.IsAny<object>(), existingGame))
+            .Callback(() => existingGame.GameGenres = gameGenres);
 
         // ExistsAsync is called on updatedGame list
         _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
@@ -328,7 +344,11 @@ public class GameServiceTests
     {
         // Arrange
         var gamePlatforms = new List<GamePlatform> { new() };
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias } };
+        var gameUpdateDto = new GameUpdateDto
+        {
+            Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias },
+            Culture = "en",
+        };
 
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
@@ -337,9 +357,8 @@ public class GameServiceTests
                 It.IsAny<bool>()))
             .ReturnsAsync(existingGame);
 
-        var updatedGame = new Game() { Id = Guid.Empty, Alias = GameAlias, GamePlatforms = gamePlatforms };
-        _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
-            .Returns(updatedGame);
+        _mapper.Setup(m => m.Map(gameUpdateDto as object, existingGame))
+            .Callback(() => existingGame.GamePlatforms = gamePlatforms);
 
         _unitOfWork.Setup(uow => uow.Platforms.ExistsAsync(It.IsAny<Expression<Func<Platform, bool>>>()))
             .ReturnsAsync(false);
@@ -352,7 +371,11 @@ public class GameServiceTests
     public async Task UpdateGameAsync_WhenPublisherDoesNotExist_ThrowsForeignKeyException()
     {
         // Arrange
-        var gameUpdateDto = new GameUpdateDto { Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias } };
+        var gameUpdateDto = new GameUpdateDto
+        {
+            Game = new GameUpdateInnerDto { Id = Guid.Empty.ToString(), Key = GameAlias },
+            Culture = "en",
+        };
 
         var existingGame = new Game() { Id = Guid.Empty, Alias = GameAlias };
         _unitOfWork.Setup(uow => uow.Games.GetOneAsync(
@@ -361,9 +384,8 @@ public class GameServiceTests
                 It.IsAny<bool>()))
             .ReturnsAsync(existingGame);
 
-        var updatedGame = new Game() { Id = Guid.Empty, Alias = GameAlias, PublisherId = Guid.Empty };
-        _mapper.Setup(m => m.Map(gameUpdateDto, existingGame))
-            .Returns(updatedGame);
+        _mapper.Setup(m => m.Map(gameUpdateDto as object, existingGame))
+            .Callback(() => existingGame.PublisherId = Guid.Empty);
 
         _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(It.IsAny<Expression<Func<Publisher, bool>>>()))
             .ReturnsAsync(false);

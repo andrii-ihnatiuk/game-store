@@ -1,8 +1,9 @@
-﻿using GameStore.Data.Interfaces;
+﻿using GameStore.Data.Entities.Localization;
+using GameStore.Data.Interfaces;
 
 namespace GameStore.Data.Entities;
 
-public class Game : ICreationTrackable, IMigrationTrackable
+public class Game : ICreationTrackable, IMigrationTrackable, IMultiLingualEntity<GameTranslation>
 {
     public Guid Id { get; set; }
 
@@ -43,4 +44,6 @@ public class Game : ICreationTrackable, IMigrationTrackable
     public IList<GamePlatform> GamePlatforms { get; set; } = new List<GamePlatform>();
 
     public IList<Comment> Comments { get; set; } = new List<Comment>();
+
+    public IList<GameTranslation> Translations { get; set; } = new List<GameTranslation>();
 }

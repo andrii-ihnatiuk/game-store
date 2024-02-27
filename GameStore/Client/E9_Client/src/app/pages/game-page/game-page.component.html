@@ -1,5 +1,5 @@
 <div *ngIf="!!game">
-  <a class="go-back-link" routerLink="{{links.get(pageRoutes.Games)}}">Go Back to Game List</a>
+  <a class="go-back-link" routerLink="{{links.get(pageRoutes.Games)}}">{{ labels.backToGameListLabel }}</a>
 
   <div class="content-container">
     <div class="product-images-container">
@@ -26,7 +26,7 @@
         </div>
         <div class="product-rating-container">
           <app-star-rating [rating]="4" [readonly]="true"></app-star-rating>
-          <div class="rating-comments-count">{{totalComments}} Comments</div>
+          <div class="rating-comments-count">{{totalComments}} {{ labels.commentsLabel }}</div>
         </div>
       </div>
       <hr class="hr-soft">
@@ -54,7 +54,7 @@
       </div>
       <hr class="hr-soft">
       <div class="product-info-wrapper">
-        <div class="product-info-title">What You Get</div>
+        <div class="product-info-title">{{ labels.whatYouGetLabel }}</div>
         <p>Purchase the Ace Combat 7: Skies Unknown Launch Edition, available until 2/18/2019, and get the following content:</p>
         <ul>
           <li>Ace Combat 7: Skies Unknown;</li>
@@ -65,7 +65,7 @@
         <p>This bundle also comes with the playable aircraft F-104C: Avril DLC as a digital-exclusive bonus.</p>
       </div>
       <div *ngIf="!!game.description?.length" class="product-info-wrapper">
-        <div class="product-info-title">Game Description</div>
+        <div class="product-info-title">{{ labels.gameDescriptionLabel }}</div>
         <div [innerHTML]="game.description"></div>
       </div>
     </div>

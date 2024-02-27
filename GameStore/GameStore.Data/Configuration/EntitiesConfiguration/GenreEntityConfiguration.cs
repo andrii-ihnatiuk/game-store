@@ -18,5 +18,9 @@ internal class GenreEntityConfiguration : IEntityTypeConfiguration<Genre>
             .HasMany(gnr => gnr.SubGenres)
             .WithOne()
             .HasForeignKey(gnr => gnr.ParentGenreId);
+
+        builder.HasMany(g => g.Translations)
+            .WithOne(t => t.Core)
+            .HasForeignKey(t => t.CoreId);
     }
 }

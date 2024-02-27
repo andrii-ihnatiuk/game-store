@@ -5,11 +5,11 @@ namespace GameStore.Application.Interfaces;
 
 public interface IPublisherFacadeService
 {
-    Task<PublisherFullDto> GetPublisherByNameAsync(string companyName);
+    Task<PublisherFullDto> GetPublisherByIdAsync(string id, string culture);
 
-    Task<IList<PublisherBriefDto>> GetAllPublishersAsync();
+    Task<IList<PublisherBriefDto>> GetAllPublishersAsync(string culture);
 
-    Task<IList<GameBriefDto>> GetGamesByPublisherNameAsync(string companyName);
+    Task<IList<GameBriefDto>> GetGamesByPublisherIdAsync(string id, string culture);
 
     Task<PublisherBriefDto> AddPublisherAsync(PublisherCreateDto dto);
 

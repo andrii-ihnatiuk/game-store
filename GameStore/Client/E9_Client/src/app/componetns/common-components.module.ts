@@ -22,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTabsModule } from '@angular/material/tabs';
 import { TextareaInputComponent } from './textarea-input-component/textarea-input.component';
 import { SelectorInputComponent } from './selector-input-component/selector-input.component';
 import { CheckboxesInputComponent } from './checkboxes-input-component/checkboxes-input.component';
@@ -36,6 +37,7 @@ import { RatingStarComponent } from './star-component/star.component';
 import { PriceComponent } from './price-component/price.component';
 import { SlideInputComponentComponent } from './slide-input-component/slide-input.component';
 import { DatepickerComponent } from './datepicker-component/datepicker.component';
+import { TranslationTabsComponent } from './translation-tabs-component/translation-tabs.component';
 
 @NgModule({
   declarations: [
@@ -60,7 +62,8 @@ import { DatepickerComponent } from './datepicker-component/datepicker.component
     RatingStarComponent,
     PriceComponent,
     SlideInputComponentComponent,
-    DatepickerComponent
+    DatepickerComponent,
+    TranslationTabsComponent,
   ],
   imports: [
     CommonModule,
@@ -78,6 +81,7 @@ import { DatepickerComponent } from './datepicker-component/datepicker.component
     MatChipsModule,
     MatSlideToggleModule,
     MatDatepickerModule,
+    MatTabsModule,
   ],
   exports: [
     ListItemComponent,
@@ -99,7 +103,8 @@ import { DatepickerComponent } from './datepicker-component/datepicker.component
     DetailComponent,
     PriceComponent,
     SlideInputComponentComponent,
-    DatepickerComponent
+    DatepickerComponent,
+    TranslationTabsComponent
   ],
 })
-export class CommonComponentsModule {}
+export class CommonComponentsModule { }

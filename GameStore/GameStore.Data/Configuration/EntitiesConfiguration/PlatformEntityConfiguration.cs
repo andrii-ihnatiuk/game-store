@@ -13,5 +13,9 @@ internal class PlatformEntityConfiguration : IEntityTypeConfiguration<Platform>
         builder.HasKey(p => p.Id);
 
         builder.HasIndex(p => p.Type).IsUnique(true);
+
+        builder.HasMany(p => p.Translations)
+            .WithOne(t => t.Core)
+            .HasForeignKey(t => t.CoreId);
     }
 }

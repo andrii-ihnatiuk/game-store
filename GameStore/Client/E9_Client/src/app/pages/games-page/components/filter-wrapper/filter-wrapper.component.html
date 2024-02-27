@@ -4,7 +4,7 @@
       <div class="section-title">{{ pageTitle }}</div>
       <div class="content-title-actions">
         <a mat-button class="btn-orange" routerLink="{{ links.get(pageRoutes.AddGame) }}" >{{labels.addNewButtonLabel}}</a>
-        <gamestore-text-input [name]="'Search for game'" [control]="getFormControl('name')"></gamestore-text-input>
+        <gamestore-text-input [name]="labels.searchForGameLabel" [control]="getFormControl('name')"></gamestore-text-input>
       </div>
     </div>
     <gamestore-pagging-wrapper
@@ -15,7 +15,7 @@
     </gamestore-pagging-wrapper>
   </div>
   <aside class="filters-container">
-    <div class="section-title">Refine Results</div>
+    <div class="section-title">{{ labels.refineResultsLabel }}</div>
     <div class="filters-wrapper">
       <div class="filter-btn-wrapper">
         <button
@@ -30,7 +30,7 @@
       <mat-expansion-panel hideToggle [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <div class="filter-title">Sorting</div>
+            <div class="filter-title">{{ labels.sortingLabel }}</div>
             <hr>
           </mat-panel-title>
         </mat-expansion-panel-header>
@@ -40,7 +40,7 @@
       <mat-expansion-panel hideToggle [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            <div class="filter-title">Price Range</div>
+            <div class="filter-title">{{ labels.priceRangeLabel }}</div>
             <hr>
           </mat-panel-title>
         </mat-expansion-panel-header>

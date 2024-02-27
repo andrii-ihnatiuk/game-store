@@ -1,8 +1,9 @@
-﻿using GameStore.Data.Interfaces;
+﻿using GameStore.Data.Entities.Localization;
+using GameStore.Data.Interfaces;
 
 namespace GameStore.Data.Entities;
 
-public class Publisher : IMigrationTrackable
+public class Publisher : IMigrationTrackable, IMultiLingualEntity<PublisherTranslation>
 {
     public Guid Id { get; set; }
 
@@ -17,4 +18,6 @@ public class Publisher : IMigrationTrackable
     public string? AccountId { get; set; }
 
     public IList<Game> Games { get; set; } = new List<Game>();
+
+    public IList<PublisherTranslation> Translations { get; set; } = new List<PublisherTranslation>();
 }

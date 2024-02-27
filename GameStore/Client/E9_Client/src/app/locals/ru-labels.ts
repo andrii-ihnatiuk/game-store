@@ -12,6 +12,28 @@ export class RuLabels implements Labels {
   basketMenuItem: string = "Слава Україні!";
   rolesMenuItem: string = "Слава Україні!";
   usersMenuItem: string = "Слава Україні!";
+  aboutMenuItem: string = "Слава Україні!";
+  awardsMenuItem: string = "Слава Україні!";
+  reviewsMenuItem: string = "Слава Україні!";
+  testimonialsMenuItem: string = "Слава Україні!";
+  contactMenuItem: string = "Слава Україні!";
+
+  siteLinksLabel: string = "Слава Україні!";
+  companyInfoLabel: string = "Слава Україні!";
+  socialMediaLabel: string = "Слава Україні!";
+  rightsReservedLabel: string = "Слава Україні!";
+
+  getInTouchLabel: string = "Слава Україні!";
+  twitterUpdatesLabel: string = "Слава Україні!";
+  fromTheBlogLabel: string = "Слава Україні!";
+  formNameLabel: string = "Слава Україні!";
+  formEmailLabel: string = "Слава Україні!";
+  formMessageLabel: string = "Слава Україні!";
+
+  searchForGameLabel: string = "Слава Україні!";
+  refineResultsLabel: string = "Слава Україні!";
+  sortingLabel: string = "Слава Україні!";
+  priceRangeLabel: string = "Слава Україні!";
 
   gameKeyLabel: string = "Слава Україні!";
   gameNameLabel: string = "Слава Україні!";
@@ -50,6 +72,16 @@ export class RuLabels implements Labels {
   loginButtonLabel: string = "Слава Україні!";
   exitButtonLabel: string = "Слава Україні!";
   shipButtonLabel: string = "Слава Україні!";
+  writeCommentButtonLabel: string = "Слава Україні!";
+
+  backToGameListLabel: string = "Слава Україні!";
+  commentsLabel: string = "Слава Україні!";
+  whatYouGetLabel: string = "Слава Україні!";
+
+  learnMoreButtonLabel: string = "Слава Україні!";
+  submitButtonLabel: string = "Слава Україні!";
+  followUsButtonLabel: string = "Слава Україні!";
+  visitBlogButtonLabel: string = "Слава Україні!";
 
   deleteMessage: string = "Слава Україні!";
   enterValidMessage: string = "Слава Україні!";
@@ -70,6 +102,11 @@ export class RuLabels implements Labels {
   orderDetailsDiscountLabel: string = "Слава Україні!";
   orderDetailsQuantityLabel: string = "Слава Україні!";
   historyDateRangeLabel: string = "Слава Україні!";
+  orderSummaryLabel: string = "Слава Україні!";
+  orderSubtotalLabel: string = "Слава Україні!";
+  orderTaxesLabel: string = "Слава Україні!";
+  orderTotalLabel: string = "Слава Україні!";
+  orderItemsCounterLabel: string = "Слава Україні!";
 
   userNameLabel: string = "Слава Україні!";
   userPasswordLabel: string = "Слава Україні!";

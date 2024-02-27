@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { gameCountSubject } from 'src/app/configuration/shared-info';
 import { UserService } from 'src/app/services/user.service';
 import { BaseComponent } from '../base.component';
 import { ListItem } from '../list-item-component/list-item';
+import { LocalizationService } from 'src/app/services/localization.service';
 
 @UntilDestroy()
 @Component({
@@ -49,16 +49,15 @@ export class HeaderComponent extends BaseComponent implements OnInit {
       pageLink: this.links.get(this.pageRoutes.History)
     },
   ]
-  
-    locales = [
-      { name: 'En', value: 'en' },
-      { name: 'Ua', value: 'ua' },
-      { name: 'Ru', value: 'ru' },
-    ];
+
+  locales: { name: string; value: string }[] = [];
 
   control = new FormControl(localStorage.getItem('locale') ?? 'en');
 
-  constructor(private userService: UserService, private router: Router) {
+  constructor(
+    private userService: UserService,
+    private localizationService: LocalizationService
+  ) {
     super();
   }
 
@@ -71,9 +70,18 @@ export class HeaderComponent extends BaseComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((x) => (this.gameCount = x));
 
+    this.localizationService.loadSupportedCultures()
+      .pipe(untilDestroyed(this))
+      .subscribe((cultures) => {
+        cultures.forEach(x => this.locales.push({
+          'name': x.displayName,
+          'value': x.name
+        }));
+      });
+
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((x) => {
       localStorage.setItem('locale', x.toString());
-      this.router.navigateByUrl('').then(() => window.location.reload());
+      window.location.reload()
     });
   }
 }

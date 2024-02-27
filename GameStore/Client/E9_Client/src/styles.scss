@@ -179,3 +179,37 @@ a.mat-button-base {
         background-color: #FF7E2A;
     }
 }
+
+.language-selector-wrapper {
+    .mat-form-field-wrapper {
+        transition: background-color .2s ease;
+        background-color: rgba($color: #000000, $alpha: .2);
+
+        &:hover {
+            background-color: rgba($color: #000000, $alpha: .4);
+        }
+    }
+
+    .mat-form-field-outline, .mat-form-field-outline-thick {
+        color: transparent !important;
+    }
+
+    .mat-select-arrow {
+        color: white !important;
+    }
+
+    .mat-select-value {
+        color: white !important;
+        font-size: 16px;
+        font-family: 'Montserrat';
+        font-weight: 700;
+
+        &::before {
+            content: "🌐 ";
+        }
+    }
+
+    .mat-select-arrow-wrapper {
+        transform: none !important;
+    }
+}

@@ -4,9 +4,10 @@ import { CommonComponentsModule } from 'src/app/componetns/common-components.mod
 import { ReactiveFormsModule } from '@angular/forms';
 import { UpdateGenrePageComponent } from './update-genre-page.component';
 import { GenreService } from 'src/app/services/genre.service';
+import { GenreFormComponent } from './components/genre-form/genre-form.component';
 
 @NgModule({
-  declarations: [UpdateGenrePageComponent],
+  declarations: [UpdateGenrePageComponent, GenreFormComponent],
   imports: [CommonModule, CommonComponentsModule, ReactiveFormsModule],
   providers: [GenreService]
 })

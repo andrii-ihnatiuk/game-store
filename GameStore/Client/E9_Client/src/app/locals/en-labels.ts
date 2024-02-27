@@ -10,6 +10,28 @@ export class EnLabels implements Labels {
   usersMenuItem = 'Users';
   rolesMenuItem = 'Roles';
   ordersMenuItem = 'Orders';
+  aboutMenuItem = "About"
+  awardsMenuItem = "Awards";
+  reviewsMenuItem = "Reviews";
+  testimonialsMenuItem = "Testimonials";
+  contactMenuItem = "Contact";
+
+  siteLinksLabel: string = "Site Links";
+  companyInfoLabel: string = "Company Information";
+  socialMediaLabel: string = "Social Media";
+  rightsReservedLabel: string = "All Rights Reserved"
+
+  getInTouchLabel: string = "Get In Touch";
+  twitterUpdatesLabel: string = "Twitter Updates";
+  fromTheBlogLabel: string = "From the Blog";
+  formNameLabel: string = "Name";
+  formEmailLabel: string = "Email";
+  formMessageLabel: string = "Message";
+
+  searchForGameLabel: string = "Search for game";
+  refineResultsLabel: string = "Refine Results";
+  sortingLabel: string = "Sorting";
+  priceRangeLabel: string = "Price Range";
 
   addNewButtonLabel = 'Add';
   deleteButtonLabel = 'Delete';
@@ -31,12 +53,22 @@ export class EnLabels implements Labels {
   loginButtonLabel = 'Login';
   exitButtonLabel = 'Exit';
   shipButtonLabel = 'Ship';
+  writeCommentButtonLabel: string = "Write a Comment";
+
+  backToGameListLabel: string = "Go Back to Game List";
+  commentsLabel: string = "Comments";
+  whatYouGetLabel: string = "What You Get";
+
+  learnMoreButtonLabel = "Learn More";
+  submitButtonLabel = "Submit";
+  followUsButtonLabel = "Follow us";
+  visitBlogButtonLabel = "Visit Blog";
 
   gameKeyLabel = 'Key';
   gameNameLabel = 'Name';
   gameTypeLabel = 'Type';
   gameFileSizeLabel = 'File Size';
-  gameDescriptionLabel = 'Description';
+  gameDescriptionLabel = 'Game Description';
   gameDiscontinuedLabel = 'Discontinued';
   gameUnitInStockLabel = 'Unit in Stock';
   gamePriceLabel = 'Price';
@@ -54,6 +86,8 @@ export class EnLabels implements Labels {
   genreParentLabel = 'Parent';
   genreNestedLabel = 'Nested';
 
+  platformTypeLabel = 'Type';
+
   orderCustomerId = 'Customer ID';
   orderDate = 'Date';
   orderShipDate = 'Ship Date';
@@ -63,8 +97,11 @@ export class EnLabels implements Labels {
   orderDetailsDiscountLabel = 'Discount';
   orderDetailsQuantityLabel = 'Quantity';
   historyDateRangeLabel = 'Date range'
-
-  platformTypeLabel = 'Type';
+  orderSummaryLabel: string = "Order Summary";
+  orderSubtotalLabel: string = "Subtotal";
+  orderTaxesLabel: string = "Taxes";
+  orderTotalLabel: string = "Total";
+  orderItemsCounterLabel: string = "items";
 
   deleteMessage = 'Are you sure about deleting?';
   enterValidMessage = 'Please enter valid value';

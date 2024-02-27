@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using GameStore.Data.Entities;
+using GameStore.Data.Entities.Localization;
 using GameStore.Data.Interfaces;
+using GameStore.Services.Extensions;
 using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Platform;
@@ -9,46 +11,50 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
 
-public class PlatformService : IPlatformService
+public class PlatformService : MultiLingualEntityServiceBase<Platform, PlatformTranslation>, IPlatformService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
 
     public PlatformService(IUnitOfWork unitOfWork, IMapper mapper)
+        : base(mapper)
     {
         _unitOfWork = unitOfWork;
-        _mapper = mapper;
     }
 
-    public async Task<PlatformFullDto> GetPlatformByIdAsync(Guid id)
+    public async Task<PlatformFullDto> GetPlatformByIdAsync(Guid id, string culture)
     {
         var platform = await _unitOfWork.Platforms.GetOneAsync(
-            p => p.Id == id);
-        return _mapper.Map<PlatformFullDto>(platform);
+            predicate: p => p.Id == id,
+            include: q => q.Include(p => p.Translations.Where(t => t.LanguageCode == culture)));
+        return Mapper.MapWithTranslation<PlatformFullDto, PlatformTranslation>(platform, culture);
     }
 
-    public async Task<IList<PlatformBriefDto>> GetAllPlatformsAsync()
+    public async Task<IList<PlatformBriefDto>> GetAllPlatformsAsync(string culture)
     {
-        var platforms = await _unitOfWork.Platforms.GetAsync(orderBy: q => q.OrderBy(p => p.Id));
-        return _mapper.Map<IList<PlatformBriefDto>>(platforms);
+        var platforms = await _unitOfWork.Platforms.GetAsync(
+            include: q => q.Include(p => p.Translations.Where(t => t.LanguageCode == culture)),
+            orderBy: q => q.OrderBy(p => p.Id));
+        return Mapper.MapWithTranslation<IList<PlatformBriefDto>, PlatformTranslation>(platforms, culture);
     }
 
-    public async Task<IList<GameBriefDto>> GetGamesByPlatformAsync(Guid id)
+    public async Task<IList<GameBriefDto>> GetGamesByPlatformAsync(Guid id, string culture)
     {
         var games = (await _unitOfWork.GamesPlatforms.GetAsync(
                 predicate: gp => gp.PlatformId == id,
-                include: q => q.Include(gp => gp.Game)))
+                include: q => q
+                    .Include(gp => gp.Game)
+                    .ThenInclude(g => g.Translations.Where(t => t.LanguageCode == culture))))
             .Select(gp => gp.Game);
-        return _mapper.Map<IList<GameBriefDto>>(games);
+        return Mapper.MapWithTranslation<IList<GameBriefDto>, GameTranslation>(games, culture);
     }
 
     public async Task<PlatformBriefDto> AddPlatformAsync(PlatformCreateDto dto)
     {
-        var platform = _mapper.Map<Platform>(dto);
+        var platform = Mapper.Map<Platform>(dto);
         await ThrowIfPlatformTypeIsNotUnique(platform.Type);
         await _unitOfWork.Platforms.AddAsync(platform);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<PlatformBriefDto>(platform);
+        return Mapper.Map<PlatformBriefDto>(platform);
     }
 
     public async Task UpdatePlatformAsync(PlatformUpdateDto dto)
@@ -59,7 +65,7 @@ public class PlatformService : IPlatformService
             await ThrowIfPlatformTypeIsNotUnique(dto.Platform.Type);
         }
 
-        _mapper.Map(dto, existingPlatform);
+        UpdateMultiLingualEntity(existingPlatform, dto, dto.Culture);
         await _unitOfWork.SaveAsync();
     }
 

@@ -4,9 +4,10 @@ import { CommonComponentsModule } from 'src/app/componetns/common-components.mod
 import { ReactiveFormsModule } from '@angular/forms';
 import { PlatformService } from 'src/app/services/platform.service';
 import { UpdatePlatformPageComponent } from './update-platform-page.component';
+import { PlatformFormComponent } from './components/platform-form/platform-form.component';
 
 @NgModule({
-  declarations: [UpdatePlatformPageComponent],
+  declarations: [UpdatePlatformPageComponent, PlatformFormComponent],
   imports: [CommonModule, CommonComponentsModule, ReactiveFormsModule],
   providers: [PlatformService]
 })

@@ -3,6 +3,7 @@ using AutoMapper;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces.Payment;
+using GameStore.Services.Models;
 using GameStore.Services.Payment;
 using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Order;
@@ -63,7 +64,7 @@ public class PaymentServiceTests
             .Returns(strategy.Object)
             .Verifiable(Times.Once);
 
-        strategy.Setup(s => s.ProcessPaymentAsync(It.IsAny<PaymentDto>(), It.IsAny<string>()))
+        strategy.Setup(s => s.ProcessPaymentAsync(It.IsAny<PaymentRequest>()))
             .ReturnsAsync(new Mock<IPaymentResult>().Object);
 
         // Act

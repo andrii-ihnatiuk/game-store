@@ -1,10 +1,10 @@
 <div *ngIf="!!comments" class="comments-container">
   <div class="comments-header">
     <div class="comments-stats">
-      <div style="margin-bottom: 5px;">{{commentsCount}} Comments</div>
+      <div style="margin-bottom: 5px;">{{commentsCount}} {{ labels.commentsLabel }}</div>
       <app-star-rating [rating]="4" [showRatingNumber]="true"></app-star-rating>
     </div>
-    <button mat-flat-button class="btn-orange" (click)="onCreateComment()">Write a Comment</button>
+    <button mat-flat-button class="btn-orange" (click)="onCreateComment()">{{ labels.writeCommentButtonLabel }}</button>
   </div>
 
   <div class="comments-content">

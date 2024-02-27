@@ -2,7 +2,6 @@
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Interfaces.Services;
-using GameStore.Shared.Util;
 using Northwind.Data.Interfaces;
 
 namespace Northwind.Services;
@@ -18,24 +17,22 @@ public class MongoSupplierService : MongoServiceBase, IPublisherService
         _mapper = mapper;
     }
 
-    public async Task<PublisherFullDto> GetPublisherByNameAsync(string companyName)
+    public async Task<PublisherFullDto> GetPublisherByIdAsync(string id, string culture)
     {
-        companyName = EntityAliasUtil.RemoveSuffix(companyName);
-        var publisher = await _unitOfWork.Suppliers.GetOneAsync(s => s.CompanyName == companyName);
+        var publisher = await _unitOfWork.Suppliers.GetOneAsync(s => s.Id == id);
         var dto = _mapper.Map<PublisherFullDto>(publisher);
         return dto;
     }
 
-    public async Task<IList<PublisherBriefDto>> GetAllPublishersAsync()
+    public async Task<IList<PublisherBriefDto>> GetAllPublishersAsync(string culture)
     {
         var suppliers = await _unitOfWork.Suppliers.GetAllAsync();
         return _mapper.Map<IList<PublisherBriefDto>>(suppliers);
     }
 
-    public async Task<IList<GameBriefDto>> GetGamesByPublisherNameAsync(string companyName)
+    public async Task<IList<GameBriefDto>> GetGamesByPublisherIdAsync(string id, string culture)
     {
-        companyName = EntityAliasUtil.RemoveSuffix(companyName);
-        var products = await _unitOfWork.Suppliers.GetProductsBySupplierNameAsync(companyName);
+        var products = await _unitOfWork.Suppliers.GetProductsBySupplierIdAsync(id);
         return _mapper.Map<IList<GameBriefDto>>(products);
     }
 

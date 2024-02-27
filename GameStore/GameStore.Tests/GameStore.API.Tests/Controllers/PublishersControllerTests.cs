@@ -5,6 +5,8 @@ using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Validators;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -24,7 +26,16 @@ public class PublishersControllerTests
             _publisherFacadeService.Object,
             _publisherCreateValidator.Object,
             _publisherUpdateValidator.Object,
-            _authService.Object);
+            _authService.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext(),
+            },
+        };
+
+        _controller.HttpContext.Features.Set<IRequestCultureFeature>(
+            new RequestCultureFeature(new RequestCulture("en", "en"), null));
     }
 
     [Fact]
@@ -32,7 +43,7 @@ public class PublishersControllerTests
     {
         // Arrange
         const string companyName = "company-name";
-        _publisherFacadeService.Setup(s => s.GetPublisherByNameAsync(companyName))
+        _publisherFacadeService.Setup(s => s.GetPublisherByIdAsync(companyName, It.IsAny<string>()))
             .ReturnsAsync(new PublisherFullDto { CompanyName = companyName }).Verifiable();
 
         // Act
@@ -48,7 +59,7 @@ public class PublishersControllerTests
     public async Task GetAllPublishersAsync_ReturnsPublishers()
     {
         // Arrange
-        _publisherFacadeService.Setup(s => s.GetAllPublishersAsync())
+        _publisherFacadeService.Setup(s => s.GetAllPublishersAsync(It.IsAny<string>()))
             .ReturnsAsync(new List<PublisherBriefDto>()).Verifiable();
 
         // Act
@@ -65,7 +76,7 @@ public class PublishersControllerTests
     {
         // Arrange
         const string publisherName = "publisher-name";
-        _publisherFacadeService.Setup(s => s.GetGamesByPublisherNameAsync(publisherName))
+        _publisherFacadeService.Setup(s => s.GetGamesByPublisherIdAsync(publisherName, It.IsAny<string>()))
             .ReturnsAsync(new List<GameBriefDto>()).Verifiable();
 
         // Act
