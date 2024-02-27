@@ -1,26 +1,26 @@
 <div class="cards-container">
 
     <div class="card">
-        <div class="card-header">Get In Touch</div>
+        <div class="card-header">{{ labels.getInTouchLabel }}</div>
         <div class="card-content">
             <div class="form-group">
-                <label class="form-input-label" for="name-field">Name</label>
+                <label class="form-input-label" for="name-field">{{ labels.formNameLabel }}</label>
                 <input type="text" id="name-field" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-input-label" for="email-field">Email</label>
+                <label class="form-input-label" for="email-field">{{ labels.formEmailLabel }}</label>
                 <input type="email" id="email-field" class="form-input">
             </div>
             <div class="form-group">
-                <label class="form-input-label" for="message-field">Message</label>
+                <label class="form-input-label" for="message-field">{{ labels.formMessageLabel }}</label>
                 <textarea type="text" id="message-field" class="form-input form-textarea"></textarea>
             </div>
         </div>
-        <button mat-flat-button class="btn-orange">Submit</button>
+        <button mat-flat-button class="btn-orange">{{ labels.submitButtonLabel }}</button>
     </div>
 
     <div class="card">
-        <div class="card-header">Twitter Updates</div>
+        <div class="card-header">{{ labels.twitterUpdatesLabel }}</div>
         <div class="card-content">
             <div class="twitter-block">
                 <div class="twitter-title">Devil May Cry 5</div>
@@ -40,38 +40,38 @@
                 <div class="twitter-subtitle">about 1 hour ago reply</div>
             </div>
         </div>
-        <button mat-flat-button class="btn-orange">Follow us</button>
+        <button mat-flat-button class="btn-orange">{{ labels.followUsButtonLabel }}</button>
     </div>
 
     <div class="card">
-        <div class="card-header">From the Blog</div>
+        <div class="card-header">{{ labels.fromTheBlogLabel }}</div>
         <div class="card-content">
             <div class="blog-block">
                 <div class="blog-text">
                     Proin commodo sodales arcu, a volutpat. Nulla convallis.
-                    <a href="http://goo.gl/eJVm">Learn more</a>
+                    <a href="http://goo.gl/eJVm">{{ labels.learnMoreButtonLabel }}</a>
                 </div>
             </div>
             <div class="blog-block">
                 <div class="blog-text">
                     Proin commodo sodales arcu, volutpat. Nulla convallis a non.
-                    <a href="http://goo.gl/eJVm">Learn more</a>
+                    <a href="http://goo.gl/eJVm">{{ labels.learnMoreButtonLabel }}</a>
                 </div>
             </div>
             <div class="blog-block">
                 <div class="blog-text">
                     Curabitur a aliquet turpis, sagittis eleifend sem.
-                    <a href="http://goo.gl/eJVm">Learn more</a>
+                    <a href="http://goo.gl/eJVm">{{ labels.learnMoreButtonLabel }}</a>
                 </div>
             </div>
             <div class="blog-block">
                 <div class="blog-text">
                     Nam pellentesque finibus felis eget feugiat. Nulla a nisl non veh.
-                    <a href="http://goo.gl/eJVm">Learn more</a>
+                    <a href="http://goo.gl/eJVm">{{ labels.learnMoreButtonLabel }}</a>
                 </div>
             </div>
         </div>
-        <button mat-flat-button class="btn-orange">Visit Blog</button>
+        <button mat-flat-button class="btn-orange">{{ labels.visitBlogButtonLabel }}</button>
     </div>
 
 </div>

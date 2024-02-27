@@ -1,79 +1,94 @@
 ﻿using AutoMapper;
 using GameStore.Data.Entities;
+using GameStore.Data.Entities.Localization;
 using GameStore.Data.Extensions;
 using GameStore.Data.Interfaces;
+using GameStore.Services.Extensions;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameStore.Services;
 
-public class CoreGenreService : CoreServiceBase, ICoreGenreService
+public class CoreGenreService : MultiLingualEntityServiceBase<Genre, GenreTranslation>, ICoreGenreService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IMapper _mapper;
 
     public CoreGenreService(IUnitOfWork unitOfWork, IMapper mapper)
+        : base(mapper)
     {
         _unitOfWork = unitOfWork;
-        _mapper = mapper;
     }
 
-    public async Task<GenreFullDto> GetGenreByIdAsync(string id)
+    public EntityStorage EntityStorage => EntityStorage.SqlServer;
+
+    public async Task<GenreFullDto> GetGenreByIdAsync(string id, string culture)
     {
         var genreId = Guid.Parse(id);
         var genre = await _unitOfWork.Genres.GetOneAsync(
             g => g.Id == genreId,
             g => g
+                .Include(g => g.Translations.Where(t => t.LanguageCode == culture))
                 .Include(nav => nav.SubGenres));
-        return _mapper.Map<GenreFullDto>(genre);
+        return Mapper.MapWithTranslation<GenreFullDto, GenreTranslation>(genre, culture);
     }
 
-    public async Task<IList<GenreBriefDto>> GetAllGenresAsync()
+    public async Task<IList<GenreBriefDto>> GetAllGenresAsync(string culture)
     {
-        var genres = await _unitOfWork.Genres.GetAsync(orderBy: q => q.OrderBy(g => g.Id));
-        return _mapper.Map<IList<GenreBriefDto>>(genres);
+        var genres = await _unitOfWork.Genres.GetAsync(
+            orderBy: q => q.OrderBy(g => g.Id),
+            include: q => q.Include(g => g.Translations.Where(t => t.LanguageCode == culture)));
+        return Mapper.MapWithTranslation<IList<GenreBriefDto>, GenreTranslation>(genres, culture);
     }
 
-    public async Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId)
+    public async Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId, string culture)
     {
         var genreId = Guid.Parse(parentId);
-        var subgenres = await _unitOfWork.Genres.GetAsync(predicate: g => g.ParentGenreId == genreId);
-        return _mapper.Map<IList<GenreBriefDto>>(subgenres);
+        var subgenres = await _unitOfWork.Genres.GetAsync(
+            predicate: g => g.ParentGenreId == genreId,
+            include: q => q.Include(g => g.Translations.Where(t => t.LanguageCode == culture)));
+        return Mapper.MapWithTranslation<IList<GenreBriefDto>, GenreTranslation>(subgenres, culture);
     }
 
-    public async Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id)
+    public async Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id, string culture)
     {
         var genreId = Guid.Parse(id);
         var games = (await _unitOfWork.GamesGenres.GetAsync(
                 predicate: gg => gg.GenreId == genreId,
-                include: q => q.Include(gg => gg.Game)))
+                include: q => q
+                    .Include(gg => gg.Game)
+                    .ThenInclude(g => g.Translations.Where(t => t.LanguageCode == culture))))
             .Select(gg => gg.Game);
-        return _mapper.Map<IList<GameBriefDto>>(games);
+        return Mapper.MapWithTranslation<IList<GameBriefDto>, GameTranslation>(games, culture);
     }
 
     public async Task<GenreBriefDto> AddGenreAsync(GenreCreateDto dto)
     {
-        var genre = _mapper.Map<Genre>(dto);
+        var genre = Mapper.Map<Genre>(dto);
         await _unitOfWork.Genres.ThrowIfGenreNameIsNotUnique(genre.Name);
         await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolation(genre);
         await _unitOfWork.Genres.AddAsync(genre);
         await _unitOfWork.SaveAsync();
-        return _mapper.Map<GenreBriefDto>(genre);
+        return Mapper.Map<GenreBriefDto>(genre);
     }
 
     public async Task UpdateGenreAsync(GenreUpdateDto dto)
     {
-        var existingGenre = await _unitOfWork.Genres.GetByIdAsync(Guid.Parse(dto.Genre.Id));
+        var existingGenre = await _unitOfWork.Genres.GetOneAsync(
+            predicate: g => g.Id == Guid.Parse(dto.Genre.Id),
+            include: q => q.Include(g => g.Translations.Where(t => t.LanguageCode == dto.Culture)),
+            noTracking: false);
+
         if (existingGenre.Name != dto.Genre.Name)
         {
             await _unitOfWork.Genres.ThrowIfGenreNameIsNotUnique(dto.Genre.Name);
         }
 
-        var updatedGenre = _mapper.Map(dto, existingGenre);
+        UpdateMultiLingualEntity(existingGenre, dto, dto.Culture);
 
-        await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolation(updatedGenre);
+        await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolation(existingGenre);
         await _unitOfWork.SaveAsync();
     }
 

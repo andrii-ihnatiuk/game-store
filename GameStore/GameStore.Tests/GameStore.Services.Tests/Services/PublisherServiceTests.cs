@@ -14,6 +14,7 @@ namespace GameStore.Tests.GameStore.Services.Tests.Services;
 public class PublisherServiceTests
 {
     private const string CompanyName = "test";
+    private const string Culture = "en";
     private readonly Mock<IUnitOfWork> _unitOfWork = new();
     private readonly Mock<IMapper> _mapper = new();
     private readonly CorePublisherService _service;
@@ -39,7 +40,7 @@ public class PublisherServiceTests
             .Returns(new PublisherFullDto());
 
         // Act
-        var result = await _service.GetPublisherByNameAsync(CompanyName);
+        var result = await _service.GetPublisherByIdAsync(CompanyName, Culture);
 
         // Assert
         Assert.NotNull(result);
@@ -64,7 +65,7 @@ public class PublisherServiceTests
             .Returns(new List<PublisherBriefDto> { new(), new() });
 
         // Act
-        var result = await _service.GetAllPublishersAsync();
+        var result = await _service.GetAllPublishersAsync(Culture);
 
         // Assert
         Assert.NotNull(result);
@@ -89,7 +90,7 @@ public class PublisherServiceTests
             .Returns(games.Select(game => new GameBriefDto()).ToList());
 
         // Act
-        var result = await _service.GetGamesByPublisherNameAsync(CompanyName);
+        var result = await _service.GetGamesByPublisherIdAsync(CompanyName, Culture);
 
         // Assert
         Assert.NotNull(result);
@@ -144,19 +145,23 @@ public class PublisherServiceTests
         var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty.ToString(), CompanyName = CompanyName } };
         var existingPublisher = new Publisher { CompanyName = "another-company" };
 
-        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(existingPublisher);
+        _unitOfWork.Setup(uow => uow.Publishers.GetOneAsync(
+                It.IsAny<Expression<Func<Publisher, bool>>>(),
+                It.IsAny<Func<IQueryable<Publisher>, IIncludableQueryable<Publisher, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(existingPublisher)
+            .Verifiable(Times.Once);
 
         _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(p => p.CompanyName == existingPublisher.CompanyName))
             .ReturnsAsync(false);
 
-        _unitOfWork.Setup(uow => uow.SaveAsync()).ReturnsAsync(1);
+        _unitOfWork.Setup(uow => uow.SaveAsync()).ReturnsAsync(1).Verifiable(Times.Once);
 
         // Act
         await _service.UpdatePublisherAsync(dto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
-        _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
+        _unitOfWork.Verify();
     }
 
     [Fact]
@@ -166,14 +171,19 @@ public class PublisherServiceTests
         var dto = new PublisherUpdateDto { Publisher = new PublisherUpdateInnerDto { Id = Guid.Empty.ToString(), CompanyName = "different-company" } };
         var existingPublisher = new Publisher { Id = Guid.Empty, CompanyName = CompanyName };
 
-        _unitOfWork.Setup(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync(existingPublisher);
+        _unitOfWork.Setup(uow => uow.Publishers.GetOneAsync(
+                It.IsAny<Expression<Func<Publisher, bool>>>(),
+                It.IsAny<Func<IQueryable<Publisher>, IIncludableQueryable<Publisher, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(existingPublisher)
+            .Verifiable(Times.Once);
 
         _unitOfWork.Setup(uow => uow.Publishers.ExistsAsync(p => p.CompanyName == "different-company"))
             .ReturnsAsync(true);
 
         // Act & Assert
         await Assert.ThrowsAsync<EntityAlreadyExistsException>(() => _service.UpdatePublisherAsync(dto));
-        _unitOfWork.Verify(uow => uow.Publishers.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
+        _unitOfWork.Verify();
         _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Never);
     }
 

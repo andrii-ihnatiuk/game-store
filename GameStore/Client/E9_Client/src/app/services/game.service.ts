@@ -59,13 +59,15 @@ export class GameService extends BaseService {
     game: Game,
     genres: string[],
     platforms: string[],
-    publisher: string
+    publisher: string,
+    culture: string,
   ): Observable<any> {
     return this.put(appConfiguration.updateGameApiUrl, {
       game,
       genres,
       platforms,
       publisher,
+      culture
     });
   }
 

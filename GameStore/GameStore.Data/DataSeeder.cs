@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using GameStore.Data.Entities;
+using GameStore.Data.Entities.Localization;
 using GameStore.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -47,6 +48,28 @@ internal static class DataSeeder
     private static readonly Guid PaymentMethodId2 = new("32bda162-d288-4a60-a684-9bd7caf61951");
     private static readonly Guid PaymentMethodId3 = new("d84def54-1f51-4f1d-aedc-fc1d18b4fa12");
 
+    private static readonly Guid ZeldaUkrTranslationId = new("1fe565b1-ac46-435a-9c10-ed4820a6a4a5");
+    private static readonly Guid GtaUkrTranslationId = new("3baba5f2-85aa-4c18-a86a-7f02a5e037aa");
+    private static readonly Guid OverwatchUkrTranslationId = new("b632f58b-f4b7-4d6b-bbcf-f2654011c044");
+    private static readonly Guid HearthstoneUkrTranslationId = new("40c0e97f-3c51-4e09-ad59-ccc75515a01f");
+
+    private static readonly Guid StrategyUkrTranslationId = new("63D580F5-5EE9-4DA6-9F4E-00E4607D48E3");
+    private static readonly Guid SportsUkrTranslationId = new("A3BED4B2-77DB-4277-9089-50432871C8AD");
+    private static readonly Guid RacesUkrTranslationId = new("E3BDAD9C-E738-43D9-A9E3-A13ADC028709");
+    private static readonly Guid RallyUkrTranslationId = new("1D69066B-62D2-40E3-93E5-ED33C7A93DCE");
+    private static readonly Guid ArcadeUkrTranslationId = new("110F9F7E-1E88-4B12-A090-693897FBDC4A");
+    private static readonly Guid FormulaUkrTranslationId = new("FA678F2E-E047-4DE2-892A-B73680DB0C39");
+    private static readonly Guid OffRoadUkrTranslationId = new("18B35271-7959-4782-A456-05C6450C1D01");
+    private static readonly Guid ActionUkrTranslationId = new("CC24CE33-7808-404C-ABE2-8618A173EA73");
+    private static readonly Guid AdventureUkrTranslationId = new("BFD40057-71C0-4F07-BD54-070FB158D86E");
+    private static readonly Guid PuzzleSkillUkrTranslationId = new("3DBA4278-245A-47AC-9FBD-2D340C85F1D1");
+    private static readonly Guid MiscUkrTranslationId = new("B78BF3C6-8214-41BC-B6F6-D5369ABD6389");
+
+    private static readonly Guid MobileUkrTranslationId = new("E30F48C6-E381-48B0-8DE8-85E0E40D688E");
+    private static readonly Guid CloudUkrTranslationId = new("D6B4239D-7DDF-4EBA-9C9E-726B5C36A550");
+    private static readonly Guid DesktopUkrTranslationId = new("BFFD53A2-CCBD-44DD-834F-8DA69EF0EF44");
+    private static readonly Guid ConsoleUkrTranslationId = new("8FEBF7F4-795A-47EE-ADC9-47835BD2C906");
+
     public static void SeedData(this ModelBuilder modelBuilder)
     {
         SeedGenres(modelBuilder.Entity<Genre>());
@@ -54,6 +77,7 @@ internal static class DataSeeder
         SeedPublishers(modelBuilder.Entity<Publisher>());
         SeedGamesContainingGenresAndPlatformsAndPublishers(modelBuilder);
         SeedPaymentMethods(modelBuilder.Entity<PaymentMethod>());
+        SeedTranslations(modelBuilder);
     }
 
     private static void SeedGamesContainingGenresAndPlatformsAndPublishers(ModelBuilder builder)
@@ -206,5 +230,73 @@ internal static class DataSeeder
             new PaymentMethod { Id = PaymentMethodId1, Title = "Bank", StrategyName = PaymentStrategyName.Bank, Description = "Use a bank of your choice to make payments!", ImageUrl = "https://static.vecteezy.com/system/resources/thumbnails/000/594/232/small/B001.jpg" },
             new PaymentMethod { Id = PaymentMethodId2, Title = "IBox terminal", StrategyName = PaymentStrategyName.Terminal, Description = "Simply pay with IBox!", ImageUrl = "https://logowik.com/content/uploads/images/ibox9043.logowik.com.webp" },
             new PaymentMethod { Id = PaymentMethodId3, Title = "Visa", StrategyName = PaymentStrategyName.Visa, Description = "Pay with your favourite card!", ImageUrl = "https://d1yjjnpx0p53s8.cloudfront.net/styles/logo-thumbnail/s3/0013/4323/brand.gif?itok=fSmoZrGH" });
+    }
+
+    private static void SeedTranslations(ModelBuilder builder)
+    {
+        const string uk = "uk-UA";
+
+        // Games translations
+        builder.Entity<GameTranslation>().HasData(
+            new GameTranslation
+            {
+                Id = ZeldaUkrTranslationId,
+                Name = "The Legend of Zelda: Breath of the Wild / Легенда про Зельду",
+                Type = "Повна гра",
+                Description = "Пригодницька гра у відкритому світі.",
+                LanguageCode = uk,
+                CoreId = GameId1,
+            });
+        builder.Entity<GameTranslation>().HasData(
+            new GameTranslation
+            {
+                Id = GtaUkrTranslationId,
+                Name = "Grand Theft Auto V / ГТА 5",
+                Type = "Комплект",
+                Description = "Пригодницька гра з відкритим світом.",
+                LanguageCode = uk,
+                CoreId = GameId2,
+            });
+        builder.Entity<GameTranslation>().HasData(
+            new GameTranslation
+            {
+                Id = OverwatchUkrTranslationId,
+                Name = "Overwatch 2 / Овервотч",
+                Type = "Колекційне видання",
+                Description = "Overwatch 2 — це безкоштовна командна гра-екшен.",
+                LanguageCode = uk,
+                CoreId = GameId3,
+            });
+        builder.Entity<GameTranslation>().HasData(
+            new GameTranslation
+            {
+                Id = HearthstoneUkrTranslationId,
+                Name = "Hearthstone / Хартстоун",
+                Type = "Повна гра",
+                Description = "Hearthstone — це швидка стратегічна карткова гра від Blizzard Entertainment.",
+                LanguageCode = uk,
+                CoreId = GameId4,
+            });
+
+        // Genres translations
+        builder.Entity<GenreTranslation>().HasData(
+            new GenreTranslation { Id = StrategyUkrTranslationId, Name = "Стратегія", CoreId = GenreId1, LanguageCode = uk },
+            new GenreTranslation { Id = SportsUkrTranslationId, Name = "Спорт", CoreId = GenreId5, LanguageCode = uk },
+            new GenreTranslation { Id = RacesUkrTranslationId, Name = "Гонки", CoreId = GenreId6, LanguageCode = uk },
+            new GenreTranslation { Id = RallyUkrTranslationId, Name = "Ралі", CoreId = GenreId7, LanguageCode = uk },
+            new GenreTranslation { Id = ArcadeUkrTranslationId, Name = "Аркада", CoreId = GenreId8, LanguageCode = uk },
+            new GenreTranslation { Id = FormulaUkrTranslationId, Name = "Формула", CoreId = GenreId9, LanguageCode = uk },
+            new GenreTranslation { Id = OffRoadUkrTranslationId, Name = "Бездоріжжя", CoreId = GenreId10, LanguageCode = uk },
+            new GenreTranslation { Id = ActionUkrTranslationId, Name = "Екшн", CoreId = GenreId11, LanguageCode = uk },
+            new GenreTranslation { Id = AdventureUkrTranslationId, Name = "Пригоди", CoreId = GenreId14, LanguageCode = uk },
+            new GenreTranslation { Id = PuzzleSkillUkrTranslationId, Name = "Головоломки", CoreId = GenreId15, LanguageCode = uk },
+            new GenreTranslation { Id = MiscUkrTranslationId, Name = "Інше", CoreId = GenreId16, LanguageCode = uk });
+
+        // Platforms translations
+        builder.Entity<PlatformTranslation>().HasData(
+            new PlatformTranslation { Id = MobileUkrTranslationId, Type = "Мобільні пристрої", CoreId = PlatformId1, LanguageCode = uk },
+            new PlatformTranslation { Id = CloudUkrTranslationId, Type = "Хмара", CoreId = PlatformId2, LanguageCode = uk },
+            new PlatformTranslation { Id = DesktopUkrTranslationId, Type = "Комп'ютер", CoreId = PlatformId3, LanguageCode = uk },
+            new PlatformTranslation { Id = ConsoleUkrTranslationId, Type = "Консоль", CoreId = PlatformId4, LanguageCode = uk });
     }
 }

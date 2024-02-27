@@ -3,6 +3,8 @@ using GameStore.Services.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.Validators;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -17,7 +19,16 @@ public class PlatformsControllerTests
 
     public PlatformsControllerTests()
     {
-        _controller = new PlatformsController(_platformService.Object, _platformCreateValidator.Object, _platformUpdateValidator.Object);
+        _controller = new PlatformsController(_platformService.Object, _platformCreateValidator.Object, _platformUpdateValidator.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext(),
+            },
+        };
+
+        _controller.HttpContext.Features.Set<IRequestCultureFeature>(
+            new RequestCultureFeature(new RequestCulture("en", "en"), null));
     }
 
     [Fact]
@@ -25,7 +36,7 @@ public class PlatformsControllerTests
     {
         // Arrange
         var platformId = Guid.Empty;
-        _platformService.Setup(s => s.GetPlatformByIdAsync(platformId))
+        _platformService.Setup(s => s.GetPlatformByIdAsync(platformId, It.IsAny<string>()))
             .ReturnsAsync(new PlatformFullDto() { Id = platformId })
             .Verifiable();
 
@@ -42,7 +53,7 @@ public class PlatformsControllerTests
     public async Task GetAllGenres_ReturnsPlatformsBriefDtoList()
     {
         // Arrange
-        _platformService.Setup(s => s.GetAllPlatformsAsync())
+        _platformService.Setup(s => s.GetAllPlatformsAsync(It.IsAny<string>()))
             .ReturnsAsync(new List<PlatformBriefDto>())
             .Verifiable();
 
@@ -60,7 +71,7 @@ public class PlatformsControllerTests
     {
         // Arrange
         Guid platformId = Guid.Empty;
-        _platformService.Setup(s => s.GetGamesByPlatformAsync(platformId))
+        _platformService.Setup(s => s.GetGamesByPlatformAsync(platformId, It.IsAny<string>()))
             .ReturnsAsync(new List<GameBriefDto>())
             .Verifiable();
 

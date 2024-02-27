@@ -3,6 +3,8 @@ using GameStore.Application.Interfaces;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.Validators;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -17,7 +19,16 @@ public class GenresControllerTests
 
     public GenresControllerTests()
     {
-        _controller = new GenresController(_genreFacadeService.Object, _genreCreateValidator.Object, _genreUpdateValidator.Object);
+        _controller = new GenresController(_genreFacadeService.Object, _genreCreateValidator.Object, _genreUpdateValidator.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext(),
+            },
+        };
+
+        _controller.HttpContext.Features.Set<IRequestCultureFeature>(
+            new RequestCultureFeature(new RequestCulture("en", "en"), null));
     }
 
     [Fact]
@@ -25,7 +36,7 @@ public class GenresControllerTests
     {
         // Arrange
         var genreId = Guid.Empty.ToString();
-        _genreFacadeService.Setup(s => s.GetGenreByIdAsync(genreId))
+        _genreFacadeService.Setup(s => s.GetGenreByIdAsync(genreId, It.IsAny<string>()))
             .ReturnsAsync(new GenreFullDto { Id = genreId })
             .Verifiable();
 
@@ -42,7 +53,7 @@ public class GenresControllerTests
     public async Task GetAllGenres_ReturnsGenresBriefDtoList()
     {
         // Arrange
-        _genreFacadeService.Setup(s => s.GetAllGenresAsync())
+        _genreFacadeService.Setup(s => s.GetAllGenresAsync(It.IsAny<string>()))
             .ReturnsAsync(new List<GenreBriefDto>())
             .Verifiable();
 
@@ -60,7 +71,7 @@ public class GenresControllerTests
     {
         // Arrange
         var genreId = Guid.Empty.ToString();
-        _genreFacadeService.Setup(s => s.GetSubgenresByParentAsync(genreId))
+        _genreFacadeService.Setup(s => s.GetSubgenresByParentAsync(genreId, It.IsAny<string>()))
             .ReturnsAsync(new List<GenreBriefDto>())
             .Verifiable();
 
@@ -78,7 +89,7 @@ public class GenresControllerTests
     {
         // Arrange
         var genreId = Guid.Empty.ToString();
-        _genreFacadeService.Setup(s => s.GetGamesByGenreIdAsync(genreId))
+        _genreFacadeService.Setup(s => s.GetGamesByGenreIdAsync(genreId, It.IsAny<string>()))
             .ReturnsAsync(new List<GameBriefDto>())
             .Verifiable();
 

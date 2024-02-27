@@ -14,16 +14,16 @@ public class SupplierRepository : GenericRepository<Supplier>, ISupplierReposito
     {
     }
 
-    public async Task<IList<Product>> GetProductsBySupplierNameAsync(string companyName)
+    public async Task<IList<Product>> GetProductsBySupplierIdAsync(string id)
     {
         var products = Context.GetCollection<Product>().AsQueryable();
         var queryResult = await DbSet.AsQueryable()
-            .Where(c => c.CompanyName == companyName)
+            .Where(s => s.Id == id)
             .GroupJoin(
                 products,
-                c => c.SupplierId,
+                s => s.SupplierId,
                 p => p.SupplierId,
-                (c, p) => p.ToList())
+                (s, p) => p.ToList())
             .SingleAsync();
         return queryResult;
     }

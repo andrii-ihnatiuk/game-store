@@ -39,7 +39,7 @@ public class MongoProductServiceTests
         _mockMapper.Setup(m => m.Map<GameFullDto>(product)).Returns(expected);
 
         // Act
-        var result = await _service.GetGameByAliasAsync(DefaultAlias);
+        var result = await _service.GetGameByAliasAsync(DefaultAlias, string.Empty);
 
         // Assert
         Assert.Equal(expected, result);
@@ -58,7 +58,7 @@ public class MongoProductServiceTests
         _mockMapper.Setup(m => m.Map<GameFullDto>(product)).Returns(expected);
 
         // Act
-        var result = await _service.GetGameByIdAsync(id);
+        var result = await _service.GetGameByIdAsync(id, string.Empty);
 
         // Assert
         Assert.Equal(expected, result);

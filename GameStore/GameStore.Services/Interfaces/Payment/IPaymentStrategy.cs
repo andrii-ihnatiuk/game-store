@@ -1,5 +1,5 @@
-﻿using GameStore.Shared.Constants;
-using GameStore.Shared.DTOs.Payment;
+﻿using GameStore.Services.Models;
+using GameStore.Shared.Constants;
 
 namespace GameStore.Services.Interfaces.Payment;
 
@@ -7,5 +7,5 @@ public interface IPaymentStrategy
 {
     PaymentStrategyName Name { get; }
 
-    Task<IPaymentResult> ProcessPaymentAsync(PaymentDto payment, string customerId);
+    Task<IPaymentResult> ProcessPaymentAsync(PaymentRequest request);
 }

@@ -22,14 +22,14 @@ public class MongoProductService : MongoServiceBase, IGameService
         _mapper = mapper;
     }
 
-    public async Task<GameFullDto> GetGameByAliasAsync(string alias)
+    public async Task<GameFullDto> GetGameByAliasAsync(string alias, string culture)
     {
         alias = EntityAliasUtil.RemoveSuffix(alias);
         var product = await _unitOfWork.Products.GetOneAsync(p => p.Alias == alias);
         return _mapper.Map<GameFullDto>(product);
     }
 
-    public async Task<GameFullDto> GetGameByIdAsync(string id)
+    public async Task<GameFullDto> GetGameByIdAsync(string id, string culture)
     {
         long productId = long.Parse(id);
         var product = await _unitOfWork.Products.GetOneAsync(p => p.ProductId == productId);

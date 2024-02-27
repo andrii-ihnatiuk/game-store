@@ -28,16 +28,20 @@ public class GenreFacadeServiceTests
         // Arrange
         var mockGenreService = new Mock<IGenreService>();
         var genres = new List<GenreBriefDto> { new() { Id = "123" } };
-        mockGenreService.Setup(s => s.GetAllGenresAsync()).ReturnsAsync(genres);
-        _mockServiceResolver.Setup(sr => sr.ResolveAll<IGenreService>()).Returns(new[] { mockGenreService.Object });
+        mockGenreService.Setup(s => s.GetAllGenresAsync(It.IsAny<string>()))
+            .ReturnsAsync(genres)
+            .Verifiable(Times.Once);
+        _mockServiceResolver.Setup(sr => sr.ResolveAll<IGenreService>())
+            .Returns(new[] { mockGenreService.Object })
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _service.GetAllGenresAsync();
+        var result = await _service.GetAllGenresAsync(string.Empty);
 
         // Assert
         Assert.Equal(genres.Count, result.Count);
-        _mockServiceResolver.Verify(x => x.ResolveAll<IGenreService>(), Times.Once);
-        mockGenreService.Verify(x => x.GetAllGenresAsync(), Times.Once);
+        _mockServiceResolver.Verify();
+        mockGenreService.Verify();
     }
 
     [Fact]
@@ -47,16 +51,20 @@ public class GenreFacadeServiceTests
         const string id = "123";
         var genre = new GenreFullDto { Id = id };
         var mockGenreService = new Mock<IGenreService>();
-        mockGenreService.Setup(s => s.GetGenreByIdAsync(id)).ReturnsAsync(genre);
-        _mockServiceResolver.Setup(sr => sr.ResolveForEntityId<IGenreService>(id)).Returns(mockGenreService.Object);
+        mockGenreService.Setup(s => s.GetGenreByIdAsync(id, It.IsAny<string>()))
+            .ReturnsAsync(genre)
+            .Verifiable(Times.Once);
+        _mockServiceResolver.Setup(sr => sr.ResolveForEntityId<IGenreService>(id))
+            .Returns(mockGenreService.Object)
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _service.GetGenreByIdAsync(id);
+        var result = await _service.GetGenreByIdAsync(id, string.Empty);
 
         // Assert
         Assert.Equal(genre.Id, result.Id);
-        _mockServiceResolver.Verify(x => x.ResolveForEntityId<IGenreService>(id), Times.Once);
-        mockGenreService.Verify(x => x.GetGenreByIdAsync(id), Times.Once);
+        _mockServiceResolver.Verify();
+        mockGenreService.Verify();
     }
 
     [Fact]
@@ -66,17 +74,20 @@ public class GenreFacadeServiceTests
         const string parentId = "parentId";
         var genres = new List<GenreBriefDto> { new() { Id = "id1" }, new() { Id = "id2" } };
         var mockGenreService = new Mock<IGenreService>();
-        mockGenreService.Setup(s => s.GetSubgenresByParentAsync(parentId)).ReturnsAsync(genres);
+        mockGenreService.Setup(s => s.GetSubgenresByParentAsync(parentId, It.IsAny<string>()))
+            .ReturnsAsync(genres)
+            .Verifiable(Times.Once);
         _mockServiceResolver.Setup(sr => sr.ResolveForEntityId<IGenreService>(parentId))
-            .Returns(mockGenreService.Object);
+            .Returns(mockGenreService.Object)
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _service.GetSubgenresByParentAsync(parentId);
+        var result = await _service.GetSubgenresByParentAsync(parentId, string.Empty);
 
         // Assert
         Assert.Equal(genres.Count, result.Count);
-        _mockServiceResolver.Verify(x => x.ResolveForEntityId<IGenreService>(parentId), Times.Once);
-        mockGenreService.Verify(x => x.GetSubgenresByParentAsync(parentId), Times.Once);
+        _mockServiceResolver.Verify();
+        mockGenreService.Verify();
     }
 
     [Fact]
@@ -86,17 +97,20 @@ public class GenreFacadeServiceTests
         const string genreId = "genreId";
         var games = new List<GameBriefDto> { new() { Id = "id1" }, new() { Id = "id2" } };
         var mockGenreService = new Mock<IGenreService>();
-        mockGenreService.Setup(s => s.GetGamesByGenreIdAsync(genreId)).ReturnsAsync(games);
+        mockGenreService.Setup(s => s.GetGamesByGenreIdAsync(genreId, It.IsAny<string>()))
+            .ReturnsAsync(games)
+            .Verifiable(Times.Once);
         _mockServiceResolver.Setup(sr => sr.ResolveForEntityId<IGenreService>(genreId))
-            .Returns(mockGenreService.Object);
+            .Returns(mockGenreService.Object)
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _service.GetGamesByGenreIdAsync(genreId);
+        var result = await _service.GetGamesByGenreIdAsync(genreId, string.Empty);
 
         // Assert
         Assert.Equal(games.Count, result.Count);
-        _mockServiceResolver.Verify(x => x.ResolveForEntityId<IGenreService>(genreId), Times.Once);
-        mockGenreService.Verify(x => x.GetGamesByGenreIdAsync(genreId), Times.Once);
+        _mockServiceResolver.Verify();
+        mockGenreService.Verify();
     }
 
     [Fact]

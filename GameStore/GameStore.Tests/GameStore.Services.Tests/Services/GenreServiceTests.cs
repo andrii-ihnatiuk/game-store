@@ -39,7 +39,7 @@ public class GenreServiceTests
             .Returns(new GenreFullDto());
 
         // Act
-        await _service.GetGenreByIdAsync(id.ToString());
+        await _service.GetGenreByIdAsync(id.ToString(), string.Empty);
 
         // Assert
         _unitOfWork.Verify(
@@ -67,7 +67,7 @@ public class GenreServiceTests
             .Returns(new List<GenreBriefDto> { new(), new() });
 
         // Act
-        var subGenres = await _service.GetSubgenresByParentAsync(parentId.ToString());
+        var subGenres = await _service.GetSubgenresByParentAsync(parentId.ToString(), string.Empty);
 
         // Assert
         Assert.NotNull(subGenres);
@@ -79,7 +79,7 @@ public class GenreServiceTests
     {
         // Arrange
         var genreId = Guid.Empty;
-        var gamesGenres = new List<GameGenre> { new(), new() };
+        var gamesGenres = new List<GameGenre> { new() { Game = new Game() }, new() { Game = new Game() } };
         var games = gamesGenres.Select(gg => gg.Game).ToList();
         _unitOfWork.Setup(uow => uow.GamesGenres.GetAsync(
                 It.IsAny<Expression<Func<GameGenre, bool>>>(),
@@ -92,7 +92,7 @@ public class GenreServiceTests
             .Returns(games.Select(game => new GameBriefDto()).ToList());
 
         // Act
-        var gamesDto = await _service.GetGamesByGenreIdAsync(genreId.ToString());
+        var gamesDto = await _service.GetGamesByGenreIdAsync(genreId.ToString(), string.Empty);
 
         // Assert
         Assert.NotNull(gamesDto);
@@ -116,7 +116,7 @@ public class GenreServiceTests
             .Returns(new List<GenreBriefDto> { new(), new() });
 
         // Act
-        var genres = await _service.GetAllGenresAsync();
+        var genres = await _service.GetAllGenresAsync(string.Empty);
 
         // Assert
         _unitOfWork.Verify();
@@ -197,8 +197,12 @@ public class GenreServiceTests
         var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty.ToString() } };
         var existingGenre = new Genre() { Id = Guid.Empty };
 
-        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(existingGenre);
+        _unitOfWork.Setup(uow => uow.Genres.GetOneAsync(
+                It.IsAny<Expression<Func<Genre, bool>>>(),
+                It.IsAny<Func<IQueryable<Genre>, IIncludableQueryable<Genre, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(existingGenre)
+            .Verifiable(Times.Once);
 
         var updatedGenre = new Genre() { Id = Guid.Empty, Name = GenreName };
         _mapper.Setup(m => m.Map(genreUpdateDto, existingGenre))
@@ -208,14 +212,14 @@ public class GenreServiceTests
             .ReturnsAsync(false);
 
         _unitOfWork.Setup(uow => uow.SaveAsync())
-            .ReturnsAsync(1);
+            .ReturnsAsync(1)
+            .Verifiable(Times.Once);
 
         // Act
         await _service.UpdateGenreAsync(genreUpdateDto);
 
         // Assert
-        _unitOfWork.Verify(uow => uow.Genres.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
-        _unitOfWork.Verify(uow => uow.SaveAsync(), Times.Once);
+        _unitOfWork.Verify();
     }
 
     [Fact]
@@ -226,8 +230,12 @@ public class GenreServiceTests
         var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty.ToString(), Name = updatedName } };
 
         var existingGenre = new Genre() { Id = Guid.Empty, Name = GenreName };
-        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(existingGenre);
+        _unitOfWork.Setup(uow => uow.Genres.GetOneAsync(
+                It.IsAny<Expression<Func<Genre, bool>>>(),
+                It.IsAny<Func<IQueryable<Genre>, IIncludableQueryable<Genre, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(existingGenre)
+            .Verifiable(Times.Once);
 
         _mapper.Setup(m => m.Map(genreUpdateDto, existingGenre))
             .Returns(new Genre() { Id = Guid.Empty, Name = updatedName });
@@ -243,15 +251,23 @@ public class GenreServiceTests
     public async Task UpdateGenreAsync_ParentGenreDoesNotExist_ThrowsForeignKeyException()
     {
         // Arrange
-        var genreUpdateDto = new GenreUpdateDto { Genre = new GenreUpdateInnerDto { Id = Guid.Empty.ToString(), ParentGenreId = null } };
+        var genreUpdateDto = new GenreUpdateDto
+        {
+            Genre = new GenreUpdateInnerDto { Id = Guid.Empty.ToString(), ParentGenreId = null },
+            Culture = "en",
+        };
 
         var existingGenre = new Genre() { Id = Guid.Empty };
-        _unitOfWork.Setup(uow => uow.Genres.GetByIdAsync(It.IsAny<Guid>()))
-            .ReturnsAsync(existingGenre);
+        _unitOfWork.Setup(uow => uow.Genres.GetOneAsync(
+                It.IsAny<Expression<Func<Genre, bool>>>(),
+                It.IsAny<Func<IQueryable<Genre>, IIncludableQueryable<Genre, object>>>(),
+                It.IsAny<bool>()))
+            .ReturnsAsync(existingGenre)
+            .Verifiable(Times.Once);
 
         var updatedGenre = new Genre() { Id = Guid.Empty, ParentGenreId = Guid.Empty };
-        _mapper.Setup(m => m.Map(genreUpdateDto, existingGenre))
-            .Returns(updatedGenre);
+        _mapper.Setup(m => m.Map(genreUpdateDto as object, existingGenre))
+            .Callback(() => existingGenre.ParentGenreId = Guid.Empty);
 
         _unitOfWork.Setup(uow => uow.Genres.ExistsAsync(It.IsAny<Expression<Func<Genre, bool>>>()))
             .ReturnsAsync(false);

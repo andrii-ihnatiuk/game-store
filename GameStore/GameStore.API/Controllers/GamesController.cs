@@ -39,14 +39,14 @@ public class GamesController : ControllerBase
     [HttpGet("{gameAlias}", Name = "GetGameByAlias")]
     public async Task<IActionResult> GetGameByAliasAsync([FromRoute] string gameAlias)
     {
-        var gameFullDto = await _gameFacadeService.GetGameByAliasAsync(gameAlias);
+        var gameFullDto = await _gameFacadeService.GetGameByAliasAsync(gameAlias, this.GetCurrentCultureName());
         return Ok(gameFullDto);
     }
 
     [HttpGet("id/{id}")]
     public async Task<IActionResult> GetGameByIdAsync([FromRoute] string id)
     {
-        var gameFullDto = await _gameFacadeService.GetGameByIdAsync(id);
+        var gameFullDto = await _gameFacadeService.GetGameByIdAsync(id, this.GetCurrentCultureName());
         return Ok(gameFullDto);
     }
 
@@ -54,7 +54,7 @@ public class GamesController : ControllerBase
     public async Task<ActionResult<IList<GameFullDto>>> GetAllGamesAsync()
     {
         bool showDeleted = User.HasPermission(PermissionOptions.GameViewDeleted) || User.HasPermission(PermissionOptions.GameFull);
-        var filtered = await _gameFacadeService.GetFilteredGamesAsync(GamesFilterDto.GameStoreDefaultFilter, showDeleted);
+        var filtered = await _gameFacadeService.GetFilteredGamesAsync(GamesFilterDto.GameStoreDefaultFilter, this.GetCurrentCultureName(), showDeleted);
         return Ok(filtered.Games);
     }
 
@@ -63,7 +63,7 @@ public class GamesController : ControllerBase
     {
         _gamesFilterValidator.ValidateAndThrow(filter);
         bool showDeleted = User.HasPermission(PermissionOptions.GameViewDeleted) || User.HasPermission(PermissionOptions.GameFull);
-        var filtered = await _gameFacadeService.GetFilteredGamesAsync(filter, showDeleted);
+        var filtered = await _gameFacadeService.GetFilteredGamesAsync(filter, this.GetCurrentCultureName(), showDeleted);
         return Ok(filtered);
     }
 

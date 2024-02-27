@@ -33,7 +33,7 @@ public class MongoCategoryServiceTests
         var expected = new GenreFullDto { Id = id };
         _mockMapper.Setup(m => m.Map<GenreFullDto>(genre)).Returns(expected);
 
-        var result = await _service.GetGenreByIdAsync(id);
+        var result = await _service.GetGenreByIdAsync(id, string.Empty);
 
         Assert.Equal(expected.Id, result.Id);
     }
@@ -47,7 +47,7 @@ public class MongoCategoryServiceTests
         var expected = new List<GenreBriefDto> { new() { Id = "id1" }, new() { Id = "id2" } };
         _mockMapper.Setup(m => m.Map<IList<GenreBriefDto>>(genres)).Returns(expected);
 
-        var result = await _service.GetAllGenresAsync();
+        var result = await _service.GetAllGenresAsync(string.Empty);
 
         Assert.Equal(expected.Count, result.Count);
     }
@@ -63,7 +63,7 @@ public class MongoCategoryServiceTests
         var expected = new List<GenreBriefDto> { new() { ParentGenreId = parentId } };
         _mockMapper.Setup(m => m.Map<IList<GenreBriefDto>>(genres)).Returns(expected);
 
-        var result = await _service.GetSubgenresByParentAsync(parentId);
+        var result = await _service.GetSubgenresByParentAsync(parentId, string.Empty);
 
         Assert.Equal(expected.Count, result.Count);
     }
@@ -78,7 +78,7 @@ public class MongoCategoryServiceTests
         var expected = new List<GameBriefDto> { new() };
         _mockMapper.Setup(m => m.Map<IList<GameBriefDto>>(games)).Returns(expected);
 
-        var result = await _service.GetGamesByGenreIdAsync(genreId);
+        var result = await _service.GetGamesByGenreIdAsync(genreId, string.Empty);
 
         Assert.Equal(expected, result);
     }

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using GameStore.Shared.DTOs.Publisher;
-using GameStore.Shared.Util;
 using Northwind.Data.Entities;
 
 namespace Northwind.Services.MappingProfiles;
@@ -13,16 +12,10 @@ public class SupplierProfile : Profile
     {
         CreateMap<Supplier, PublisherFullDto>()
             .ForMember(
-                dest => dest.CompanyName,
-                opts => opts.MapFrom(src => EntityAliasUtil.AddSuffix(src.CompanyName)))
-            .ForMember(
                 dest => dest.Description,
                 opts => opts.MapFrom(src => string.Empty));
 
         CreateMap<Supplier, PublisherBriefDto>()
-            .ForMember(
-                dest => dest.CompanyName,
-                opts => opts.MapFrom(src => EntityAliasUtil.AddSuffix(src.CompanyName)))
             .ForMember(
                 dest => dest.Description,
                 opts => opts.MapFrom(src => string.Empty));

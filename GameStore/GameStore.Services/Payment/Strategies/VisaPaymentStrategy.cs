@@ -1,13 +1,12 @@
 ﻿using System.Net;
+using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
-using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.Constants;
-using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.DTOs.Payment.Visa;
 using GameStore.Shared.Exceptions;
 using GameStore.Shared.Options;
@@ -15,10 +14,8 @@ using Microsoft.Extensions.Options;
 
 namespace GameStore.Services.Payment.Strategies;
 
-public class VisaPaymentStrategy : IPaymentStrategy
+public class VisaPaymentStrategy : PaymentStrategyBase
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ICoreOrderService _orderService;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly VisaOptions _apiOptions;
 
@@ -27,38 +24,29 @@ public class VisaPaymentStrategy : IPaymentStrategy
         ICoreOrderService orderService,
         IOptions<VisaOptions> apiSettings,
         IHttpClientFactory httpClientFactory)
+        : base(unitOfWork, orderService)
     {
-        _unitOfWork = unitOfWork;
-        _orderService = orderService;
         _httpClientFactory = httpClientFactory;
         _apiOptions = apiSettings.Value;
     }
 
-    public PaymentStrategyName Name => PaymentStrategyName.Visa;
+    public override PaymentStrategyName Name => PaymentStrategyName.Visa;
 
-    public async Task<IPaymentResult> ProcessPaymentAsync(PaymentDto payment, string customerId)
-    {
-        var order = await _orderService.GetOrderForProcessingAsync(customerId);
-        order.PaymentMethodId = Guid.Parse(payment.Method);
-        var visaPaymentResult = await SendPaymentRequestAsync(payment, order);
-        await UpdateOrderStatusAsync(order);
-        return visaPaymentResult;
-    }
-
-    private async Task<VisaPaymentResult> SendPaymentRequestAsync(PaymentDto payment, Order order)
+    protected override async Task<IPaymentResult> DoPaymentAsync(PaymentRequest request)
     {
         using var client = _httpClientFactory.CreateClient();
+        var model = request.VisaModel;
         var paymentData = new VisaTransactionRequestDto()
         {
-            CardNumber = payment.Model.CardNumber,
-            CardHolderName = payment.Model.Holder,
-            ExpirationYear = payment.Model.YearExpire,
-            ExpirationMonth = payment.Model.MonthExpire,
-            TransactionAmount = order.Sum,
-            Cvv = payment.Model.Cvv2,
+            CardNumber = model.CardNumber,
+            CardHolderName = model.Holder,
+            ExpirationYear = model.YearExpire,
+            ExpirationMonth = model.MonthExpire,
+            TransactionAmount = Order.Sum,
+            Cvv = model.Cvv2,
         };
 
-        var content = new StringContent(JsonSerializer.Serialize(paymentData), Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonSerializer.Serialize(paymentData), Encoding.UTF8, MediaTypeNames.Application.Json);
         var response = await client.PostAsync(_apiOptions.ApiUrl, content);
         ThrowPaymentExceptionIfRequestIsNotSuccessful(response);
         return new VisaPaymentResult();
@@ -78,12 +66,5 @@ public class VisaPaymentStrategy : IPaymentStrategy
         }
 
         throw new PaymentException(message);
-    }
-
-    private async Task UpdateOrderStatusAsync(Order order)
-    {
-        order.PaidDate = DateTime.UtcNow;
-        order.Status = OrderStatus.Paid;
-        await _unitOfWork.SaveAsync();
     }
 }

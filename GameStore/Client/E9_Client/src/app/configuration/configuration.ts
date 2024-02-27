@@ -37,7 +37,7 @@ export class Configuration {
   addPublisherApiUrl: string = '';
   deletePublisherApiUrl: string = '';
   updatePublisherApiUrl: string = '';
-  
+
   orderApiUrl: string = '';
   ordersApiUrl: string = '';
   historyApiUrl: string = '';
@@ -76,4 +76,6 @@ export class Configuration {
   userRolesApiUrl: string = '';
   rolePermissionsApiUrl: string = '';
   permissionsApiUrl: string = '';
+
+  culturesApiUrl: string = '';
 }

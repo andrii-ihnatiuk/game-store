@@ -2,7 +2,7 @@
   <div class="basket-content">
     <div class="basket-header">
       <div class="basket-header-title">{{labels.basketMenuItem}}</div>
-      <div class="basket-header-counter">{{orderInfoList.length}} items</div>
+      <div class="basket-header-counter">{{orderInfoList.length}} {{ labels.orderItemsCounterLabel }}</div>
     </div>
     <div *ngFor="let item of orderInfoList">
       <hr class="hr-soft">
@@ -10,19 +10,19 @@
     </div>
   </div>
   <div class="basket-summary">
-    <div class="summary-title">Oder Summary</div>
+    <div class="summary-title">{{ labels.orderSummaryLabel }}</div>
     <hr class="hr-soft">
     <div class="summary-item">
-      <span>Subtotal</span>
+      <span>{{ labels.orderSubtotalLabel }}</span>
       <span>{{ subtotal | currency: 'USD' }}</span>
     </div>
     <div class="summary-item">
-      <span>Taxes</span>
+      <span>{{ labels.orderTaxesLabel }}</span>
       <span>{{ taxes | currency: 'USD' }}</span>
     </div>
     <hr class="hr-soft">
     <div class="summary-item summary-total">
-      <span>Total</span>
+      <span>{{ labels.orderTotalLabel }}</span>
       <span class="summary-highlight">{{ total | currency: 'USD' }}</span>
     </div>
     <a *ngIf="!!orderInfoList.length" mat-button class="btn-orange" routerLink="{{ links.get(pageRoutes.MakeOrder) }}">{{ labels.checkoutButtonLabel }}</a>

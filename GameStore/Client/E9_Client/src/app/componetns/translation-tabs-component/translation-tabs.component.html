@@ -1,0 +1,7 @@
+﻿<mat-tab-group (selectedTabChange)="onTabChange($event)" [selectedIndex]="defaultCultureIndex">
+    <mat-tab *ngFor="let culture of cultures; index as i" [label]="culture.displayName">
+        <ng-container *ngIf="loadedTabs[i]">
+            <ng-container *ngTemplateOutlet="templateRef; context: {$implicit: culture.name}"></ng-container>
+        </ng-container>
+    </mat-tab>
+</mat-tab-group>

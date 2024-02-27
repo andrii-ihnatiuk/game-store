@@ -24,7 +24,8 @@ public class GameRepository : GenericRepository<Game>, IGameRepository
             return new EntityFilteringResult<Game>(new List<Game>(), 0);
         }
 
-        var query = DbSet.AsQueryable();
+        IQueryable<Game> query = DbSet.Include(g =>
+            g.Translations.Where(t => t.LanguageCode == filter.Culture));
 
         query = filter.MaxPrice is null ? query : query.Where(g => g.Price <= filter.MaxPrice);
         query = filter.MinPrice is null ? query : query.Where(g => g.Price >= filter.MinPrice);

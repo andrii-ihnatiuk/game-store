@@ -14,6 +14,10 @@ internal class GameEntityConfiguration : IEntityTypeConfiguration<Game>
 
         builder.HasIndex(g => g.Alias).IsUnique(true);
 
+        builder.HasIndex(g => g.Name);
+
+        builder.HasIndex(g => g.PublishDate);
+
         builder
             .Property(g => g.Price)
             .HasColumnType("money");
@@ -21,5 +25,9 @@ internal class GameEntityConfiguration : IEntityTypeConfiguration<Game>
         builder
             .Property(g => g.Discontinued)
             .HasColumnType("bit");
+
+        builder.HasMany(g => g.Translations)
+            .WithOne(t => t.Core)
+            .HasForeignKey(t => t.CoreId);
     }
 }

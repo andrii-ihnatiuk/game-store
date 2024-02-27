@@ -22,26 +22,26 @@ public class PublisherFacadeService : IPublisherFacadeService
         _migrationService = migrationService;
     }
 
-    public Task<PublisherFullDto> GetPublisherByNameAsync(string companyName)
+    public Task<PublisherFullDto> GetPublisherByIdAsync(string id, string culture)
     {
-        var service = _serviceResolver.ResolveForEntityAlias<IPublisherService>(companyName);
-        return service.GetPublisherByNameAsync(companyName);
+        var service = _serviceResolver.ResolveForEntityId<IPublisherService>(id);
+        return service.GetPublisherByIdAsync(id, culture);
     }
 
-    public async Task<IList<PublisherBriefDto>> GetAllPublishersAsync()
+    public async Task<IList<PublisherBriefDto>> GetAllPublishersAsync(string culture)
     {
         var services = _serviceResolver.ResolveAll<IPublisherService>();
-        var tasks = services.Select(s => s.GetAllPublishersAsync()).ToList();
+        var tasks = services.Select(s => s.GetAllPublishersAsync(culture)).ToList();
         await Task.WhenAll(tasks);
 
         var publishers = tasks.SelectMany(t => t.Result).ToList();
         return publishers.FilterLegacyEntities();
     }
 
-    public Task<IList<GameBriefDto>> GetGamesByPublisherNameAsync(string companyName)
+    public Task<IList<GameBriefDto>> GetGamesByPublisherIdAsync(string id, string culture)
     {
-        var service = _serviceResolver.ResolveForEntityAlias<IPublisherService>(companyName);
-        return service.GetGamesByPublisherNameAsync(companyName);
+        var service = _serviceResolver.ResolveForEntityId<IPublisherService>(id);
+        return service.GetGamesByPublisherIdAsync(id, culture);
     }
 
     public async Task<PublisherBriefDto> AddPublisherAsync(PublisherCreateDto dto)

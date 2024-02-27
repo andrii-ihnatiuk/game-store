@@ -32,5 +32,9 @@ public class PublisherEntityConfiguration : IEntityTypeConfiguration<Publisher>
 
         builder.Property(p => p.HomePage)
             .HasColumnType("ntext");
+
+        builder.HasMany(p => p.Translations)
+            .WithOne(t => t.Core)
+            .HasForeignKey(t => t.CoreId);
     }
 }

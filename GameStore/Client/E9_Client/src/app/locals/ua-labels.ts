@@ -1,84 +1,121 @@
 import { Labels } from './base-labels';
 
 export class UaLabels implements Labels {
-  gamesMenuItem = 'Games';
-  genresMenuItem = 'Genres';
-  platformsMenuItem = 'Platforms';
-  publishersMenuItem = 'Publishers';
-  historyMenuItem = 'History';
-  basketMenuItem = 'Basket';
-  usersMenuItem = 'Users';
-  rolesMenuItem = 'Roles';
-  ordersMenuItem = 'Orders';
+  gamesMenuItem = 'Ігри';
+  genresMenuItem = 'Жанри';
+  platformsMenuItem = 'Платформи';
+  publishersMenuItem = 'Видавці';
+  historyMenuItem = 'Історія';
+  basketMenuItem = 'Кошик';
+  usersMenuItem = 'Користувачі';
+  rolesMenuItem = 'Ролі';
+  ordersMenuItem = 'Замовлення';
+  aboutMenuItem = "Про нас"
+  awardsMenuItem = "Нагороди";
+  reviewsMenuItem = "Відгуки";
+  testimonialsMenuItem = "Історії клієнтів";
+  contactMenuItem = "Контакти";
 
-  addNewButtonLabel = 'Add';
-  deleteButtonLabel = 'Delete';
-  updateButtonLabel = 'Update';
-  replyButtonLabel = 'Reply';
-  likeButtonLabel = "Like";
-  quoteButtonLabel = 'Quoute';
-  toPageLabel = 'To Page';
-  downloadButtonLabel = 'Download';
-  totalGamesLabel = 'Games count';
-  saveButtonLabel = 'Save';
-  addToCatButtonLabel = 'Add to cart';
-  totalLabel = 'Total';
-  payButtonLabel = 'Pay';
-  checkoutButtonLabel = 'Checkout';
-  banButtonLabel = 'Ban';
-  banDurationLabel = 'Ban duration';
-  filterButtonLabel = 'Apply filters';
-  loginButtonLabel = 'Login';
-  exitButtonLabel = 'Exit';
-  shipButtonLabel = 'Ship';
+  siteLinksLabel: string = "Розділи сайту";
+  companyInfoLabel: string = "Інформація про компанію";
+  socialMediaLabel: string = "Соціальні мережі";
+  rightsReservedLabel: string = "Всі права захищено"
 
-  gameKeyLabel = 'Key';
-  gameNameLabel = 'Name';
-  gameTypeLabel = 'Type';
-  gameFileSizeLabel = 'File Size';
-  gameDescriptionLabel = 'Description';
-  gameDiscontinuedLabel = 'Discontinued';
-  gameUnitInStockLabel = 'Unit in Stock';
-  gamePriceLabel = 'Price';
-  gameDiscountLabel = 'Discount';
-  gameMinPriceLabel = 'Min price';
-  gameMaxPriceLabel = 'Max price';
-  gameDatePublishing = 'Date publishing';
+  getInTouchLabel: string = "Зв'яжіться з нами";
+  twitterUpdatesLabel: string = "З нашого Twitter";
+  fromTheBlogLabel: string = "З блогу";
+  formNameLabel: string = "Ім'я";
+  formEmailLabel: string = "Електронна пошта";
+  formMessageLabel: string = "Повідомлення";
 
-  publisherCompanyNameLabel = 'Company Name';
-  publisherDescriptionLabel = 'Description';
-  publisherHomePageLabel = 'Home Page';
-  publisherLabel = 'Publisher';
+  searchForGameLabel: string = "Пошук гри";
+  refineResultsLabel: string = "Уточнити результати";
+  sortingLabel: string = "Сортування";
+  priceRangeLabel: string = "Діапазон цін";
 
-  genreNameLabel = 'Name';
-  genreParentLabel = 'Parent';
-  genreNestedLabel = 'Nested';
+  addNewButtonLabel = 'Створити';
+  deleteButtonLabel = 'Видалити';
+  updateButtonLabel = 'Оновити';
+  replyButtonLabel = 'Відповісти';
+  likeButtonLabel = "Подобається";
+  quoteButtonLabel = 'Цитувати';
+  toPageLabel = 'До сторінки';
+  downloadButtonLabel = 'Завантажити';
+  totalGamesLabel = 'Кількість ігор';
+  saveButtonLabel = 'Зберегти';
+  addToCatButtonLabel = 'Додати до кошика';
+  totalLabel = 'Всього';
+  payButtonLabel = 'Оплатити';
+  checkoutButtonLabel = 'Оформити';
+  banButtonLabel = 'Заблокувати';
+  banDurationLabel = 'Тривалість блокування';
+  filterButtonLabel = 'Застосувати фільтри';
+  loginButtonLabel = 'Увійти';
+  exitButtonLabel = 'Вийти';
+  shipButtonLabel = 'Надіслати';
+  writeCommentButtonLabel: string = "Написати коментар";
 
-  orderCustomerId = 'Customer ID';
-  orderDate = 'Date';
-  orderShipDate = 'Ship Date';
-  orderDetailsLabel = 'Order details';
-  orderDetailsGameLabel = 'Game';
-  orderDetailsPriceLabel = 'Price';
-  orderDetailsDiscountLabel = 'Discount';
-  orderDetailsQuantityLabel = 'Quantity';
-  historyDateRangeLabel = 'Date range'
+  backToGameListLabel = "Повернутися до списку ігор";
+  commentsLabel: string = "Коментарів";
+  whatYouGetLabel: string = "Що ви отримуєте";
 
-  platformTypeLabel = 'Type';
+  learnMoreButtonLabel = "Дізнатися більше";
+  submitButtonLabel = "Надіслати";
+  followUsButtonLabel = "Слідкуйте за нами";
+  visitBlogButtonLabel = "Відвідати блог";
 
-  deleteMessage = 'Are you sure about deleting?';
-  enterValidMessage = 'Please enter valid value';
-  emptyBasketMessage = 'Basket is empty';
-  banMessage = 'Are you sure about ban?';
+  gameKeyLabel = 'Ключ';
+  gameNameLabel = 'Ім\'я';
+  gameTypeLabel = 'Тип';
+  gameFileSizeLabel = 'Розмір файлу';
+  gameDescriptionLabel = 'Опис гри';
+  gameDiscontinuedLabel = 'Виробництво припинено';
+  gameUnitInStockLabel = 'Одиниць в наявності';
+  gamePriceLabel = 'Ціна';
+  gameDiscountLabel = 'Знижка';
+  gameMinPriceLabel = 'Мінімальна ціна';
+  gameMaxPriceLabel = 'Максимальна ціна';
+  gameDatePublishing = 'Дата публікації';
 
-  roleNameLabel = 'Name';
-  permissionsLabel = 'Permissions';
+  publisherCompanyNameLabel = 'Назва компанії';
+  publisherDescriptionLabel = 'Опис';
+  publisherHomePageLabel = 'Домашня сторінка';
+  publisherLabel = 'Видавець';
 
-  userNameLabel = 'Name';
-  userPasswordLabel = 'Password';
+  genreNameLabel = 'Ім\'я';
+  genreParentLabel = 'Батьківський жанр';
+  genreNestedLabel = 'Вкладений жанр';
 
-  gamePlatformsDetailLabel = "Playable on";
-  gameFileDetailLabel = "File size";
+  orderCustomerId = 'ID Клієнта';
+  orderDate = 'Дата';
+  orderShipDate = 'Дата відправки';
+  orderDetailsLabel = 'Деталі замовлення';
+  orderDetailsGameLabel = 'Гра';
+  orderDetailsPriceLabel = 'Ціна';
+  orderDetailsDiscountLabel = 'Знижка';
+  orderDetailsQuantityLabel = 'Кількість';
+  historyDateRangeLabel = 'Діапазон дат';
+  orderSummaryLabel: string = "Всього по замовленню";
+  orderSubtotalLabel: string = "Проміжна сума";
+  orderTaxesLabel: string = "Податки";
+  orderTotalLabel: string = "Всього";
+  orderItemsCounterLabel: string = "одиниць";
 
-  noCommentsMessage = "No comments yet, be the first!";
+  platformTypeLabel = 'Тип';
+
+  deleteMessage = 'Ви впевнені що хочете видалити?';
+  enterValidMessage = 'Будь ласка ввдіте валідне значення';
+  emptyBasketMessage = 'Кошик порожній';
+  banMessage = 'Ви впевнені що хочете заблокувати?';
+
+  roleNameLabel = 'Ім\'я';
+  permissionsLabel = 'Повноваження';
+
+  userNameLabel = 'Ім\'я';
+  userPasswordLabel = 'Пароль';
+
+  gamePlatformsDetailLabel = "Підтримувані платформи";
+  gameFileDetailLabel = "Розмiр файлу";
+
+  noCommentsMessage = "Коментарі відсутні, будьте першим!";
 }

@@ -11,6 +11,7 @@ namespace GameStore.Tests.Northwind.Services.Tests;
 
 public class MongoSupplierServiceTests
 {
+    private const string Culture = "en";
     private readonly Mock<IMongoUnitOfWork> _mockUnitOfWork;
     private readonly Mock<IMapper> _mockMapper;
     private readonly MongoSupplierService _service;
@@ -23,19 +24,18 @@ public class MongoSupplierServiceTests
     }
 
     [Fact]
-    public async Task GetPublisherByNameAsync_ReturnsPublisherFullDto()
+    public async Task GetPublisherByIdAsync_ReturnsPublisherFullDto()
     {
         // Arrange
-        const string companyName = "companyName";
-        var supplier = new Supplier { CompanyName = companyName };
+        var supplier = new Supplier();
         _mockUnitOfWork.Setup(u => u.Suppliers.GetOneAsync(It.IsAny<Expression<Func<Supplier, bool>>>()))
             .ReturnsAsync(supplier);
 
-        var expected = new PublisherFullDto { CompanyName = companyName };
+        var expected = new PublisherFullDto();
         _mockMapper.Setup(m => m.Map<PublisherFullDto>(supplier)).Returns(expected);
 
         // Act
-        var result = await _service.GetPublisherByNameAsync(companyName);
+        var result = await _service.GetPublisherByIdAsync("some-id", Culture);
 
         // Assert
         Assert.Equal(expected, result);
@@ -53,25 +53,25 @@ public class MongoSupplierServiceTests
         _mockMapper.Setup(m => m.Map<IList<PublisherBriefDto>>(suppliers)).Returns(expected);
 
         // Act
-        var result = await _service.GetAllPublishersAsync();
+        var result = await _service.GetAllPublishersAsync(Culture);
 
         // Assert
         Assert.Equal(expected, result);
     }
 
     [Fact]
-    public async Task GetGamesByPublisherNameAsync_ReturnsGameBriefDtoList()
+    public async Task GetGamesByPublisherIdAsync_ReturnsGameBriefDtoList()
     {
         // Arrange
-        const string companyName = "companyName";
+        const string id = "some-id";
         var products = new List<Product> { new() };
-        _mockUnitOfWork.Setup(u => u.Suppliers.GetProductsBySupplierNameAsync(companyName)).ReturnsAsync(products);
+        _mockUnitOfWork.Setup(u => u.Suppliers.GetProductsBySupplierIdAsync(id)).ReturnsAsync(products);
 
         var expected = new List<GameBriefDto> { new() };
         _mockMapper.Setup(m => m.Map<IList<GameBriefDto>>(products)).Returns(expected);
 
         // Act
-        var result = await _service.GetGamesByPublisherNameAsync(companyName);
+        var result = await _service.GetGamesByPublisherIdAsync(id, Culture);
 
         // Assert
         Assert.Equal(expected, result);

@@ -2,6 +2,8 @@
 
 public class GameUpdateDto
 {
+    public string Culture { get; set; }
+
     public GameUpdateInnerDto Game { get; set; }
 
     public IList<string>? Genres { get; set; }

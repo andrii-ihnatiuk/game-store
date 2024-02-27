@@ -27,10 +27,11 @@ public class GameFacadeService : IGameFacadeService
         _mapper = mapper;
     }
 
-    public async Task<FilteredGamesDto> GetFilteredGamesAsync(GamesFilterDto filterDto, bool showDeleted = false)
+    public async Task<FilteredGamesDto> GetFilteredGamesAsync(GamesFilterDto filterDto, string culture, bool showDeleted = false)
     {
         var filter = _mapper.Map<GamesFilter>(filterDto);
         filter.ShowDeleted = showDeleted;
+        filter.Culture = culture;
         filter.ResetPageIfTriggeredNotByPagination();
 
         var coreService = _serviceResolver.ResolveForEntityStorage<IGameService>(EntityStorage.SqlServer);
@@ -47,16 +48,16 @@ public class GameFacadeService : IGameFacadeService
         return new FilteredGamesDto(games, totalPages, currentPage: filter.Page);
     }
 
-    public Task<GameFullDto> GetGameByIdAsync(string id)
+    public Task<GameFullDto> GetGameByIdAsync(string id, string culture)
     {
         var gameService = _serviceResolver.ResolveForEntityId<IGameService>(id);
-        return gameService.GetGameByIdAsync(id);
+        return gameService.GetGameByIdAsync(id, culture);
     }
 
-    public Task<GameFullDto> GetGameByAliasAsync(string alias)
+    public Task<GameFullDto> GetGameByAliasAsync(string alias, string culture)
     {
         var gameService = _serviceResolver.ResolveForEntityAlias<IGameService>(alias);
-        return gameService.GetGameByAliasAsync(alias);
+        return gameService.GetGameByAliasAsync(alias, culture);
     }
 
     public Task<IList<GenreBriefDto>> GetGenresByGameAliasAsync(string alias)

@@ -24,9 +24,9 @@ export class PublishersPageComponent extends BaseComponent implements OnInit {
           publishers.map((publisher) => {
             const publisherItem: ListItem = {
               title: publisher.companyName,
-              pageLink: `${this.links.get(this.pageRoutes.Publisher)}/${publisher.companyName}`,
-              updateLink: `${this.links.get(this.pageRoutes.UpdatePublisher)}/${publisher.companyName}`,
-              deleteLink: `${this.links.get(this.pageRoutes.DeletePublisher)}/${publisher.companyName}`,
+              pageLink: `${this.links.get(this.pageRoutes.Publisher)}/${publisher.id}`,
+              updateLink: `${this.links.get(this.pageRoutes.UpdatePublisher)}/${publisher.id}`,
+              deleteLink: `${this.links.get(this.pageRoutes.DeletePublisher)}/${publisher.id}`,
             };
 
             return publisherItem;

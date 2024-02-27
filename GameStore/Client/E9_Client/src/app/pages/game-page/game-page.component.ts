@@ -99,7 +99,7 @@ export class GamePageComponent
         )
       )
       .subscribe((x) => {
-        this.addPatformsInfo(x.platforms);
+        this.addPlatformsInfo(x.platforms);
         this.addGenresInfo(x.genres);
         this.file = x.file;
         this.addDownloadFile();
@@ -120,7 +120,7 @@ export class GamePageComponent
     }
   }
 
-  addPatformsInfo(platforms: Platform[]): void {
+  addPlatformsInfo(platforms: Platform[]): void {
     if (!platforms?.length) {
       return;
     }
@@ -150,7 +150,7 @@ export class GamePageComponent
       pageLink: !publisher?.id?.length
         ? undefined
         : `${this.links.get(this.pageRoutes.Publisher)}/${
-            publisher.companyName
+            publisher.id
           }`,
     };
   }

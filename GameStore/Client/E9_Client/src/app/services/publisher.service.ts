@@ -13,11 +13,11 @@ export class PublisherService extends BaseService {
     super(http, loaderService);
   }
 
-  getPublisher(companyName: string): Observable<Publisher> {
+  getPublisher(id: string): Observable<Publisher> {
     return this.get<Publisher>(
       appConfiguration.publisherApiUrl.replace(
-        environment.routeCompanyNameIdentifier,
-        companyName
+        environment.routeIdIdentifier,
+        id
       )
     );
   }
@@ -39,8 +39,8 @@ export class PublisherService extends BaseService {
     return this.post(appConfiguration.addPublisherApiUrl, { publisher });
   }
 
-  updatePublisher(publisher: Publisher): Observable<any> {
-    return this.put(appConfiguration.updatePublisherApiUrl, { publisher });
+  updatePublisher(publisher: Publisher, culture: string): Observable<any> {
+    return this.put(appConfiguration.updatePublisherApiUrl, { publisher, culture });
   }
 
   deletePublisher(id: string): Observable<any> {

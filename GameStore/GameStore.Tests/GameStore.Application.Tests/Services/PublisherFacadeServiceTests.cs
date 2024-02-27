@@ -11,6 +11,7 @@ namespace GameStore.Tests.GameStore.Application.Tests.Services;
 
 public class PublisherFacadeServiceTests
 {
+    private const string Culture = "en";
     private readonly Mock<IEntityServiceResolver> _mockServiceResolver;
     private readonly Mock<IPublisherMigrationService> _mockMigrationService;
     private readonly PublisherFacadeService _service;
@@ -23,23 +24,26 @@ public class PublisherFacadeServiceTests
     }
 
     [Fact]
-    public async Task GetPublisherByNameAsync_GivenName_ReturnsPublisher()
+    public async Task GetPublisherByIdAsync_GivenId_ReturnsPublisher()
     {
         // Arrange
-        const string name = "PublisherName";
-        var expectedPublisher = new PublisherFullDto { CompanyName = name };
+        var id = Guid.Empty.ToString();
+        var expectedPublisher = new PublisherFullDto { Id = id };
         var mockPublisherService = new Mock<IPublisherService>();
-        mockPublisherService.Setup(s => s.GetPublisherByNameAsync(name)).ReturnsAsync(expectedPublisher);
-        _mockServiceResolver.Setup(x => x.ResolveForEntityAlias<IPublisherService>(name))
-            .Returns(mockPublisherService.Object);
+        mockPublisherService.Setup(s => s.GetPublisherByIdAsync(id, It.IsAny<string>()))
+            .ReturnsAsync(expectedPublisher)
+            .Verifiable(Times.Once);
+        _mockServiceResolver.Setup(x => x.ResolveForEntityId<IPublisherService>(id))
+            .Returns(mockPublisherService.Object)
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _service.GetPublisherByNameAsync(name);
+        var result = await _service.GetPublisherByIdAsync(id, Culture);
 
         // Assert
         Assert.Equal(expectedPublisher.CompanyName, result.CompanyName);
-        _mockServiceResolver.Verify(x => x.ResolveForEntityAlias<IPublisherService>(name), Times.Once);
-        mockPublisherService.Verify(x => x.GetPublisherByNameAsync(name), Times.Once);
+        _mockServiceResolver.Verify();
+        mockPublisherService.Verify();
     }
 
     [Fact]
@@ -50,13 +54,15 @@ public class PublisherFacadeServiceTests
         var mongoPublisherService = new Mock<IPublisherService>();
         var publishers = new List<PublisherBriefDto> { new() { Id = "123" }, new() { Id = "456" } };
 
-        corePublisherService.Setup(s => s.GetAllPublishersAsync()).ReturnsAsync(publishers.Take(1).ToList());
-        mongoPublisherService.Setup(s => s.GetAllPublishersAsync()).ReturnsAsync(publishers.TakeLast(1).ToList());
+        corePublisherService.Setup(s => s.GetAllPublishersAsync(It.IsAny<string>()))
+            .ReturnsAsync(publishers.Take(1).ToList());
+        mongoPublisherService.Setup(s => s.GetAllPublishersAsync(It.IsAny<string>()))
+            .ReturnsAsync(publishers.TakeLast(1).ToList());
         _mockServiceResolver.Setup(sr => sr.ResolveAll<IPublisherService>())
             .Returns(new[] { corePublisherService.Object, mongoPublisherService.Object });
 
         // Act
-        var result = await _service.GetAllPublishersAsync();
+        var result = await _service.GetAllPublishersAsync(Culture);
 
         // Assert
         Assert.Equal(publishers.Count, result.Count);
@@ -64,22 +70,24 @@ public class PublisherFacadeServiceTests
     }
 
     [Fact]
-    public async Task GetGamesByPublisherNameAsync_GivenName_ReturnsGames()
+    public async Task GetGamesByPublisherIdAsync_GivenId_ReturnsGames()
     {
         // Arrange
-        const string name = "PublisherName";
+        var id = Guid.Empty.ToString();
         var games = new List<GameBriefDto> { new() { Id = "game1" }, new() { Id = "game2" } };
         var mockPublisherService = new Mock<IPublisherService>();
-        mockPublisherService.Setup(s => s.GetGamesByPublisherNameAsync(name)).ReturnsAsync(games);
-        _mockServiceResolver.Setup(sr => sr.ResolveForEntityAlias<IPublisherService>(name))
-            .Returns(mockPublisherService.Object);
+        mockPublisherService.Setup(s => s.GetGamesByPublisherIdAsync(id, It.IsAny<string>()))
+            .ReturnsAsync(games);
+        _mockServiceResolver.Setup(sr => sr.ResolveForEntityId<IPublisherService>(id))
+            .Returns(mockPublisherService.Object)
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _service.GetGamesByPublisherNameAsync(name);
+        var result = await _service.GetGamesByPublisherIdAsync(id, Culture);
 
         // Assert
         Assert.Equal(games.Count, result.Count);
-        _mockServiceResolver.Verify(x => x.ResolveForEntityAlias<IPublisherService>(name), Times.Once);
+        _mockServiceResolver.Verify();
     }
 
     [Fact]

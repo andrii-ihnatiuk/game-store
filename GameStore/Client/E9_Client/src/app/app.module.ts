@@ -45,6 +45,7 @@ import { UpdateOrderPageModule } from './pages/update-order-page/update-order-pa
 import { AuthGuard } from './configuration/auth-guard';
 import { FooterComponent } from './componetns/footer-component/footer.component';
 import { CommonComponentsModule } from "./componetns/common-components.module";
+import { LocalizationService } from './services/localization.service';
 
 @NgModule({
     declarations: [AppComponent, HeaderComponent, FooterComponent],
@@ -61,7 +62,8 @@ import { CommonComponentsModule } from "./componetns/common-components.module";
             multi: true,
         },
         { provide: ErrorHandler, useClass: GlobalErrorHandlerService },
-        AuthGuard
+        AuthGuard,
+        LocalizationService
     ],
     imports: [
         MainPageModule,

@@ -1,5 +1,8 @@
-﻿using GameStore.Data.Entities;
+﻿using System.Data;
+using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace GameStore.Data;
 
@@ -64,6 +67,11 @@ public class UnitOfWork : IUnitOfWork
     {
         _context.LogChanges = logChanges;
         return SaveAsync();
+    }
+
+    public Task<IDbContextTransaction> BeginTransactionAsync(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
+    {
+        return _context.Database.BeginTransactionAsync(isolationLevel);
     }
 
     public void Dispose()

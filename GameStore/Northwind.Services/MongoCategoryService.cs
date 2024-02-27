@@ -17,25 +17,25 @@ public class MongoCategoryService : MongoServiceBase, IGenreService
         _mapper = mapper;
     }
 
-    public async Task<GenreFullDto> GetGenreByIdAsync(string id)
+    public async Task<GenreFullDto> GetGenreByIdAsync(string id, string culture)
     {
         var category = await _unitOfWork.Categories.GetOneAsync(c => c.Id == id);
         return _mapper.Map<GenreFullDto>(category);
     }
 
-    public async Task<IList<GenreBriefDto>> GetAllGenresAsync()
+    public async Task<IList<GenreBriefDto>> GetAllGenresAsync(string culture)
     {
         var categories = await _unitOfWork.Categories.GetAllAsync();
         return _mapper.Map<IList<GenreBriefDto>>(categories);
     }
 
-    public async Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId)
+    public async Task<IList<GenreBriefDto>> GetSubgenresByParentAsync(string parentId, string culture)
     {
         var categories = await _unitOfWork.Categories.GetAllAsync(c => c.ParentId == parentId);
         return _mapper.Map<IList<GenreBriefDto>>(categories);
     }
 
-    public async Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id)
+    public async Task<IList<GameBriefDto>> GetGamesByGenreIdAsync(string id, string culture)
     {
         var games = await _unitOfWork.Categories.GetProductsByCategoryIdAsync(id);
         return _mapper.Map<IList<GameBriefDto>>(games);

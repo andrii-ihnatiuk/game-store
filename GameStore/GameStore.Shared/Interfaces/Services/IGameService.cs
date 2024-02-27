@@ -8,9 +8,9 @@ namespace GameStore.Shared.Interfaces.Services;
 
 public interface IGameService : IResolvableByEntityStorage
 {
-    Task<GameFullDto> GetGameByAliasAsync(string alias);
+    Task<GameFullDto> GetGameByAliasAsync(string alias, string culture);
 
-    Task<GameFullDto> GetGameByIdAsync(string id);
+    Task<GameFullDto> GetGameByIdAsync(string id, string culture);
 
     Task<IList<GenreBriefDto>> GetGenresByGameAliasAsync(string alias);
 

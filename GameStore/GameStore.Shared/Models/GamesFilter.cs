@@ -38,6 +38,8 @@ public class GamesFilter
 
     public bool ShowDeleted { get; set; }
 
+    public string Culture { get; set; }
+
     public void ResetPageIfTriggeredNotByPagination()
     {
         if (Trigger != FilterTrigger.PageChange)

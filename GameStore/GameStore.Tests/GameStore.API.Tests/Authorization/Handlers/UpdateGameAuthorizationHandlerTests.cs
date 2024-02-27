@@ -52,7 +52,7 @@ public class UpdateGameAuthorizationHandlerTests
     {
         // Arrange
         var game = _fixture.Build<GameFullDto>().With(g => g.Deleted, isDeleted).Create();
-        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>()))
+        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(game);
 
         var principal = GetPrincipalWithPermissions(permission);
@@ -75,7 +75,7 @@ public class UpdateGameAuthorizationHandlerTests
         // Arrange
         var fixture = new Fixture();
         var game = fixture.Build<GameFullDto>().With(g => g.Deleted, isDeleted).Create();
-        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>()))
+        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(game);
 
         var resource = fixture.Create<GameUpdateDto>();
@@ -103,7 +103,7 @@ public class UpdateGameAuthorizationHandlerTests
 
         var publisherId = Guid.Empty.ToString();
         var game = _fixture.Build<GameFullDto>().With(g => g.PublisherId, publisherId).Create();
-        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>()))
+        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(game);
 
         _unitOfWorkMock.Setup(s => s.Publishers.GetOneAsync(
@@ -132,7 +132,7 @@ public class UpdateGameAuthorizationHandlerTests
         SetupAuthContext(principal, _fixture.Create<GameUpdateDto>());
 
         var game = _fixture.Build<GameFullDto>().With(g => g.PublisherId, "wrong id").Create();
-        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>()))
+        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(game);
 
         _unitOfWorkMock.Setup(s => s.Publishers.GetOneAsync(
@@ -160,7 +160,7 @@ public class UpdateGameAuthorizationHandlerTests
         }));
         SetupAuthContext(principal, _fixture.Create<GameUpdateDto>());
 
-        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>()))
+        _gameFacadeMock.Setup(s => s.GetGameByIdAsync(It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(_fixture.Create<GameFullDto>());
 
         _unitOfWorkMock.Setup(s => s.Publishers.GetOneAsync(

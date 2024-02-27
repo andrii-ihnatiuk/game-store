@@ -1,21 +1,7 @@
-<article *ngIf="!!form">
-  <gamestore-form
-    [form]="form"
-    idName="id"
-    (save)="onSave()"
-    [pageLink]="publisherPageLink"
-  >
-    <gamestore-text-input
-      [name]="labels.publisherCompanyNameLabel"
-      [control]="getFormControl('companyName')"
-    ></gamestore-text-input>
-    <gamestore-text-input
-      [name]="labels.publisherDescriptionLabel"
-      [control]="getFormControl('description')"
-    ></gamestore-text-input>
-    <gamestore-text-input
-      [name]="labels.publisherHomePageLabel"
-      [control]="getFormControl('homePage')"
-    ></gamestore-text-input>
-  </gamestore-form>
-</article>
+<app-translation-tabs [cultures]="contentCultures">
+  <ng-template let-culture>
+    <div class="form-wrapper">
+      <app-publisher-form [culture]="culture" [id]="publisherId"></app-publisher-form>
+    </div>
+  </ng-template>
+</app-translation-tabs>

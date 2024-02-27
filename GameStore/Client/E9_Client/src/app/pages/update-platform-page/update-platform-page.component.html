@@ -1,5 +1,7 @@
-<article *ngIf="!!form">
-  <gamestore-form [form]="form" idName="id" (save)="onSave()" [pageLink]="platformPageLink">
-    <gamestore-text-input [name]="labels.platformTypeLabel" [control]="getFormControl('type')"></gamestore-text-input>
-  </gamestore-form>
-</article>
+<app-translation-tabs [cultures]="contentCultures">
+  <ng-template let-culture>
+    <div class="form-wrapper">
+      <app-platform-form [culture]="culture" [id]="platfromId"></app-platform-form>
+    </div>
+  </ng-template>
+</app-translation-tabs>

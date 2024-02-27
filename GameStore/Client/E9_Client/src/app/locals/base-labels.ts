@@ -10,6 +10,28 @@ export interface Labels {
   basketMenuItem: string;
   rolesMenuItem: string;
   usersMenuItem: string;
+  aboutMenuItem: string;
+  awardsMenuItem: string;
+  reviewsMenuItem: string;
+  testimonialsMenuItem: string;
+  contactMenuItem: string;
+
+  siteLinksLabel: string;
+  companyInfoLabel: string;
+  socialMediaLabel: string;
+  rightsReservedLabel: string;
+
+  getInTouchLabel: string;
+  twitterUpdatesLabel: string;
+  fromTheBlogLabel: string;
+  formNameLabel: string;
+  formEmailLabel: string;
+  formMessageLabel: string;
+
+  searchForGameLabel: string;
+  refineResultsLabel: string;
+  sortingLabel: string;
+  priceRangeLabel: string;
 
   gameKeyLabel: string;
   gameNameLabel: string;
@@ -48,6 +70,16 @@ export interface Labels {
   loginButtonLabel: string;
   exitButtonLabel: string;
   shipButtonLabel: string;
+  writeCommentButtonLabel: string;
+
+  backToGameListLabel: string;
+  commentsLabel: string;
+  whatYouGetLabel: string;
+
+  learnMoreButtonLabel: string;
+  submitButtonLabel: string;
+  followUsButtonLabel: string;
+  visitBlogButtonLabel: string;
 
   deleteMessage: string;
   enterValidMessage: string;
@@ -68,6 +100,11 @@ export interface Labels {
   orderDetailsDiscountLabel: string;
   orderDetailsQuantityLabel: string;
   historyDateRangeLabel: string;
+  orderSummaryLabel: string;
+  orderSubtotalLabel: string;
+  orderTaxesLabel: string;
+  orderTotalLabel: string;
+  orderItemsCounterLabel: string;
 
   userNameLabel: string;
   userPasswordLabel: string;

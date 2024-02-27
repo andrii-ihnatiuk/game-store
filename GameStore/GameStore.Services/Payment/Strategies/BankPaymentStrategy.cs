@@ -1,37 +1,44 @@
 ﻿using System.Globalization;
+using System.Net.Mime;
 using GameStore.Data.Entities;
 using GameStore.Data.Interfaces;
 using GameStore.Services.Interfaces;
 using GameStore.Services.Interfaces.Payment;
 using GameStore.Services.Models;
 using GameStore.Shared.Constants;
-using GameStore.Shared.DTOs.Payment;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
 
 namespace GameStore.Services.Payment.Strategies;
 
-public class BankPaymentStrategy : IPaymentStrategy
+public class BankPaymentStrategy : PaymentStrategyBase
 {
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ICoreOrderService _orderService;
-
     public BankPaymentStrategy(IUnitOfWork unitOfWork, ICoreOrderService orderService)
+        : base(unitOfWork, orderService)
     {
-        _unitOfWork = unitOfWork;
-        _orderService = orderService;
     }
 
-    public PaymentStrategyName Name => PaymentStrategyName.Bank;
+    public override PaymentStrategyName Name => PaymentStrategyName.Bank;
 
-    public async Task<IPaymentResult> ProcessPaymentAsync(PaymentDto payment, string customerId)
+    protected override Task<IPaymentResult> DoPaymentAsync(PaymentRequest request)
     {
-        var order = await _orderService.GetOrderForProcessingAsync(customerId);
-        order.PaymentMethodId = Guid.Parse(payment.Method);
-        byte[] fileBytes = GeneratePdfInvoice(order);
-        await UpdateOrderStatusAsync(order);
-        return ConvertToBankPaymentResult(fileBytes);
+        byte[] fileBytes = GeneratePdfInvoice(Order);
+        var fileName = $"{DateTime.UtcNow:u}.pdf";
+
+        return Task.FromResult<IPaymentResult>(new BankPaymentResult
+        {
+            InvoiceFileBytes = fileBytes,
+            FileDownloadName = fileName,
+            ContentType = MediaTypeNames.Application.Pdf,
+        });
+    }
+
+    protected override async Task CompletePaymentAsync()
+    {
+        Order.Status = OrderStatus.Checkout;
+        UpdateQuantitiesForProducts(Order.OrderDetails);
+        await UnitOfWork.SaveAsync();
     }
 
     private static byte[] GeneratePdfInvoice(Order order)
@@ -51,24 +58,5 @@ public class BankPaymentStrategy : IPaymentStrategy
         document.Close();
 
         return stream.ToArray();
-    }
-
-    private static BankPaymentResult ConvertToBankPaymentResult(byte[] fileBytes)
-    {
-        const string fileType = "application/pdf";
-        var fileName = $"{DateTime.UtcNow:u}.pdf";
-
-        return new BankPaymentResult()
-        {
-            InvoiceFileBytes = fileBytes,
-            FileDownloadName = fileName,
-            ContentType = fileType,
-        };
-    }
-
-    private async Task UpdateOrderStatusAsync(Order order)
-    {
-        order.Status = OrderStatus.Checkout;
-        await _unitOfWork.SaveAsync();
     }
 }

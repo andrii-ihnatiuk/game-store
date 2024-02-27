@@ -36,8 +36,8 @@ export class PlatformService extends BaseService {
     return this.post(appConfiguration.addPlatformApiUrl, { platform });
   }
 
-  updatePlatform(platform: Platform): Observable<any> {
-    return this.put(appConfiguration.updatePlatformApiUrl, { platform });
+  updatePlatform(platform: Platform, culture: string): Observable<any> {
+    return this.put(appConfiguration.updatePlatformApiUrl, { platform, culture });
   }
 
   deletePlatform(id: string): Observable<any> {

@@ -42,14 +42,16 @@ public class GameFacadeServiceTests
         var expectedGame = _fixture.Create<GameFullDto>();
         expectedGame.Id = gameId;
 
-        _gameServiceMock.Setup(s => s.GetGameByIdAsync(gameId)).ReturnsAsync(expectedGame);
+        _gameServiceMock.Setup(s => s.GetGameByIdAsync(gameId, It.IsAny<string>()))
+            .ReturnsAsync(expectedGame)
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _service.GetGameByIdAsync(gameId);
+        var result = await _service.GetGameByIdAsync(gameId, string.Empty);
 
         // Assert
         Assert.Equal(expectedGame.Id, result.Id);
-        _gameServiceMock.Verify(s => s.GetGameByIdAsync(gameId), Times.Once);
+        _gameServiceMock.Verify();
     }
 
     [Fact]
@@ -60,14 +62,16 @@ public class GameFacadeServiceTests
         var expectedGame = _fixture.Create<GameFullDto>();
         expectedGame.Key = gameAlias;
 
-        _gameServiceMock.Setup(s => s.GetGameByAliasAsync(gameAlias)).ReturnsAsync(expectedGame);
+        _gameServiceMock.Setup(s => s.GetGameByAliasAsync(gameAlias, It.IsAny<string>()))
+            .ReturnsAsync(expectedGame)
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _service.GetGameByAliasAsync(gameAlias);
+        var result = await _service.GetGameByAliasAsync(gameAlias, string.Empty);
 
         // Assert
         Assert.Equal(expectedGame.Key, result.Key);
-        _gameServiceMock.Verify(s => s.GetGameByAliasAsync(gameAlias), Times.Once);
+        _gameServiceMock.Verify();
     }
 
     [Fact]

@@ -1,6 +1,7 @@
 ﻿using GameStore.API.Attributes;
 using GameStore.Application.Interfaces;
 using GameStore.Data.Entities;
+using GameStore.Data.Extensions;
 using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Publisher;
@@ -31,24 +32,24 @@ public class PublishersController : ControllerBase
         _authorizationService = authorizationService;
     }
 
-    [HttpGet("{companyName}", Name = "GetPublisherByName")]
-    public async Task<ActionResult<PublisherFullDto>> GetPublisherAsync([FromRoute] string companyName)
+    [HttpGet("{id}", Name = "GetPublisherById")]
+    public async Task<ActionResult<PublisherFullDto>> GetPublisherAsync([FromRoute] string id)
     {
-        var gameFullDto = await _publisherFacadeService.GetPublisherByNameAsync(companyName);
+        var gameFullDto = await _publisherFacadeService.GetPublisherByIdAsync(id, this.GetCurrentCultureName());
         return Ok(gameFullDto);
     }
 
     [HttpGet]
     public async Task<ActionResult<IList<Publisher>>> GetAllPublishersAsync()
     {
-        var publishersDto = await _publisherFacadeService.GetAllPublishersAsync();
+        var publishersDto = await _publisherFacadeService.GetAllPublishersAsync(this.GetCurrentCultureName());
         return Ok(publishersDto);
     }
 
-    [HttpGet("{companyName}/games")]
-    public async Task<ActionResult<IList<GameBriefDto>>> GetGamesByPublisherAsync([FromRoute] string companyName)
+    [HttpGet("{id}/games")]
+    public async Task<ActionResult<IList<GameBriefDto>>> GetGamesByPublisherAsync([FromRoute] string id)
     {
-        var games = await _publisherFacadeService.GetGamesByPublisherNameAsync(companyName);
+        var games = await _publisherFacadeService.GetGamesByPublisherIdAsync(id, this.GetCurrentCultureName());
         return Ok(games);
     }
 
@@ -58,7 +59,7 @@ public class PublishersController : ControllerBase
     {
         _publisherCreateValidator.ValidateAndThrow(dto);
         var publisherBriefDto = await _publisherFacadeService.AddPublisherAsync(dto);
-        return CreatedAtRoute("GetPublisherByName", new { CompanyName = publisherBriefDto.CompanyName }, publisherBriefDto);
+        return CreatedAtRoute("GetPublisherById", new { id = publisherBriefDto.Id }, publisherBriefDto);
     }
 
     [HasAnyPermission(PermissionOptions.PublisherUpdate, PermissionOptions.PublisherUpdateSelf, PermissionOptions.PublisherFull)]
