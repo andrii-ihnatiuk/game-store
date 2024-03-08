@@ -38,6 +38,9 @@ import { PriceComponent } from './price-component/price.component';
 import { SlideInputComponentComponent } from './slide-input-component/slide-input.component';
 import { DatepickerComponent } from './datepicker-component/datepicker.component';
 import { TranslationTabsComponent } from './translation-tabs-component/translation-tabs.component';
+import { ImageSelectDialogComponent } from './image-select-dialog-component/image-select-dialog.component';
+import { ImageViewerDialogComponent } from './image-viewer-dialog-component/image-viewer-dialog.component';
+import { ImageGalleryComponent } from './image-gallery-component/image-gallery.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +67,9 @@ import { TranslationTabsComponent } from './translation-tabs-component/translati
     SlideInputComponentComponent,
     DatepickerComponent,
     TranslationTabsComponent,
+    ImageSelectDialogComponent,
+    ImageViewerDialogComponent,
+    ImageGalleryComponent,
   ],
   imports: [
     CommonModule,
@@ -104,7 +110,8 @@ import { TranslationTabsComponent } from './translation-tabs-component/translati
     PriceComponent,
     SlideInputComponentComponent,
     DatepickerComponent,
-    TranslationTabsComponent
+    TranslationTabsComponent,
+    ImageGalleryComponent
   ],
 })
 export class CommonComponentsModule { }

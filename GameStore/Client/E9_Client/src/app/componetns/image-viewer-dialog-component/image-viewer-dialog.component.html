@@ -1,0 +1,25 @@
+<div class="image-wrapper">
+  <div class="control-prev" (click)="selectPrevious()">
+    <div class="arrow"></div>
+  </div>
+  <ng-container *ngFor="let image of dialogData.images; index as i">
+    <img
+      *ngIf="loadedIndices.has(i)"
+      [ngClass]="{ 'hidden': activeIndex !== i }"
+      [src]="getImageUrl(image)"
+      alt="product image"
+    >
+  </ng-container>
+  <div class="control-next" (click)="selectNext()">
+    <div class="arrow right"></div>
+  </div>
+  <div class="indicators-wrapper">
+    <div class="indicators">
+      <div 
+        *ngFor="let image of dialogData.images; index as i"
+        class="indicator"
+        [ngClass]="{ 'active': activeIndex == i }"
+      ></div>
+    </div>
+  </div>
+</div>

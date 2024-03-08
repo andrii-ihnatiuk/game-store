@@ -1,8 +1,57 @@
-<app-translation-tabs [cultures]="contentCultures">
-  <ng-template let-culture>
-    <div class="form-wrapper">
-      <app-game-form [culture]="culture" [key]="gameKey"></app-game-form>
+<div class="page-container">
+  <div class="specs-container">
+    <app-translation-tabs [cultures]="contentCultures">
+      <ng-template let-culture>
+        <div class="form-wrapper">
+          <app-game-form [culture]="culture" [key]="gameKey" [onImagesChange]="imagesChange$"></app-game-form>
+        </div>
+      </ng-template>
+    </app-translation-tabs>
+  </div>
+  <div class="images-container">
+    <div class="cover-image">
+      <div class="section-title">
+        <div>Cover image</div>
+      </div>
+      <div class="image-wrapper">
+        <ng-container *ngIf="!!coverImage; else selectCover">
+          <img [src]="coverImage.small ?? coverImage.large" alt="cover image">
+          <div class="image-overlay">
+            <div class="btn-replace" (click)="selectCoverImage()">
+              <mat-icon>add_photo_alternate</mat-icon>
+            </div>
+            <button mat-flat-button color="warn" class="btn-remove" (click)="deleteImage(-1)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+        </ng-container>
+        <ng-template #selectCover>
+          <div class="image-selector" (click)="selectCoverImage()" [ngClass]="{ invalid: gameImages.length }">+</div>
+        </ng-template>
+      </div>
     </div>
-  </ng-template>
-</app-translation-tabs>
-
+    <div class="additional-images">
+      <div class="section-title">
+        <div>Additional images</div>
+      </div>
+      <div class="images-list">
+        <ng-container *ngFor="let image of gameImages; index as i">
+          <div class="image-wrapper">
+            <img [src]="image.small ?? image.large" alt="product image">
+            <div class="image-overlay">
+              <div class="btn-replace" (click)="selectAdditionalImage(i)">
+                <mat-icon>add_photo_alternate</mat-icon>
+              </div>
+              <button mat-flat-button color="warn" class="btn-remove" (click)="deleteImage(i)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+        <div class="image-wrapper">
+          <div class="image-selector" (click)="selectAdditionalImage()">+</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

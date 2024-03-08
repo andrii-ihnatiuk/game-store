@@ -70,6 +70,9 @@ internal static class DataSeeder
     private static readonly Guid DesktopUkrTranslationId = new("BFFD53A2-CCBD-44DD-834F-8DA69EF0EF44");
     private static readonly Guid ConsoleUkrTranslationId = new("8FEBF7F4-795A-47EE-ADC9-47835BD2C906");
 
+    private static readonly Guid ImageId1 = new("60ab69c0-571e-4255-9310-2281e64f81b6");
+    private static readonly Guid ImageId2 = new("f95594bd-72ba-4d76-8e36-486458c42430");
+
     public static void SeedData(this ModelBuilder modelBuilder)
     {
         SeedGenres(modelBuilder.Entity<Genre>());
@@ -78,6 +81,7 @@ internal static class DataSeeder
         SeedGamesContainingGenresAndPlatformsAndPublishers(modelBuilder);
         SeedPaymentMethods(modelBuilder.Entity<PaymentMethod>());
         SeedTranslations(modelBuilder);
+        SeedImages(modelBuilder);
     }
 
     private static void SeedGamesContainingGenresAndPlatformsAndPublishers(ModelBuilder builder)
@@ -98,6 +102,7 @@ internal static class DataSeeder
                 PublisherId = PublisherId4,
                 PublishDate = new DateTime(2017, 4, 23, 0, 0, 0, DateTimeKind.Utc),
                 CreationDate = new DateTime(2023, 10, 20, 0, 0, 0, DateTimeKind.Utc),
+                PreviewImgUrl = "https://andrii.blob.core.windows.net/gamestore-static/60ab69c0-571e-4255-9310-2281e64f81b6_small.jpg",
             },
             new Game()
             {
@@ -298,5 +303,12 @@ internal static class DataSeeder
             new PlatformTranslation { Id = CloudUkrTranslationId, Type = "Хмара", CoreId = PlatformId2, LanguageCode = uk },
             new PlatformTranslation { Id = DesktopUkrTranslationId, Type = "Комп'ютер", CoreId = PlatformId3, LanguageCode = uk },
             new PlatformTranslation { Id = ConsoleUkrTranslationId, Type = "Консоль", CoreId = PlatformId4, LanguageCode = uk });
+    }
+
+    private static void SeedImages(ModelBuilder builder)
+    {
+        builder.Entity<AppImage>().HasData(
+            new AppImage { Id = ImageId1, GameId = GameId1, Order = 0, IsCover = true, Large = "https://andrii.blob.core.windows.net/gamestore-static/60ab69c0-571e-4255-9310-2281e64f81b6_large.jpg", Small = "https://andrii.blob.core.windows.net/gamestore-static/60ab69c0-571e-4255-9310-2281e64f81b6_small.jpg" },
+            new AppImage { Id = ImageId2, GameId = GameId1, Order = 1, IsCover = false, Large = "https://andrii.blob.core.windows.net/gamestore-static/f95594bd-72ba-4d76-8e36-486458c42430_large.jpg", Small = "https://andrii.blob.core.windows.net/gamestore-static/f95594bd-72ba-4d76-8e36-486458c42430_small.jpg" });
     }
 }

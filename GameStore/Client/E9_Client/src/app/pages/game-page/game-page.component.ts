@@ -21,6 +21,11 @@ import { PlatformService } from 'src/app/services/platform.service';
 import { PublisherService } from 'src/app/services/publisher.service';
 import { UserService } from 'src/app/services/user.service';
 import { GameInfo } from './game-info';
+import { ImageService } from 'src/app/services/image.service';
+import { Image } from 'src/app/models/image.model';
+import { GalleryItem } from 'src/app/componetns/image-gallery-component/gallery-item';
+import { MatDialog } from '@angular/material/dialog';
+import { ImageViewerDialogComponent } from 'src/app/componetns/image-viewer-dialog-component/image-viewer-dialog.component';
 
 @Component({
   selector: 'gamestore-game',
@@ -40,6 +45,10 @@ export class GamePageComponent
 
   gameInfo: GameInfo = new GameInfo;
 
+  coverImage?: string;
+  gameImages?: Image[];
+  galleryImages?: GalleryItem[];
+
   canSeeComments = false;
   canBuy = false;
   totalComments = 0;
@@ -52,7 +61,9 @@ export class GamePageComponent
     private orderService: OrderService,
     private route: ActivatedRoute,
     private userService: UserService,
-    private router: Router
+    private imageService: ImageService,
+    private router: Router,
+    private imageViewer: MatDialog
   ) {
     super();
   }
@@ -95,6 +106,7 @@ export class GamePageComponent
             publisher: this.publisherService.getPublisherByGameKey(x.key),
             canSeeComments: this.userService.checkAccess('Comments', x.key),
             canBuy: this.userService.checkAccess('Buy', x.key),
+            images: this.imageService.getImagesByGameKey(x.key)
           })
         )
       )
@@ -106,6 +118,7 @@ export class GamePageComponent
         this.addPublisherInfo(x.publisher);
         this.canSeeComments = x.canSeeComments;
         this.canBuy = x.canBuy;
+        this.addImages(x.images);
       });
   }
 
@@ -119,7 +132,7 @@ export class GamePageComponent
       (this.downloadLink as any)._elementRef.nativeElement.href = downloadURL;
     }
   }
-
+  
   addPlatformsInfo(platforms: Platform[]): void {
     if (!platforms?.length) {
       return;
@@ -176,6 +189,14 @@ export class GamePageComponent
     this.gameInfo.genresInfo = genresInfo;
   }
 
+  private addImages(images: Image[]) {
+    this.gameImages = images;
+    this.galleryImages = images.map(i => (
+      { id: i.id!, imageUrl: i.small ?? i.large }
+   ));
+   this.coverImage = images.find(i => i.isCover)?.large ?? 'https://placehold.co/540x445';
+  }
+
   buy(): void {
     this.orderService
       .buyGame(this.game!.key)
@@ -186,5 +207,20 @@ export class GamePageComponent
 
   onCommentsLoaded(commentsCount: number) {
     this.totalComments = commentsCount;
+  }
+
+  onImageSelected(imageId: string): void {
+    let index = this.gameImages?.findIndex(i => i.id == imageId)!;
+    this.openImageViewer(index);
+  }
+
+  private openImageViewer(activeIndex: number) {
+    this.imageViewer.open(ImageViewerDialogComponent, {
+      panelClass: "dialog-no-padding",
+      data: { 
+        activeIndex: activeIndex,
+        images: this.gameImages,
+      }
+    });
   }
 }

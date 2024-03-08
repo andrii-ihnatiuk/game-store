@@ -16,8 +16,17 @@
     }
 }
 
-.card-image-wrapper img {
-    vertical-align: middle;
+.card-image-wrapper {
+    overflow: hidden;
+    width: 160px;
+    height: 160px;
+    
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
 }
 
 .card-content {

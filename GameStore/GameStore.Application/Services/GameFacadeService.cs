@@ -7,6 +7,7 @@ using GameStore.Shared.Constants;
 using GameStore.Shared.Constants.Filter;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Image;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
 using GameStore.Shared.Interfaces.Services;
@@ -76,6 +77,12 @@ public class GameFacadeService : IGameFacadeService
     {
         var gameService = _serviceResolver.ResolveForEntityAlias<IGameService>(alias);
         return gameService.GetPublisherByGameAliasAsync(alias);
+    }
+
+    public async Task<IList<ImageBriefDto>> GetImagesByGameAliasAsync(string alias)
+    {
+        var service = _serviceResolver.ResolveAll<ICoreGameService>().Single();
+        return await service.GetImagesByGameAliasAsync(alias);
     }
 
     public async Task<GameBriefDto> AddGameAsync(GameCreateDto dto)

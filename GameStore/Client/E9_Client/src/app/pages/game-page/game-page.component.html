@@ -4,18 +4,10 @@
   <div class="content-container">
     <div class="product-images-container">
       <div class="main-image-wrapper">
-        <img src="https://placehold.co/540x445" alt="product image">
+          <img [src]="coverImage" alt="product image">
       </div>
-      <div class="image-galery-container">
-        <div class="galery-image-wrapper">
-          <img src="https://placehold.co/160x115" alt="product image">
-        </div>
-        <div class="galery-image-wrapper">
-          <img src="https://placehold.co/160x115" alt="product image">
-        </div>
-        <div class="galery-image-wrapper">
-          <img src="https://placehold.co/160x115" alt="product image">
-        </div>
+      <div *ngIf="!!galleryImages && !!galleryImages.length">
+        <app-image-gallery [images]="galleryImages" (select)="onImageSelected($event)"></app-image-gallery>
       </div>
     </div>
     <div class="product-info-container">

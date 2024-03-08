@@ -9,8 +9,10 @@ using GameStore.Services.Interfaces;
 using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Game;
 using GameStore.Shared.DTOs.Genre;
+using GameStore.Shared.DTOs.Image;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
+using GameStore.Shared.Exceptions;
 using GameStore.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -85,6 +87,14 @@ public class CoreGameService : MultiLingualEntityServiceBase<Game, GameTranslati
         };
     }
 
+    public async Task<IList<ImageBriefDto>> GetImagesByGameAliasAsync(string gameAlias)
+    {
+        var game = await _unitOfWork.Games.GetOneAsync(
+            predicate: g => g.Alias == gameAlias,
+            include: q => q.Include(g => g.Images.OrderBy(img => img.Order)));
+        return Mapper.Map<IList<ImageBriefDto>>(game.Images);
+    }
+
     public async Task<GameBriefDto> AddGameAsync(GameCreateDto dto)
     {
         var game = Mapper.Map<Game>(dto);
@@ -102,13 +112,10 @@ public class CoreGameService : MultiLingualEntityServiceBase<Game, GameTranslati
         {
             var existingGame = await _unitOfWork.Games.GetOneAsync(
                 predicate: g => g.Id == Guid.Parse(dto.Game.Id),
-                include: q =>
-                {
-                    return q
-                        .Include(g => g.GameGenres)
+                include: q => q.Include(g => g.GameGenres)
                         .Include(g => g.GamePlatforms)
-                        .Include(g => g.Translations.Where(t => t.LanguageCode == dto.Culture));
-                },
+                        .Include(g => g.Translations.Where(t => t.LanguageCode == dto.Culture))
+                        .Include(g => g.Images),
                 noTracking: false);
 
             if (existingGame.Alias != dto.Game.Key)
@@ -117,10 +124,14 @@ public class CoreGameService : MultiLingualEntityServiceBase<Game, GameTranslati
             }
 
             UpdateMultiLingualEntity(existingGame, dto, dto.Culture);
+            if (dto.Images is not null)
+            {
+                var images = await GetImagesForUpdateAsync(dto.Images);
+                UpdateGameImages(existingGame, images, dto.Images.First(img => img.IsCover).Id);
+            }
 
             await ThrowIfForeignKeyConstraintViolation(existingGame);
             await _unitOfWork.SaveAsync();
-
             await transaction.CommitAsync();
         }
         catch
@@ -157,5 +168,50 @@ public class CoreGameService : MultiLingualEntityServiceBase<Game, GameTranslati
         await _unitOfWork.Genres.ThrowIfForeignKeyConstraintViolation(game.GameGenres);
         await _unitOfWork.Platforms.ThrowIfForeignKeyConstraintViolation(game.GamePlatforms);
         await _unitOfWork.Publishers.ThrowIfForeignKeyConstraintViolation(game);
+    }
+
+    private async Task<IList<AppImage>> GetImagesForUpdateAsync(ICollection<ImageDto> dtoImages)
+    {
+        var images = await _unitOfWork.Images.GetAsync(
+            predicate: img => dtoImages.Select(x => x.Id).Contains(img.Id),
+            noTracking: false);
+
+        if (images.Count != dtoImages.Count)
+        {
+            throw new EntityNotFoundException();
+        }
+
+        return dtoImages.Join(
+            images,
+            dto => dto.Id,
+            img => img.Id,
+            (_, img) => img).ToList(); // keep original order as in dto
+    }
+
+    private static void UpdateGameImages(Game game, IList<AppImage> images, Guid coverImageId)
+    {
+        foreach (var image in game.Images)
+        {
+            image.ResetOwner();
+        }
+
+        for (var i = 0; i < images.Count; i++)
+        {
+            var image = images[i];
+            if (image.GameId is not null)
+            {
+                throw new ForeignKeyException(nameof(image.GameId));
+            }
+
+            image.GameId = game.Id;
+            image.IsCover = image.Id == coverImageId;
+            image.Order = (ushort)(i + 1);
+
+            if (image.IsCover)
+            {
+                image.Order = 0;
+                game.PreviewImgUrl = image.Small ?? image.Large;
+            }
+        }
     }
 }

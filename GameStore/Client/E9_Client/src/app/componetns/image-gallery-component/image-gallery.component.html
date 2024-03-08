@@ -1,0 +1,15 @@
+<div class="image-gallery-wrapper">
+  <div class="gallery-control prev" (click)="scrollLeft()">
+    <div class="arrow-left"></div>
+  </div>
+  <div class="image-gallery" #imgGallery>
+    <div class="image-gallery-box">
+      <div *ngFor="let image of images" class="galery-image-wrapper" (click)="onImageSelection(image.id)">
+        <img [src]="image.imageUrl" alt="product image">
+      </div>
+    </div>
+  </div>
+  <div class="gallery-control next" (click)="scrollRight()">
+    <div class="arrow-right"></div>
+  </div>
+</div>

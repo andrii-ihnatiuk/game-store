@@ -9,6 +9,7 @@
   "gamesByPublisherApiUrl": "publishers/{id}/games",
   "gamesByPlatformApiUrl": "platforms/{id}/games",
   "getGameFileApiUrl": "games/{key}/download",
+  "getGameImageApiUrl": "games/{key}/image",
   "updateGameApiUrl": "games/update",
   "addGameApiUrl": "games/new",
   "deleteGameApiUrl": "games/remove/{key}",
@@ -75,5 +76,9 @@
   "rolePermissionsApiUrl": "roles/{id}/permissions",
   "permissionsApiUrl": "permissions",
 
-  "culturesApiUrl": "localization/cultures"
+  "culturesApiUrl": "localization/cultures",
+
+  "imagesByGameApiUrl": "games/{key}/images",
+  "availableImagesApiUrl": "images/available",
+  "uploadImagesApiUrl": "images"
 }

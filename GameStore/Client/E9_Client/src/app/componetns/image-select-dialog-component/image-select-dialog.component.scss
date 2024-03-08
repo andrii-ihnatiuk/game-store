@@ -1,0 +1,65 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+mat-dialog-content {
+    max-height: unset !important;
+    flex: 1 0 0;
+}
+
+mat-dialog-actions {
+    justify-content: space-between;
+    
+    .actions-container {
+        display: flex;
+    }
+}
+
+.images-container {
+    display: grid;
+    justify-content: space-between;
+    grid-template-columns: repeat(auto-fill, 160px);
+    gap: 5px;
+}
+
+.img-wrapper {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+        user-select: none;
+    }
+
+    &:hover {
+        cursor: pointer;
+
+        img {
+            transform: scale(1.1);
+        }
+    }
+
+    &.selected::before {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        font-size: 50px;
+        content: "✔️";
+        user-select: none;
+        z-index: 1;
+        background-color: rgba($color: #00ff22, $alpha: .2);
+    }
+}

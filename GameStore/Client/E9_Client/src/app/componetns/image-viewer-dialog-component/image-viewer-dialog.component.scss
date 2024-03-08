@@ -1,0 +1,156 @@
+.image-wrapper {
+    position: relative;
+
+    &:hover {
+        .arrow {
+            opacity: 1;
+            animation: slideLeft .2s ease;
+        }
+
+        .arrow.right {
+            animation: slideRight .2s ease;
+        }
+
+        .indicators {
+            opacity: 1;
+            animation: slideTop .2s ease;
+        }
+    }
+
+    .control-prev, .control-next {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:hover {
+            .arrow::before {
+                border-color: white;
+            }
+        }
+    }
+
+    .control-prev {
+        padding-left: 5px;
+        left: 0px;
+    }
+
+    .control-next {
+        padding-right: 5px;
+        right: 0px;
+    }
+
+    .arrow {
+        opacity: 0;
+        position: relative;
+        width: 50px;
+        height: 50px;
+        background-color: rgba($color: #FFFF, $alpha: .4);
+        backdrop-filter: blur(4px);
+        border-radius: 100%;
+        transition: opacity .2s ease;
+
+        &::before {
+            position: absolute;
+            top: 50%;
+            margin-top: -8px;
+            margin-left: -6px;
+            left: 50%;
+            right: 0;
+            content: '';
+            width: 16px;
+            height: 16px;
+            border-left: 3px solid #3E4554;
+            border-top: 3px solid #3E4554;
+            border-radius: 3px;
+            transform: rotate(-45deg);
+            transition: border-color .2s ease;
+        }
+
+        &.right {
+            &::before {
+                transform: rotate(135deg);
+                left: unset;
+                margin-left: unset;
+                right: 50%;
+                margin-right: -6px;
+            }
+        }
+    }
+
+    img {
+        display: block;
+        max-height: 90vh;
+        max-width: 90vw;
+        min-height: 50vh;
+
+        &.hidden {
+            display: none;
+        }
+    }
+}
+
+.indicators-wrapper {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .indicators {
+        display: flex;
+        gap: 10px;
+        padding: 6px;
+        border-radius: 20px;
+        background-color: rgba($color: #3E4554, $alpha: .4);
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        transition: opacity .2s ease;
+    }
+
+    .indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 100%;
+        background-color: #a0a0a0;
+
+        &.active {
+            background-color: white;
+        }
+    }
+}
+
+@keyframes slideRight {
+    from {
+        transform: translateX(-20px);
+      }
+    
+      to {
+        transform: translateX(0px);
+      }
+}
+
+@keyframes slideLeft {
+    from {
+        transform: translateX(20px);
+      }
+    
+      to {
+        transform: translateX(0px);
+      }
+}
+
+@keyframes slideTop {
+    from {
+        transform: translateY(20px);
+      }
+    
+      to {
+        transform: translateY(0px);
+      }
+}

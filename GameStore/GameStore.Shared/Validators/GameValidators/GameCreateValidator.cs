@@ -20,5 +20,12 @@ public class GameCreateValidator : AbstractValidator<GameCreateDto>
         RuleFor(g => g.Game.Price).GreaterThanOrEqualTo(0M);
         RuleFor(g => g.Game.Discount).InclusiveBetween((ushort)0, (ushort)100);
         RuleFor(g => g.Game.UnitInStock).GreaterThanOrEqualTo((short)0);
+
+        When(g => g.Images is not null && g.Images.Count > 0, () =>
+        {
+            RuleFor(g => g.Images)
+                .Must(images => images!.Count(img => img.IsCover).Equals(1))
+                .WithMessage("Game must contain exactly one cover image.");
+        });
     }
 }

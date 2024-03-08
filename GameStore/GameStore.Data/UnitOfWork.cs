@@ -22,7 +22,8 @@ public class UnitOfWork : IUnitOfWork
         IOrderRepository ordersRepository,
         IGenericRepository<OrderDetail> orderDetailsRepository,
         IGenericRepository<PaymentMethod> paymentMethodsRepository,
-        IGenericRepository<Comment> commentsRepository)
+        IGenericRepository<Comment> commentsRepository,
+        IGenericRepository<AppImage> images)
     {
         _context = context;
         Games = gameRepository;
@@ -36,6 +37,7 @@ public class UnitOfWork : IUnitOfWork
         PaymentMethods = paymentMethodsRepository;
         Comments = commentsRepository;
         Comments = commentsRepository;
+        Images = images;
     }
 
     public IGameRepository Games { get; }
@@ -57,6 +59,8 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<PaymentMethod> PaymentMethods { get; }
 
     public IGenericRepository<Comment> Comments { get; }
+
+    public IGenericRepository<AppImage> Images { get; }
 
     public async Task<int> SaveAsync()
     {

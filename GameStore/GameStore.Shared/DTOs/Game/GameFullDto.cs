@@ -27,4 +27,6 @@ public class GameFullDto
     public string? PublisherId { get; set; }
 
     public DateTime? PublishDate { get; set; }
+
+    public string? PreviewImgUrl { get; set; }
 }

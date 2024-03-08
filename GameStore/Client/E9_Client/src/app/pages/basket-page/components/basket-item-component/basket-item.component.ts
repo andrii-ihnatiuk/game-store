@@ -1,10 +1,7 @@
-﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+﻿import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { BaseComponent } from 'src/app/componetns/base.component';
 import { Game } from 'src/app/models/game.model';
 import { OrderDetail } from 'src/app/models/order-detail.model';
-import { QuantityOperation } from './quantity-operation';
 
 @Component({
   selector: 'app-basket-item',

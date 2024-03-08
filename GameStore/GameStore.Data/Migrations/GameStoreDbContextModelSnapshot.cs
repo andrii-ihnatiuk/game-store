@@ -22,6 +22,55 @@ namespace GameStore.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("GameStore.Data.Entities.AppImage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("GameId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsCover")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Large")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Small")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.ToTable("AppImage");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("60ab69c0-571e-4255-9310-2281e64f81b6"),
+                            GameId = new Guid("8e9d1000-50e0-4bd8-8159-42c7431f32b5"),
+                            IsCover = true,
+                            Large = "https://andrii.blob.core.windows.net/gamestore-static/60ab69c0-571e-4255-9310-2281e64f81b6_large.jpg",
+                            Order = 0,
+                            Small = "https://andrii.blob.core.windows.net/gamestore-static/60ab69c0-571e-4255-9310-2281e64f81b6_small.jpg"
+                        },
+                        new
+                        {
+                            Id = new Guid("f95594bd-72ba-4d76-8e36-486458c42430"),
+                            GameId = new Guid("8e9d1000-50e0-4bd8-8159-42c7431f32b5"),
+                            IsCover = false,
+                            Large = "https://andrii.blob.core.windows.net/gamestore-static/f95594bd-72ba-4d76-8e36-486458c42430_large.jpg",
+                            Order = 1,
+                            Small = "https://andrii.blob.core.windows.net/gamestore-static/f95594bd-72ba-4d76-8e36-486458c42430_small.jpg"
+                        });
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -100,6 +149,9 @@ namespace GameStore.Data.Migrations
                     b.Property<decimal>("PageViews")
                         .HasColumnType("decimal(20,0)");
 
+                    b.Property<string>("PreviewImgUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("money");
 
@@ -141,6 +193,7 @@ namespace GameStore.Data.Migrations
                             FileSize = "65.76 GB",
                             Name = "The Legend of Zelda: Breath of the Wild",
                             PageViews = 0m,
+                            PreviewImgUrl = "https://andrii.blob.core.windows.net/gamestore-static/60ab69c0-571e-4255-9310-2281e64f81b6_small.jpg",
                             Price = 1500.2m,
                             PublishDate = new DateTime(2017, 4, 23, 0, 0, 0, 0, DateTimeKind.Utc),
                             PublisherId = new Guid("defd4ed1-a967-48af-83fb-4e5ffee412b0"),
@@ -1167,6 +1220,16 @@ namespace GameStore.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("GameStore.Data.Entities.AppImage", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.Game", "Game")
+                        .WithMany("Images")
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Game");
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Comment", b =>
                 {
                     b.HasOne("GameStore.Data.Entities.Game", "Game")
@@ -1384,6 +1447,8 @@ namespace GameStore.Data.Migrations
                     b.Navigation("GameGenres");
 
                     b.Navigation("GamePlatforms");
+
+                    b.Navigation("Images");
 
                     b.Navigation("Translations");
                 });

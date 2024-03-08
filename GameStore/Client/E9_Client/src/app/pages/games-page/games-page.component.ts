@@ -46,6 +46,7 @@ export class GamesPageComponent extends BaseComponent {
               pageLink: `${this.links.get(this.pageRoutes.Game)}/${game.key}`,
               updateLink: `${this.links.get(this.pageRoutes.UpdateGame)}/${game.key}`,
               deleteLink: `${this.links.get(this.pageRoutes.DeleteGame)}/${game.key}`,
+              previewImgUrl: game.previewImgUrl,
             };
 
             return gameItem;

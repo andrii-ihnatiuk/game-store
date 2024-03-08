@@ -78,4 +78,8 @@ export class Configuration {
   permissionsApiUrl: string = '';
 
   culturesApiUrl: string = '';
+
+  imagesByGameApiUrl: string = '';
+  availableImagesApiUrl: string = '';
+  uploadImagesApiUrl: string = '';
 }

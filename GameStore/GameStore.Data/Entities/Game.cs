@@ -35,6 +35,8 @@ public class Game : ICreationTrackable, IMigrationTrackable, IMultiLingualEntity
 
     public DateTime CreationDate { get; set; }
 
+    public string? PreviewImgUrl { get; set; }
+
     public Guid? PublisherId { get; set; }
 
     public Publisher? Publisher { get; set; }
@@ -46,4 +48,6 @@ public class Game : ICreationTrackable, IMigrationTrackable, IMultiLingualEntity
     public IList<Comment> Comments { get; set; } = new List<Comment>();
 
     public IList<GameTranslation> Translations { get; set; } = new List<GameTranslation>();
+
+    public IList<AppImage> Images { get; set; } = new List<AppImage>();
 }

@@ -6,4 +6,5 @@ export class GameListItem {
     pageLink?: string;
     updateLink?: string;
     deleteLink?: string;
+    previewImgUrl?: string;
   }
