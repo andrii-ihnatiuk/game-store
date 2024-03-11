@@ -22,11 +22,17 @@ public class OrdersControllerTests
     private readonly Mock<IOrderFacadeService> _orderFacadeService = new();
     private readonly Mock<IPaymentService> _paymentService = new();
     private readonly Mock<IValidatorWrapper<PaymentDto>> _paymentValidator = new();
+    private readonly Mock<INotificationService> _notificationService = new();
     private readonly OrdersController _controller;
 
     public OrdersControllerTests()
     {
-        _controller = new OrdersController(_orderService.Object, _orderFacadeService.Object, _paymentService.Object, _paymentValidator.Object)
+        _controller = new OrdersController(
+            _orderService.Object,
+            _orderFacadeService.Object,
+            _paymentService.Object,
+            _paymentValidator.Object,
+            _notificationService.Object)
         {
             ControllerContext = new ControllerContext()
             {

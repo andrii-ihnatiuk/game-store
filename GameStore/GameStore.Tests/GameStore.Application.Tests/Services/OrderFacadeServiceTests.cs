@@ -1,6 +1,7 @@
 ﻿using GameStore.Application.Interfaces.Util;
 using GameStore.Application.Services;
 using GameStore.Services.Interfaces;
+using GameStore.Shared.Constants;
 using GameStore.Shared.DTOs.Order;
 using GameStore.Shared.Interfaces.Services;
 using GameStore.Shared.Models;
@@ -99,7 +100,7 @@ public class OrderFacadeServiceTests
     {
         // Arrange
         var orderId = Guid.Empty.ToString();
-        _coreOrderServiceMock.Setup(s => s.ShipOrderAsync(orderId))
+        _coreOrderServiceMock.Setup(s => s.UpdateOrderStatusAsync(orderId, OrderStatus.Shipped))
             .Returns(Task.CompletedTask).Verifiable(Times.Once);
 
         // Act

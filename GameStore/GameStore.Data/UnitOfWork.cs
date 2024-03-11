@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using GameStore.Data.Entities;
+using GameStore.Data.Entities.Identity;
 using GameStore.Data.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -23,7 +24,9 @@ public class UnitOfWork : IUnitOfWork
         IGenericRepository<OrderDetail> orderDetailsRepository,
         IGenericRepository<PaymentMethod> paymentMethodsRepository,
         IGenericRepository<Comment> commentsRepository,
-        IGenericRepository<AppImage> images)
+        IGenericRepository<AppImage> imagesRepository,
+        IGenericRepository<NotificationMethod> notificationMethodsRepository,
+        IGenericRepository<ApplicationUserRole> usersRolesRepository)
     {
         _context = context;
         Games = gameRepository;
@@ -37,7 +40,9 @@ public class UnitOfWork : IUnitOfWork
         PaymentMethods = paymentMethodsRepository;
         Comments = commentsRepository;
         Comments = commentsRepository;
-        Images = images;
+        Images = imagesRepository;
+        NotificationMethods = notificationMethodsRepository;
+        UsersRoles = usersRolesRepository;
     }
 
     public IGameRepository Games { get; }
@@ -61,6 +66,10 @@ public class UnitOfWork : IUnitOfWork
     public IGenericRepository<Comment> Comments { get; }
 
     public IGenericRepository<AppImage> Images { get; }
+
+    public IGenericRepository<NotificationMethod> NotificationMethods { get; }
+
+    public IGenericRepository<ApplicationUserRole> UsersRoles { get; }
 
     public async Task<int> SaveAsync()
     {

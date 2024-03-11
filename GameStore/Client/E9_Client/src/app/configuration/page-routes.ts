@@ -11,6 +11,7 @@ export enum PageRoutes {
   DeleteUser = 'DeleteUser',
   AddUser = 'AddUser',
   Login = 'Login',
+  Profile = 'Profile',
 
   Roles = 'Roles',
   Role = 'Role',

@@ -49,6 +49,7 @@ LogManager.Setup().LoadConfigurationFromFile("nlog.config", false);
 
 builder.Services.Configure<RouteOptions>(options => { options.LowercaseUrls = true; });
 builder.Services.Configure<AzureStorageOptions>(builder.Configuration.GetSection("Azure:Storage"));
+builder.Services.Configure<AzureServiceBusOptions>(builder.Configuration.GetSection("Azure:ServiceBus"));
 builder.Services.Configure<VisaOptions>(builder.Configuration.GetSection("PaymentOptions:Visa"));
 builder.Services.Configure<TerminalOptions>(builder.Configuration.GetSection("PaymentOptions:IBox"));
 builder.Services.Configure<TaxOptions>(builder.Configuration.GetSection("PaymentOptions:Taxes"));
@@ -70,6 +71,7 @@ builder.Services.ConfigureAuthorization();
 builder.Services.AddAzureClients(azureFactory =>
 {
     azureFactory.AddBlobServiceClient(builder.Configuration["Azure:Storage:ConnectionString"]);
+    azureFactory.AddServiceBusClient(builder.Configuration["Azure:ServiceBus:ConnectionString"]);
 });
 
 var app = builder.Build();

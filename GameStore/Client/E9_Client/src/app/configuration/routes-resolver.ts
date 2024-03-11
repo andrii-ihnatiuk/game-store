@@ -28,11 +28,11 @@ import { UpdateRolePageComponent } from '../pages/update-role-page/update-role-p
 import { DeleteRolePageComponent } from '../pages/delete-role-page/delete-role-page.component';
 import { RolePageComponent } from '../pages/role-page/role-page.component';
 import { LoginPageComponent } from '../pages/login-page/login-page.component';
-import { RolesPageModule } from '../pages/roles-page/roles-page.module';
 import { RolesPageComponent } from '../pages/roles-page/roles-page.component';
 import { OrdersPageComponent } from '../pages/orders-page/orders-page.component';
 import { UpdateOrderPageComponent } from '../pages/update-order-page/update-order-page.component';
 import { AuthGuard } from './auth-guard';
+import { ProfilePageComponent } from '../pages/profile-page/profile-page.component';
 
 export const links = new Map<string, string>();
 
@@ -512,6 +512,19 @@ export async function resolveRoutesAsync(): Promise<Routes> {
           canActivate: [AuthGuard],
           data: {
             targetPage: PageRoutes.AddRole,
+          },
+        });
+        break;
+      case PageRoutes.Profile:
+        links.set(PageRoutes.Profile, '/' + link);
+        routes.push({
+          path: link,
+          pathMatch: 'full',
+          component: ProfilePageComponent,
+          canActivate: [AuthGuard],
+          data: {
+            targetPage: PageRoutes.Profile,
+            targetIdName: 'id',
           },
         });
         break;

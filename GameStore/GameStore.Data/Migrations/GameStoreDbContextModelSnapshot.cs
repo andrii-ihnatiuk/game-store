@@ -885,6 +885,48 @@ namespace GameStore.Data.Migrations
                     b.ToTable("PublisherTranslation");
                 });
 
+            modelBuilder.Entity("GameStore.Data.Entities.NotificationMethod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique();
+
+                    b.ToTable("NotificationMethod");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("f5e9772d-a3eb-4d19-b53d-975407624360"),
+                            Name = "Email",
+                            NormalizedName = "EMAIL"
+                        },
+                        new
+                        {
+                            Id = new Guid("2754466f-78c0-4e64-ab1d-3e5287afede0"),
+                            Name = "SMS",
+                            NormalizedName = "SMS"
+                        },
+                        new
+                        {
+                            Id = new Guid("306632e8-8f2b-48d0-9e4d-bdb56abc05b0"),
+                            Name = "Push",
+                            NormalizedName = "PUSH"
+                        });
+                });
+
             modelBuilder.Entity("GameStore.Data.Entities.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -893,7 +935,7 @@ namespace GameStore.Data.Migrations
 
                     b.Property<string>("CustomerId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
@@ -915,6 +957,8 @@ namespace GameStore.Data.Migrations
                         .HasColumnType("money");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.HasIndex("PaymentMethodId");
 
@@ -1127,6 +1171,21 @@ namespace GameStore.Data.Migrations
                             Description = "Rockstar Games, Inc. is an American video game publisher based in New York City.",
                             HomePage = "https://www.rockstargames.com/"
                         });
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.UserNotificationMethod", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<Guid>("NotificationMethodId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "NotificationMethodId");
+
+                    b.HasIndex("NotificationMethodId");
+
+                    b.ToTable("UserNotificationMethod");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1365,9 +1424,17 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Entities.Order", b =>
                 {
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationUser", "Customer")
+                        .WithMany("Orders")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GameStore.Data.Entities.PaymentMethod", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodId");
+
+                    b.Navigation("Customer");
 
                     b.Navigation("PaymentMethod");
                 });
@@ -1397,6 +1464,25 @@ namespace GameStore.Data.Migrations
                         .WithOne()
                         .HasForeignKey("GameStore.Data.Entities.Publisher", "AccountId")
                         .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("GameStore.Data.Entities.UserNotificationMethod", b =>
+                {
+                    b.HasOne("GameStore.Data.Entities.NotificationMethod", "NotificationMethod")
+                        .WithMany()
+                        .HasForeignKey("NotificationMethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameStore.Data.Entities.Identity.ApplicationUser", "User")
+                        .WithMany("NotificationMethods")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("NotificationMethod");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1471,6 +1557,10 @@ namespace GameStore.Data.Migrations
 
             modelBuilder.Entity("GameStore.Data.Entities.Identity.ApplicationUser", b =>
                 {
+                    b.Navigation("NotificationMethods");
+
+                    b.Navigation("Orders");
+
                     b.Navigation("UserRoles");
                 });
 

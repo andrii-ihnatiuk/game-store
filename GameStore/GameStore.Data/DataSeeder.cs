@@ -73,6 +73,10 @@ internal static class DataSeeder
     private static readonly Guid ImageId1 = new("60ab69c0-571e-4255-9310-2281e64f81b6");
     private static readonly Guid ImageId2 = new("f95594bd-72ba-4d76-8e36-486458c42430");
 
+    private static readonly Guid NotificationMethodId1 = new("F5E9772D-A3EB-4D19-B53D-975407624360");
+    private static readonly Guid NotificationMethodId2 = new("2754466F-78C0-4E64-AB1D-3E5287AFEDE0");
+    private static readonly Guid NotificationMethodId3 = new("306632E8-8F2B-48D0-9E4D-BDB56ABC05B0");
+
     public static void SeedData(this ModelBuilder modelBuilder)
     {
         SeedGenres(modelBuilder.Entity<Genre>());
@@ -82,6 +86,7 @@ internal static class DataSeeder
         SeedPaymentMethods(modelBuilder.Entity<PaymentMethod>());
         SeedTranslations(modelBuilder);
         SeedImages(modelBuilder);
+        SeedNotificationMethods(modelBuilder);
     }
 
     private static void SeedGamesContainingGenresAndPlatformsAndPublishers(ModelBuilder builder)
@@ -310,5 +315,13 @@ internal static class DataSeeder
         builder.Entity<AppImage>().HasData(
             new AppImage { Id = ImageId1, GameId = GameId1, Order = 0, IsCover = true, Large = "https://andrii.blob.core.windows.net/gamestore-static/60ab69c0-571e-4255-9310-2281e64f81b6_large.jpg", Small = "https://andrii.blob.core.windows.net/gamestore-static/60ab69c0-571e-4255-9310-2281e64f81b6_small.jpg" },
             new AppImage { Id = ImageId2, GameId = GameId1, Order = 1, IsCover = false, Large = "https://andrii.blob.core.windows.net/gamestore-static/f95594bd-72ba-4d76-8e36-486458c42430_large.jpg", Small = "https://andrii.blob.core.windows.net/gamestore-static/f95594bd-72ba-4d76-8e36-486458c42430_small.jpg" });
+    }
+
+    private static void SeedNotificationMethods(ModelBuilder builder)
+    {
+        builder.Entity<NotificationMethod>().HasData(
+            new NotificationMethod { Id = NotificationMethodId1, Name = "Email" },
+            new NotificationMethod { Id = NotificationMethodId2, Name = "SMS" },
+            new NotificationMethod { Id = NotificationMethodId3, Name = "Push" });
     }
 }

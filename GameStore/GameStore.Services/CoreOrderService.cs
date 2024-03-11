@@ -54,12 +54,28 @@ public class CoreOrderService : CoreServiceBase, ICoreOrderService
         return order;
     }
 
-    public async Task ShipOrderAsync(string orderId)
+    public async Task UpdateOrderStatusAsync(string orderId, OrderStatus status)
     {
         var id = Guid.Parse(orderId);
         var order = await _unitOfWork.Orders.GetByIdAsync(id);
-        order.ShippedDate = DateTime.UtcNow;
-        order.Status = OrderStatus.Shipped;
+        order.Status = status;
+
+        switch (status)
+        {
+            case OrderStatus.Shipped:
+                order.ShippedDate = DateTime.UtcNow;
+                break;
+            case OrderStatus.Paid:
+                order.PaidDate = DateTime.UtcNow;
+                break;
+            case OrderStatus.Open:
+            case OrderStatus.Checkout:
+            case OrderStatus.Canceled:
+                break;
+            default:
+                break;
+        }
+
         await _unitOfWork.SaveAsync();
     }
 

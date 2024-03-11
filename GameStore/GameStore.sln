@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStore.Services", "GameS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Services", "Northwind.Services\Northwind.Services.csproj", "{C4237127-AC8D-48AA-B6C8-42AC6C19406D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStore.MessageConsumer", "GameStore.MessageConsumer\GameStore.MessageConsumer.csproj", "{B8615DD6-096B-4092-928D-2FFA88AA3F92}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameStore.Messaging", "GameStore.Messaging\GameStore.Messaging.csproj", "{49FD9BDA-8744-4D8A-A607-472CBBA15C74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{C4237127-AC8D-48AA-B6C8-42AC6C19406D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4237127-AC8D-48AA-B6C8-42AC6C19406D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4237127-AC8D-48AA-B6C8-42AC6C19406D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8615DD6-096B-4092-928D-2FFA88AA3F92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8615DD6-096B-4092-928D-2FFA88AA3F92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8615DD6-096B-4092-928D-2FFA88AA3F92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8615DD6-096B-4092-928D-2FFA88AA3F92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49FD9BDA-8744-4D8A-A607-472CBBA15C74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49FD9BDA-8744-4D8A-A607-472CBBA15C74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49FD9BDA-8744-4D8A-A607-472CBBA15C74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49FD9BDA-8744-4D8A-A607-472CBBA15C74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

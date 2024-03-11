@@ -15,6 +15,7 @@ using GameStore.Shared.DTOs.Genre;
 using GameStore.Shared.DTOs.Payment;
 using GameStore.Shared.DTOs.Platform;
 using GameStore.Shared.DTOs.Publisher;
+using GameStore.Shared.DTOs.User;
 using GameStore.Shared.Loggers;
 using GameStore.Shared.Validators;
 using GameStore.Shared.Validators.CommentValidators;
@@ -23,6 +24,7 @@ using GameStore.Shared.Validators.GenreValidators;
 using GameStore.Shared.Validators.PaymentValidators;
 using GameStore.Shared.Validators.PlatformValidators;
 using GameStore.Shared.Validators.PublisherValidators;
+using GameStore.Shared.Validators.UserValidators;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Northwind.Data.Configuration;
@@ -66,6 +68,7 @@ public static class ApplicationConfiguration
         serviceCollection.AddScoped<IValidator<CommentUpdateDto>, CommentUpdateValidator>();
         serviceCollection.AddScoped<IValidator<PaymentDto>, PaymentValidator>();
         serviceCollection.AddScoped<IValidator<GamesFilterDto>, GamesFilterValidator>();
+        serviceCollection.AddScoped<IValidator<ContactInfoUpdateDto>, ContactInfoUpdateValidator>();
         serviceCollection.AddScoped(typeof(IValidatorWrapper<>), typeof(ValidatorWrapper<>));
         ValidatorOptions.Global.LanguageManager.Culture = new CultureInfo("en");
 
