@@ -40,8 +40,23 @@ Some key features of the system:
 
 - Error handling
 
+- Generation of thumbnails for images to improve load speed
+
 
 
 Below are demo videos showing some of the functionality of the system.
 
+Demo 1:
+
+https://github.com/andrii-ihnatiuk/game-store/assets/55395347/1d60e7b3-36aa-4441-945e-aa0fb057b63c
+
+
+Demo 2:
+
+https://github.com/andrii-ihnatiuk/game-store/assets/55395347/e7b666fc-7302-4085-bb4c-06561a18b06c
+
+
+Demo 3:
+
+https://github.com/andrii-ihnatiuk/game-store/assets/55395347/b70e81ba-5f33-405e-9728-2907081d8c30
 
